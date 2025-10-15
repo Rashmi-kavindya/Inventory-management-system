@@ -1,56 +1,77 @@
 // src/App.js
 import React, { useState } from 'react';
-import axios from 'axios';
+import { Routes, Route, Link } from 'react-router-dom';
+import { HomeIcon, ChartBarIcon, PlusIcon, ExclamationTriangleIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import Dashboard from './pages/Dashboard';
+import Predict from './pages/Predict';
+import InventoryList from './pages/InventoryList';
+import ExpiryAlerts from './pages/ExpiryAlerts';
 
 function App() {
-  const [predictFormData, setPredictFormData] = useState({
-    product_name: '',
-    month: '',
-    type: '',
-    department: ''
-  });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const [prediction, setPrediction] = useState('');
-  const [error, setError] = useState('');
-
-  const handleChange = (e) => {
-    setPredictFormData({ ...predictFormData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setPrediction('');
-
-    try {
-      const response = await axios.post('http://127.0.0.1:5000/predict_reorder', predictFormData);
-      setPrediction(response.data.predicted_reorder_quantity);
-    } catch (err) {
-      if (err.response && err.response.data.error) {
-        setError(err.response.data.error);
-      } else {
-        setError('Network Error');
-      }
-    }
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4 text-center">Stockly - Inventory Prediction</h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Fixed Navbar */}
+      <nav className="bg-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link to="/" className="text-2xl font-bold text-purple-600">Stockly</Link>
+            </div>
+            {/* Desktop Nav */}
+            <div className="hidden md:flex space-x-8">
+              <Link to="/" className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600">
+                <HomeIcon className="h-5 w-5 mr-2" /> Dashboard
+              </Link>
+              <Link to="/predict" className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600">
+                <ChartBarIcon className="h-5 w-5 mr-2" /> Predict Reorder
+              </Link>
+              <Link to="/inventory" className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600">
+                <PlusIcon className="h-5 w-5 mr-2" /> Inventory
+              </Link>
+              <Link to="/expiry" className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600">
+                <ExclamationTriangleIcon className="h-5 w-5 mr-2" /> Expiry Alerts
+              </Link>
+            </div>
+            {/* Mobile Menu Button */}
+            <div className="md:hidden flex items-center">
+              <button onClick={toggleMobileMenu} className="p-2 text-gray-700 hover:text-purple-600">
+                {isMobileMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              <Link to="/" className="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium" onClick={toggleMobileMenu}>
+                Dashboard
+              </Link>
+              <Link to="/predict" className="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium" onClick={toggleMobileMenu}>
+                Predict Reorder
+              </Link>
+              <Link to="/inventory" className="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium" onClick={toggleMobileMenu}>
+                Inventory
+              </Link>
+              <Link to="/expiry" className="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium" onClick={toggleMobileMenu}>
+                Expiry Alerts
+              </Link>
+            </div>
+          </div>
+        )}
+      </nav>
 
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Predict Next Reorder Quantity</h2>
-        <form onSubmit={handleSubmit}>
-          <input type="text" name="product_name" placeholder="Product Name" onChange={handleChange} required className="border p-2 rounded mr-2 mb-2" />
-          <input type="number" name="month" placeholder="Month (1-12)" onChange={handleChange} required className="border p-2 rounded mr-2 mb-2" />
-          <input type="text" name="type" placeholder="Type" onChange={handleChange} required className="border p-2 rounded mr-2 mb-2" />
-          <input type="text" name="department" placeholder="Department" onChange={handleChange} required className="border p-2 rounded mr-2 mb-2" />
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Predict</button>
-        </form>
-
-        {prediction && <p className="mt-2 text-green-700 font-semibold">Predicted Reorder Quantity: {prediction}</p>}
-        {error && <p className="mt-2 text-red-700 font-semibold">Error: {error}</p>}
-      </div>
+      {/* Routes */}
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/predict" element={<Predict />} />
+        <Route path="/inventory" element={<InventoryList />} />
+        <Route path="/expiry" element={<ExpiryAlerts />} />
+      </Routes>
     </div>
   );
 }
