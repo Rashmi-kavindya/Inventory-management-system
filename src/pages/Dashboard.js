@@ -1,15 +1,15 @@
 // src/pages/Dashboard.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useLayoutEffect } from 'react';
 import axios from 'axios';
-import Plot from 'react-plotly.js';  // Plotly import
+import Plot from 'react-plotly.js';
 import { PlusIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 export default function Dashboard() {
-  // States (same as before)
+  // States
   const [salesData, setSalesData] = useState([]);
-  const [inventoryData, setInventoryData] = useState([]);  // For pie
-  const [expiryItems, setExpiryItems] = useState([]);  // For bar
+  const [inventoryData, setInventoryData] = useState([]);
+  const [expiryItems, setExpiryItems] = useState([]);
   const [deadStock, setDeadStock] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(1);
   const [items, setItems] = useState([]);
@@ -24,8 +24,15 @@ export default function Dashboard() {
     fetchInventory();
     fetchExpiry();
     fetchDeadStock();
-    fetchItems();  // For dropdowns
+    fetchItems();
   }, [selectedItemId]);
+
+  // Resize listener for responsive charts (fixes overlap)
+  useLayoutEffect(() => {
+    const handleResize = () => window.dispatchEvent(new Event('resize'));
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const fetchItems = async () => {
     try {
@@ -62,7 +69,8 @@ export default function Dashboard() {
         product_name: selectedItem.name
       });
       alert('Stock added successfully!');
-      fetchExpiry();  // Refresh alerts
+      fetchExpiry();
+      fetchInventory();  // Refresh pie
       setAddForm({ stock_quantity: '', expire_date: '' });
       setSelectedItem({ code: '', name: '' });
       setSelectedDept(''); setSelectedType('');
@@ -75,16 +83,27 @@ export default function Dashboard() {
     try {
       const response = await axios.get(`http://127.0.0.1:5000/sales/${itemId}`);
       const formatted = response.data.map(d => ({ name: `${d.month}/${d.year}`, quantity: d.quantity_sold }));
+      console.log('Sales data for line chart:', formatted);  // Debug
       setSalesData(formatted);
     } catch (err) {
       console.error('Error fetching sales:', err);
     }
   };
 
+  const fetchInventory = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:5000/inventory');
+      console.log('Inventory data for pie:', response.data);
+      setInventoryData(response.data);
+    } catch (err) {
+      console.error('Error fetching inventory:', err);
+    }
+  };
+
   const fetchExpiry = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:5000/near_expiry?days=30');
-      console.log('Expiry API response:', response.data);  // Debug: Check in console
+      console.log('Expiry API response:', response.data);
       setExpiryItems(response.data);
     } catch (err) {
       console.error('Error fetching expiry:', err);
@@ -94,18 +113,56 @@ export default function Dashboard() {
   const fetchDeadStock = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:5000/dead_stock?months_back=3');
-      console.log('Dead stock API response:', response.data);  // Debug
+      console.log('Dead stock API response:', response.data);
       setDeadStock(response.data);
     } catch (err) {
       console.error('Error fetching dead stock:', err);
     }
   };
 
+  // FIXED: Aggregate pie by dept (useMemo for perf; map dept from items)
+  const deptStockMap = useMemo(() => {
+    const map = {};
+    inventoryData.forEach(item => {
+      const matchingItem = items.find(i => i.item_code === item.product_code);
+      const dept = matchingItem ? matchingItem.department : 'Unknown';
+      map[dept] = (map[dept] || 0) + item.stock_quantity;
+    });
+    return Object.entries(map);
+  }, [inventoryData, items]);
+
+  const pieData = deptStockMap.length > 0 ? [
+    {
+      values: deptStockMap.map(([, stock]) => stock),
+      labels: deptStockMap.map(([dept]) => dept),
+      type: 'pie',
+      marker: { colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#FF9999'] },
+      textinfo: 'label+percent',
+      insidetextorientation: 'radial'
+    }
+  ] : [];
+
+  // FIXED: Multi-color bar (cycle colors)
+  const expiryCounts = expiryItems.length > 0 ? 
+    Object.entries(expiryItems.reduce((acc, item) => {
+      acc[item.type || 'Unknown'] = (acc[item.type || 'Unknown'] || 0) + 1;
+      return acc;
+    }, {})) : [];
+  const barColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'];
+  const barData = [
+    {
+      x: expiryCounts.map(([type]) => type),
+      y: expiryCounts.map(([, count]) => count),
+      type: 'bar',
+      marker: { color: expiryCounts.map((_, i) => barColors[i % barColors.length]) }
+    }
+  ];
+
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>
       
-      {/* Quick Add Section with Dropdowns & Labels */}
+      {/* Quick Add Section */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
         <h2 className="text-xl font-semibold mb-4 flex items-center"><PlusIcon className="h-5 w-5 mr-2" /> Quick Add Inventory</h2>
         <form onSubmit={handleAddSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -119,7 +176,7 @@ export default function Dashboard() {
           </select>
           <select onChange={(e) => {
             const selectedValue = e.target.value;
-            const item = filteredItems.find(i => i.item_name === selectedValue.split(' (')[0]);  // Parse name from "Name (Code)"
+            const item = filteredItems.find(i => `${i.item_name} (${i.item_code})` === selectedValue);
             if (item) handleItemSelect(item);
           }} className="border p-2 rounded md:col-span-2">
             <option value="">Select Item ({filteredItems.length} available)</option>
@@ -133,67 +190,129 @@ export default function Dashboard() {
         </form>
       </div>
 
-      {/* 3-Column Grid for Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Trends Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Monthly Sales Trends</h2>
-          <select onChange={(e) => setSelectedItemId(e.target.value)} className="mb-4 p-2 border rounded">
-            <option value="1">Glue Stick (ID 1)</option>
-            <option value="2">Pencil HB (ID 2)</option>
-            <option value="3">Lifebuoy Soap (ID 3)</option>
-            {/* Add more as needed */}
-          </select>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={salesData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="quantity" stroke="#8B5CF6" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
+      {/* Trends Line Chart */}
+      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 className="text-xl font-semibold mb-4">Monthly Sales Trends (Last 12 Months)</h2>
+        <select onChange={(e) => setSelectedItemId(e.target.value)} className="mb-4 p-2 border rounded">
+          <option value="">Select Item for Trends</option>
+          {items.slice(0, 20).map(item => (
+            <option key={item.item_id} value={item.item_id}>
+              {item.item_name} (ID {item.item_id}, {item.department})
+            </option>
+          ))}
+        </select>
+        {salesData.length > 0 ? (
+          <div className="h-80 w-full flex-1">  {/* Fixed container for no overlap */}
+            <Plot
+              data={[
+                {
+                  x: salesData.map(d => d.name),
+                  y: salesData.map(d => d.quantity),
+                  type: 'scatter',
+                  mode: 'lines+markers',
+                  marker: { color: '#8B5CF6' },
+                  line: { color: '#8B5CF6', width: 2 }
+                }
+              ]}
+              layout={{
+                title: 'Sales Quantity Over Time (Past Data)',
+                xaxis: { title: 'Month/Year' },
+                yaxis: { title: 'Quantity Sold' },
+                height: 300,
+                margin: { t: 40, b: 40, l: 40, r: 40 }
+              }}
+              config={{ responsive: true, displayModeBar: false }}
+              style={{ width: '100%', height: '100%' }}
+            />
+          </div>
+        ) : (
+          <p className="text-gray-500">Select an item to view historical trends from sales data. If empty, add data to sales_history table.</p>
+        )}
+      </div>
+
+      {/* Bottom Grid: Pie + Bar (Responsive) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Stock Distribution Pie (Aggregated) */}
+        <div className="bg-white p-6 rounded-lg shadow-md flex-1">
+          <h2 className="text-xl font-semibold mb-4">Stock Distribution by Department</h2>
+          {deptStockMap.length > 0 ? (
+            <div className="h-80 w-full flex-1">
+              <Plot
+                data={pieData}
+                layout={{
+                  title: 'Total Stock by Department (Aggregated)',
+                  height: 300,
+                  margin: { t: 40, b: 40, l: 40, r: 40 }
+                }}
+                config={{ responsive: true, displayModeBar: false }}
+                style={{ width: '100%', height: '100%' }}
+              />
+            </div>
+          ) : (
+            <p className="text-gray-500">No inventory data—add more samples for multi-slice pie</p>
+          )}
+          <button onClick={fetchInventory} className="mt-4 text-purple-600 underline">Refresh</button>
         </div>
 
-        {/* Expiry Alerts */}
-        <div className="bg-white p-6 rounded-lg shadow-md lg:col-span-1">
-          <h2 className="text-xl font-semibold mb-4 flex items-center"><ExclamationTriangleIcon className="h-5 w-5 mr-2 text-yellow-500" /> Near-Expiry (30 Days)</h2>
-          {expiryItems.length === 0 ? (
-            <p className="text-gray-500">No urgent items (check console for API response).</p>
+        {/* Expiry by Type Bar (Multi-Color) */}
+        <div className="bg-white p-6 rounded-lg shadow-md flex-1">
+          <h2 className="text-xl font-semibold mb-4 flex items-center"><ExclamationTriangleIcon className="h-5 w-5 mr-2 text-yellow-500" /> Expiry Items by Type</h2>
+          {expiryCounts.length > 0 ? (
+            <div className="h-80 w-full flex-1">
+              <Plot
+                data={barData}
+                layout={{
+                  title: 'Near-Expiry Count by Type',
+                  xaxis: { title: 'Type' },
+                  yaxis: { title: 'Number of Items' },
+                  height: 300,
+                  margin: { t: 40, b: 40, l: 40, r: 40 }
+                }}
+                config={{ responsive: true, displayModeBar: false }}
+                style={{ width: '100%', height: '100%' }}
+              />
+            </div>
           ) : (
-            <ul className="space-y-2 max-h-60 overflow-y-auto">
-              {expiryItems.map((item, index) => (
-                <li key={index} className="p-3 bg-yellow-50 rounded border-l-4 border-yellow-400 text-sm">
-                  <div className="font-semibold">{item.product_name}</div>
-                  <div>{item.stock_quantity} units, {item.days_left} days left</div>
-                  <div className="text-purple-600">Discount: {item.recommended_discount}%</div>
-                  <div className="text-blue-600">Bundle: {item.bundling_suggestion}</div>
-                  <div className="text-green-600">Tip: {item.loyalty_tip}</div>
-                </li>
-              ))}
-            </ul>
+            <p className="text-gray-500">No expiry data—add samples with repeated types for varied bars</p>
           )}
           <button onClick={fetchExpiry} className="mt-4 text-purple-600 underline">Refresh</button>
         </div>
+      </div>
 
-        {/* Dead Stock Alerts */}
-        <div className="bg-white p-6 rounded-lg shadow-md lg:col-span-1">
-          <h2 className="text-xl font-semibold mb-4">Dead Stock Alerts</h2>
-          {deadStock.length === 0 ? (
-            <p className="text-gray-500">No dead stock detected.</p>
-          ) : (
-            <ul className="space-y-2 max-h-60 overflow-y-auto">
-              {deadStock.map((item, index) => (
-                <li key={index} className="p-3 bg-red-50 rounded border-l-4 border-red-400 text-sm">
-                  <div>{item.item_name}: {item.stock_quantity} units</div>
-                  <div>Recent Sales: {item.recent_sales}</div>
-                  <div className="text-purple-600">{item.recommendation}</div>
-                </li>
-              ))}
-            </ul>
-          )}
-          <button onClick={fetchDeadStock} className="mt-4 text-purple-600 underline">Refresh</button>
+      {/* Detailed Expiry Tracking List */}
+      {expiryItems.length > 0 && (
+        <div className="bg-yellow-50 p-6 rounded-lg shadow-md mb-6">
+          <h3 className="text-lg font-semibold mb-2">Detailed Near-Expiry Items</h3>
+          <ul className="space-y-2">
+            {expiryItems.map((item, index) => (
+              <li key={index} className="p-3 bg-white rounded border-l-4 border-yellow-400 text-sm">
+                <div className="font-medium">{item.product_name}</div>
+                <div>{item.stock_quantity} units, {item.days_left} days left ({item.type})</div>
+                <div className="text-purple-600">Recommended Discount: {item.recommended_discount}%</div>
+                <div className="text-blue-600">Bundle Suggestion: {item.bundling_suggestion}</div>
+                <div className="text-green-600">Tip: {item.loyalty_tip}</div>
+              </li>
+            ))}
+          </ul>
         </div>
+      )}
+
+      {/* Dead Stock Alerts */}
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Dead Stock Alerts</h2>
+        {deadStock.length === 0 ? (
+          <p className="text-gray-500">No dead stock detected.</p>
+        ) : (
+          <ul className="space-y-2">
+            {deadStock.map((item, index) => (
+              <li key={index} className="p-3 bg-red-50 rounded border-l-4 border-red-400">
+                <div>{item.item_name}: {item.stock_quantity} units, Recent Sales: {item.recent_sales}</div>
+                <div className="text-sm text-purple-600">{item.recommendation}</div>
+              </li>
+            ))}
+          </ul>
+        )}
+        <button onClick={fetchDeadStock} className="mt-4 text-purple-600 underline">Refresh</button>
       </div>
     </div>
   );
