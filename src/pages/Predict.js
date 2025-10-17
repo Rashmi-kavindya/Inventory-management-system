@@ -15,6 +15,7 @@ export default function Predict() {
       const response = await axios.post('http://127.0.0.1:5000/predict_reorder', formData);
       setPrediction(response.data.predicted_reorder_quantity);
     } catch (err) {
+      console.error('Predict error:', err);
       setError(err.response?.data?.error || 'Network Error');
     }
   };

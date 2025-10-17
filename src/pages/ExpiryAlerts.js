@@ -6,13 +6,15 @@ import axios from 'axios';
 export default function ExpiryAlerts() {
   const [expiryItems, setExpiryItems] = useState([]);
   const [days, setDays] = useState(30);
+  const [error, setError] = useState('');
 
   const fetchExpiry = useCallback(async () => {
     try {
       const response = await axios.get(`http://127.0.0.1:5000/near_expiry?days=${days}`);
       setExpiryItems(response.data);
     } catch (err) {
-      console.error(err);
+      console.error('Expiry fetch error:', err);
+      setError(err.response?.data?.error || err.response?.data?.msg || err.message || 'Failed to fetch expiry alerts');
     }
   }, [days]);
 
@@ -23,6 +25,7 @@ export default function ExpiryAlerts() {
   return (
     <div className="max-w-4xl mx-auto py-6 px-4">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Expiry Alerts</h1>
+      {error && <p className="mb-4 text-red-600 font-semibold">Error: {error}</p>}
       <div className="mb-4">
         <label>Alert Threshold: </label>
         <input type="number" value={days} onChange={(e) => setDays(e.target.value)} min="1" max="90" className="ml-2 border p-1 rounded" />

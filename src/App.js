@@ -1,16 +1,37 @@
 // src/App.js
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
-import { HomeIcon, ChartBarIcon, PlusIcon, ExclamationTriangleIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, ChartBarIcon, PlusIcon, ExclamationTriangleIcon, Bars3Icon, XMarkIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import Dashboard from './pages/Dashboard';
 import Predict from './pages/Predict';
 import InventoryList from './pages/InventoryList';
 import ExpiryAlerts from './pages/ExpiryAlerts';
+import Login from './pages/Login';
+import CreateUser from './pages/CreateUser';
+// import axios from 'axios';
 
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [role, setRole] = useState(localStorage.getItem('role') || '');
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setRole(localStorage.getItem('role'));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    setIsLoggedIn(false);
+    setRole('');
+  };
+
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -35,6 +56,14 @@ function App() {
               <Link to="/expiry" className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600">
                 <ExclamationTriangleIcon className="h-5 w-5 mr-2" /> Expiry Alerts
               </Link>
+              {role === 'manager' && (
+                <Link to="/create-user" className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600">
+                  <UserPlusIcon className="h-5 w-5 mr-2" /> Create User
+                </Link>
+              )}
+              <button onClick={handleLogout} className="flex items-center px-3 py-2 text-gray-700 hover:text-purple-600">
+                Logout
+              </button>
             </div>
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center">
@@ -60,6 +89,14 @@ function App() {
               <Link to="/expiry" className="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium" onClick={toggleMobileMenu}>
                 Expiry Alerts
               </Link>
+              {role === 'manager' && (
+                <Link to="/create-user" className="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium" onClick={toggleMobileMenu}>
+                  Create User
+                </Link>
+              )}
+              <button onClick={() => { handleLogout(); toggleMobileMenu(); }} className="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium">
+                Logout
+              </button>
             </div>
           </div>
         )}
@@ -71,6 +108,7 @@ function App() {
         <Route path="/predict" element={<Predict />} />
         <Route path="/inventory" element={<InventoryList />} />
         <Route path="/expiry" element={<ExpiryAlerts />} />
+        {role === 'manager' && <Route path="/create-user" element={<CreateUser />} />}
       </Routes>
     </div>
   );
