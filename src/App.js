@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import { HomeIcon, ChartBarIcon, PlusIcon, ExclamationTriangleIcon, Bars3Icon, XMarkIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import Dashboard from './pages/Dashboard';
@@ -8,7 +8,7 @@ import InventoryList from './pages/InventoryList';
 import ExpiryAlerts from './pages/ExpiryAlerts';
 import Login from './pages/Login';
 import CreateUser from './pages/CreateUser';
-// import axios from 'axios';
+// import axios from 'axios';  
 
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,9 +34,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-16"> 
       {/* Fixed Navbar */}
-      <nav className="bg-white shadow-lg">
+      <nav className="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
@@ -75,7 +75,7 @@ function App() {
         </div>
         {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="md:hidden bg-white border-t border-gray-200 z-50">  {/* Added z-50 */}
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link to="/" className="block px-3 py-2 text-gray-700 hover:text-purple-600 font-medium" onClick={toggleMobileMenu}>
                 Dashboard
