@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [selectedType, setSelectedType] = useState('');
   const [selectedItem, setSelectedItem] = useState({ code: '', name: '' });
   const [addForm, setAddForm] = useState({ stock_quantity: '', expire_date: '' });
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchInventorySales(selectedItemId);
@@ -146,7 +147,7 @@ export default function Dashboard() {
     }
   ] : [];
 
-  // FIXED: Multi-color bar (cycle colors)
+  // Multi-color bar (cycle colors)
   const expiryCounts = expiryItems.length > 0 ? 
     Object.entries(expiryItems.reduce((acc, item) => {
       acc[item.type || 'Unknown'] = (acc[item.type || 'Unknown'] || 0) + 1;
@@ -197,13 +198,26 @@ export default function Dashboard() {
       {/* Trends Line Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
         <h2 className="text-xl font-semibold mb-4">Monthly Sales Trends (Last 12 Months)</h2>
+        <input 
+          type="text" 
+          placeholder="Search by Item ID or Name" 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value.toLowerCase())} 
+          className="mb-4 p-2 border rounded w-full"
+        />
         <select onChange={(e) => setSelectedItemId(e.target.value)} className="mb-4 p-2 border rounded">
           <option value="">Select Item for Trends</option>
-          {items.slice(0, 20).map(item => (
-            <option key={item.item_id} value={item.item_id}>
-              {item.item_name} (ID {item.item_id}, {item.department})
-            </option>
-          ))}
+          {items
+            .filter(item => 
+              item.item_id.toString().includes(searchTerm) ||  // Filter by ID
+              item.item_name.toLowerCase().includes(searchTerm)  // Or name
+            )
+            .map(item => (
+              <option key={item.item_id} value={item.item_id}>
+                {item.item_name} (ID {item.item_id}, {item.department})
+              </option>
+            ))
+          }
         </select>
         {salesData.length > 0 ? (
           <div className="h-80 w-full flex-1">  {/* Fixed container for no overlap */}
@@ -230,7 +244,7 @@ export default function Dashboard() {
             />
           </div>
         ) : (
-          <p className="text-gray-500">Select an item to view historical trends from sales data. If empty, add data to sales_history table.</p>
+          <p className="text-gray-500">Select an item to view historical trends from sales data.</p>
         )}
       </div>
 
