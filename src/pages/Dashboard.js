@@ -20,7 +20,7 @@ export default function Dashboard() {
   const [addForm, setAddForm] = useState({ stock_quantity: '', expire_date: '' });
 
   useEffect(() => {
-    fetchSalesForTrends(selectedItemId);
+    fetchInventorySales(selectedItemId);
     fetchInventory();
     fetchExpiry();
     fetchDeadStock();
@@ -79,14 +79,18 @@ export default function Dashboard() {
     }
   };
 
-  const fetchSalesForTrends = async (itemId) => {
+  const fetchInventorySales = async (itemId) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/sales/${itemId}`);
-      const formatted = response.data.map(d => ({ name: `${d.month}/${d.year}`, quantity: d.quantity_sold }));
-      console.log('Sales data for line chart:', formatted);  // Debug
-      setSalesData(formatted);
+      const response = await axios.get(`http://127.0.0.1:5000/inventory_sales/${itemId}`);
+      const formatted = response.data.map(d => ({ name: `${d.month}/${d.year}`, quantity: d.total_units_sold }));
+      const sortedSales = formatted.sort((a, b) => {
+        const dateA = new Date(`${a.name.split('/')[1]}-${a.name.split('/')[0]}-01`);
+        const dateB = new Date(`${b.name.split('/')[1]}-${b.name.split('/')[0]}-01`);
+        return dateA - dateB;  // Sort ASC for chronological order
+      });
+      setSalesData(sortedSales);  // Reuse salesData state for the chart
     } catch (err) {
-      console.error('Error fetching sales:', err);
+      console.error('Error fetching inventory sales:', err);
     }
   };
 
