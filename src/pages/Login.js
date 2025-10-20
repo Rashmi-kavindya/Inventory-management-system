@@ -16,6 +16,8 @@ export default function Login({ onLogin }) {
       const response = await axios.post('http://127.0.0.1:5000/login', formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', response.data.role);
+      localStorage.setItem('username', response.data.username);
+      localStorage.setItem('userId', response.data.id);
       onLogin();  // Redirect to dashboard
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');

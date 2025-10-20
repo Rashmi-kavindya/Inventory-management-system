@@ -1,3 +1,5 @@
+// src/pages/InventoryList.js
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -30,7 +32,7 @@ export default function InventoryList() {
           </thead>
           <tbody>
             {inventory.map(item => (
-              <tr key={item.id} className="border-t">
+              <tr key={item.item_id} className="border-t">
                 <td className="px-6 py-4">{item.product_name}</td>
                 <td className="px-6 py-4">{item.stock_quantity}</td>
                 <td className="px-6 py-4">{item.expire_date}</td>
