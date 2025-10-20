@@ -11,7 +11,7 @@ export default function Dashboard() {
   const [inventoryData, setInventoryData] = useState([]);
   const [expiryItems, setExpiryItems] = useState([]);
   const [deadStock, setDeadStock] = useState([]);
-  const [selectedItemId, setSelectedItemId] = useState(1);
+  const [selectedItemId, setSelectedItemId] = useState(15);
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [selectedDept, setSelectedDept] = useState('');
@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [selectedItem, setSelectedItem] = useState({ code: '', name: '' });
   const [addForm, setAddForm] = useState({ stock_quantity: '', expire_date: '' });
   const [searchTerm, setSearchTerm] = useState('');
+
 
   useEffect(() => {
     fetchInventorySales(selectedItemId);
