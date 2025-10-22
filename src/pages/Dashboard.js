@@ -408,7 +408,7 @@ export default function Dashboard() {
           <p className="text-gray-500">Select an item to view trends.</p>
         )}
       </div>
-      {/* Bottom Grid, Expiry List, Dead Stock - unchanged */}
+      {/* Expiry List, Dead Stock */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Stock Distribution Pie */}
         <div className="bg-white p-6 rounded-lg shadow-md flex-1">
