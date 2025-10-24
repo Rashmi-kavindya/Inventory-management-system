@@ -4,6 +4,8 @@ import axios from 'axios';
 import Plot from 'react-plotly.js';
 import { PlusIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import dashboardImg from '../assets/dashboard.png';
+import { useExpiry } from '../contexts/ExpiryContext';
+import { useCallback } from 'react';
 
 export default function Dashboard() {
   const [salesData, setSalesData] = useState([]);
@@ -20,6 +22,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const role = localStorage.getItem('role');
   const username = localStorage.getItem('username') || 'User';
+  const { expiryDays } = useExpiry(); // Use shared threshold
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -80,13 +83,13 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    fetchInventorySales(selectedItemId);
-    fetchInventory();
-    fetchExpiry();
-    fetchDeadStock();
-    fetchItems();
-  }, [selectedItemId]);
+  // useEffect(() => {
+  //   fetchInventorySales(selectedItemId);
+  //   fetchInventory();
+  //   fetchExpiry();
+  //   fetchDeadStock();
+  //   fetchItems();
+  // }, [selectedItemId, expiryDays, fetchExpiry]);
 
   useEffect(() => {
     if (items.length > 0) {
@@ -168,14 +171,14 @@ export default function Dashboard() {
     }
   };
 
-  const fetchExpiry = async () => {
+  const fetchExpiry = useCallback(async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/near_expiry?days=30');
+      const response = await axios.get(`http://127.0.0.1:5000/near_expiry?days=${expiryDays}`); // Use backticks for interpolation
       setExpiryItems(response.data);
     } catch (err) {
       console.error('Error fetching expiry:', err);
     }
-  };
+  }, [expiryDays]);
 
   const fetchDeadStock = async () => {
     try {
@@ -185,6 +188,14 @@ export default function Dashboard() {
       console.error('Error fetching dead stock:', err);
     }
   };
+
+  useEffect(() => {
+    fetchInventorySales(selectedItemId);
+    fetchInventory();
+    fetchExpiry();
+    fetchDeadStock();
+    fetchItems();
+  }, [selectedItemId, expiryDays, fetchExpiry]);
 
   const deptStockMap = useMemo(() => {
     const map = {};
@@ -502,7 +513,7 @@ export default function Dashboard() {
           <ul className="space-y-2">
             {inventoryData.filter(item => item.stock_quantity <= item.reorder_level).map((item, index) => (
               <li key={index} className="p-3 bg-orange-50 rounded border-l-4 border-orange-400">
-                <div>{item.product_name}: Stock {item.stock_quantity} {'<='} Reorder Level {item.reorder_level}</div>
+                <div>{item.product_name}: Stock {item.stock_quantity} ≤ Reorder Level {item.reorder_level}</div> {/* FIXED: Use ≤ symbol */}
                 <div className="text-sm text-purple-600">Suggest ordering {item.reorder_quantity} units.</div>
               </li>
             ))}

@@ -7,6 +7,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
+import { ExpiryProvider } from './contexts/ExpiryContext';
 
 // Set up Axios request interceptor globally (for JWT headers)
 axios.interceptors.request.use(config => {
@@ -36,7 +37,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <ExpiryProvider>
+        <App />
+      </ExpiryProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
