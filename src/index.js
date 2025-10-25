@@ -8,6 +8,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 import { ExpiryProvider } from './contexts/ExpiryContext';
+import { Toaster } from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 
 // Set up Axios request interceptor globally (for JWT headers)
 axios.interceptors.request.use(config => {
@@ -39,6 +41,13 @@ root.render(
     <BrowserRouter>
       <ExpiryProvider>
         <App />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: { background: '#10b981', color: '#fff' },
+          }}
+        />
       </ExpiryProvider>
     </BrowserRouter>
   </React.StrictMode>

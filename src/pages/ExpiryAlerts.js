@@ -3,6 +3,7 @@
 import React, { useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useExpiry } from '../contexts/ExpiryContext';
+import toast from 'react-hot-toast';
 
 export default function ExpiryAlerts() {
   const { expiryDays, setExpiryDays } = useExpiry();
@@ -23,21 +24,30 @@ export default function ExpiryAlerts() {
     fetchExpiry();
   }, [fetchExpiry]);
 
+  // success handler
+  const handleUpdate = () => {
+    fetchExpiry();                                 // refresh the list
+    toast.success(`Expiry alert threshold updated to ${expiryDays} days!`);
+  };
+
   return (
     <div className="max-w-4xl mx-auto py-6 px-4">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Expiry Alerts</h1>
       {error && <p className="mb-4 text-red-600 font-semibold">Error: {error}</p>}
-      <div className="mb-4">
-        <label>Alert Threshold (days): </label>
+      <div className="mb-4 flex items-center gap-2">
+        <label>Alert Threshold (days):</label>
         <input
           type="number"
           value={expiryDays}
           onChange={(e) => setExpiryDays(parseInt(e.target.value) || 30)}
           min="1"
           max="90"
-          className="ml-2 border p-1 rounded"
+          className="border p-1 rounded w-20"
         />
-        <button onClick={fetchExpiry} className="ml-2 bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700">
+        <button
+          onClick={handleUpdate}                     // <-- use the new handler
+          className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
+        >
           Update
         </button>
       </div>
