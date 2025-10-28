@@ -67,29 +67,50 @@ export default function Dashboard() {
   };
 
   // For Add New Item (integrated from CreateItem.js)
-  const [newItemForm, setNewItemForm] = useState({ item_code: '', item_name: '', department: '', type: '', reorder_level: 10, reorder_quantity: 50 });
+  const [newItemForm, setNewItemForm] = useState({
+    next_code: '',
+    item_name: '',
+    department: '',
+    type: '',
+    reorder_level: 10
+  });
 
-  const handleNewItemChange = (e) => setNewItemForm({ ...newItemForm, [e.target.name]: e.target.value });
+  useEffect(() => {
+    axios.get('http://127.0.0.1:5000/next_item_code')
+      .then(res => setNewItemForm(prev => ({ ...prev, next_code: res.data.next_code })))
+      .catch(() => setNewItemForm(prev => ({ ...prev, next_code: '?' })));
+  }, []);
+
+  const handleNewItemChange = (e) => {
+    setNewItemForm({ ...newItemForm, [e.target.name]: e.target.value });
+  };
 
   const handleNewItemSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://127.0.0.1:5000/add_item', newItemForm);
+      await axios.post('http://127.0.0.1:5000/add_item', {
+        item_code: newItemForm.next_code,
+        item_name: newItemForm.item_name,
+        department: newItemForm.department,
+        type: newItemForm.type,
+        reorder_level: parseInt(newItemForm.reorder_level) || 10
+      });
       alert('Item added!');
-      setNewItemForm({ item_code: '', item_name: '', department: '', type: '', reorder_level: 10, reorder_quantity: 50 });
-      fetchItems();  // Refresh items list
+      setNewItemForm({
+        next_code: '',
+        item_name: '',
+        department: '',
+        type: '',
+        reorder_level: 10
+      });
+      // Refresh next code
+      const res = await axios.get('http://127.0.0.1:5000/next_item_code');
+      setNewItemForm(prev => ({ ...prev, next_code: res.data.next_code }));
+      fetchItems(); // refresh list
     } catch (err) {
       alert('Error: ' + (err.response?.data?.error || err.message));
     }
   };
-
-  // useEffect(() => {
-  //   fetchInventorySales(selectedItemId);
-  //   fetchInventory();
-  //   fetchExpiry();
-  //   fetchDeadStock();
-  //   fetchItems();
-  // }, [selectedItemId, expiryDays, fetchExpiry]);
 
   useEffect(() => {
     if (items.length > 0) {
@@ -307,64 +328,37 @@ export default function Dashboard() {
 
           {/* Add New Item */}
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4 flex items-center"><PlusIcon className="h-5 w-5 mr-2" /> Add New Item</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <PlusIcon className="h-5 w-5 mr-2" /> Add New Item
+            </h2>
             <form onSubmit={handleNewItemSubmit} className="grid grid-cols-1 gap-4">
-              <input 
-                name="item_code" 
-                value={newItemForm.item_code} 
-                onChange={handleNewItemChange} 
-                placeholder="Auto-generated (next available)" 
-                readOnly 
-                className="border p-2 rounded bg-gray-100 cursor-not-allowed" 
-              />
-              <input 
-                name="item_name" 
-                value={newItemForm.item_name} 
-                onChange={handleNewItemChange} 
-                placeholder="Item Name (e.g., New Product)" 
-                required 
-                className="border p-2 rounded" 
-              />
-              <select 
-                name="department" 
-                value={newItemForm.department} 
-                onChange={handleNewItemChange} 
-                required 
-                className="border p-2 rounded"
-              >
+              
+              {/* Auto-generated Code */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Item Code</label>
+                <div className="bg-gray-100 border border-gray-300 text-gray-800 font-mono p-2 rounded text-center">
+                  {newItemForm.next_code || 'Loading...'}
+                </div>
+              </div>
+
+              <input name="item_name" value={newItemForm.item_name} onChange={handleNewItemChange} placeholder="Item Name" required className="border p-2 rounded" />
+              
+              <select name="department" value={newItemForm.department} onChange={handleNewItemChange} required className="border p-2 rounded">
                 <option value="">Select Department</option>
-                {[...new Set(items.map(i => i.department))].sort().map(dept => (
-                  <option key={dept} value={dept}>{dept}</option>
+                {[...new Set(items.map(i => i.department))].sort().map(d => (
+                  <option key={d} value={d}>{d}</option>
                 ))}
               </select>
-              <select 
-                name="type" 
-                value={newItemForm.type} 
-                onChange={handleNewItemChange} 
-                required 
-                className="border p-2 rounded"
-              >
+
+              <select name="type" value={newItemForm.type} onChange={handleNewItemChange} required className="border p-2 rounded">
                 <option value="">Select Type</option>
-                {[...new Set(items.map(i => i.type))].sort().map(typ => (
-                  <option key={typ} value={typ}>{typ}</option>
+                {[...new Set(items.map(i => i.type))].sort().map(t => (
+                  <option key={t} value={t}>{t}</option>
                 ))}
               </select>
-              <input 
-                type="number" 
-                name="reorder_level" 
-                value={newItemForm.reorder_level} 
-                onChange={handleNewItemChange} 
-                placeholder="Reorder Level (e.g., 10 - alert when stock <= this)" 
-                className="border p-2 rounded" 
-              />
-              <input 
-                type="number" 
-                name="reorder_quantity" 
-                value={newItemForm.reorder_quantity} 
-                onChange={handleNewItemChange} 
-                placeholder="Reorder Quantity (e.g., 50 - suggested order amount)" 
-                className="border p-2 rounded" 
-              />
+
+              <input type="number" name="reorder_level" value={newItemForm.reorder_level} onChange={handleNewItemChange} placeholder="Reorder Level (e.g., 10)" className="border p-2 rounded" />
+
               <button type="submit" className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700">Add Item</button>
             </form>
           </div>
