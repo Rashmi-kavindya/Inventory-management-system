@@ -195,7 +195,7 @@ export default function InventoryList() {
       {/* REFRESH */}
       <button
         onClick={fetchInventory}
-        className="mt-6 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+        className="mt-6 bg-stockly-green text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
       >
         Refresh List
       </button>

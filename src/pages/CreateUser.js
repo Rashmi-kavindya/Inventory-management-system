@@ -32,7 +32,7 @@ export default function CreateUser() {
           <option value="employee">Employee/Cashier</option>
           <option value="manager">Manager/Owner</option>
         </select>
-        <button type="submit" className="w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700">Create User</button>
+        <button type="submit" className="w-full bg-stockly-green text-white p-3 rounded-lg hover:bg-purple-700">Create User</button>
       </form>
       {message && <p className="mt-4 text-green-600 font-semibold">{message}</p>}
       {error && <p className="mt-4 text-red-600 font-semibold">Error: {error}</p>}

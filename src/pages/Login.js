@@ -30,7 +30,7 @@ export default function Login({ onLogin }) {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input type="text" name="username" placeholder="Username" onChange={handleChange} required className="w-full border p-3 rounded-lg" />
         <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="w-full border p-3 rounded-lg" />
-        <button type="submit" className="w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700">Login</button>
+        <button type="submit" className="w-full bg-stockly-green text-white p-3 rounded-lg hover:bg-purple-700">Login</button>
       </form>
       {error && <p className="mt-4 text-red-600 font-semibold">Error: {error}</p>}
     </div>

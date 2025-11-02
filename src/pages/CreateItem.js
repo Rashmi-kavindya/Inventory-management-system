@@ -65,7 +65,7 @@ export default function CreateItem() {
           <p className="text-xs text-gray-500 mt-1">Alert when stock ≤ this number</p>
         </div>
 
-        <button type="submit" className="md:col-span-2 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+        <button type="submit" className="md:col-span-2 bg-stockly-green text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
           Add Item
         </button>
       </form>

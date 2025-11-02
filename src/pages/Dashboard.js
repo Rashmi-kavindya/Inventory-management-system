@@ -20,53 +20,10 @@ export default function Dashboard() {
   const [selectedItem, setSelectedItem] = useState({ item_id: '', name: '' });
   const [addForm, setAddForm] = useState({ stock_quantity: '', expire_date: '', supplier: '', batch_number: '' });
   const [searchTerm, setSearchTerm] = useState('');
-  const role = localStorage.getItem('role');
-  const username = localStorage.getItem('username') || 'User';
-  const { expiryDays } = useExpiry(); // Use shared threshold
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 18) return 'Good Afternoon';
-    return 'Good Evening';
-  };
-
-  // For Add Sales (integrated from SalesEntry.js)
   const [selectedSaleItemId, setSelectedSaleItemId] = useState('');
   const [quantitySold, setQuantitySold] = useState('');
   const [file, setFile] = useState(null);
 
-  const handleSingleSaleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://127.0.0.1:5000/add_sale', { item_id: selectedSaleItemId, quantity_sold: parseInt(quantitySold) });
-      alert('Sale added!');
-      setQuantitySold('');
-      setSelectedSaleItemId('');
-      fetchInventorySales(selectedItemId);  // Refresh trends
-      fetchInventory();  // Refresh stock
-    } catch (err) {
-      alert('Error: ' + (err.response?.data?.error || err.message));
-    }
-  };
-
-  const handleBulkSaleSubmit = async (e) => {
-    e.preventDefault();
-    if (!file) return alert('Select a file');
-    const formData = new FormData();
-    formData.append('file', file);
-    try {
-      await axios.post('http://127.0.0.1:5000/bulk_sales_upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      alert('Bulk sales added!');
-      setFile(null);
-      fetchInventorySales(selectedItemId);
-      fetchInventory();
-    } catch (err) {
-      alert('Error: ' + (err.response?.data?.error || err.message));
-    }
-  };
-
-  // For Add New Item (integrated from CreateItem.js)
   const [newItemForm, setNewItemForm] = useState({
     next_code: '',
     item_name: '',
@@ -75,15 +32,82 @@ export default function Dashboard() {
     reorder_level: 10
   });
 
+  const role = localStorage.getItem('role');
+  const username = localStorage.getItem('username') || 'User';
+  const { expiryDays } = useExpiry();
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  // ──────────────────────── EFFECTS ────────────────────────
   useEffect(() => {
     axios.get('http://127.0.0.1:5000/next_item_code')
       .then(res => setNewItemForm(prev => ({ ...prev, next_code: res.data.next_code })))
       .catch(() => setNewItemForm(prev => ({ ...prev, next_code: '?' })));
   }, []);
 
-  const handleNewItemChange = (e) => {
-    setNewItemForm({ ...newItemForm, [e.target.name]: e.target.value });
+  useLayoutEffect(() => {
+    const handleResize = () => window.dispatchEvent(new Event('resize'));
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // ──────────────────────── FETCHERS ────────────────────────
+  const fetchItems = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:5000/items');
+      setItems(response.data);
+      setFilteredItems(response.data);
+    } catch (err) { console.error(err); }
   };
+
+  const fetchInventorySales = async (itemId) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/inventory_sales/${itemId}`);
+      const sortedSales = response.data.sort((a, b) => {
+        const dateA = new Date(`${a.name.split('/')[1]}-${a.name.split('/')[0]}-01`);
+        const dateB = new Date(`${b.name.split('/')[1]}-${b.name.split('/')[0]}-01`);
+        return dateA - dateB;
+      });
+      setSalesData(sortedSales);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchInventory = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:5000/inventory');
+      setInventoryData(response.data);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchExpiry = useCallback(async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:5000/near_expiry?days=${expiryDays}`);
+      setExpiryItems(response.data);
+    } catch (err) { console.error(err); }
+  }, [expiryDays]);
+
+  const fetchDeadStock = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:5000/dead_stock?months_back=3');
+      setDeadStock(response.data);
+    } catch (err) { console.error(err); }
+  };
+
+  useEffect(() => {
+    fetchInventorySales(selectedItemId);
+    fetchInventory();
+    fetchExpiry();
+    fetchDeadStock();
+    fetchItems();
+  }, [selectedItemId, expiryDays, fetchExpiry]);
+
+  // ──────────────────────── HANDLERS ────────────────────────
+  const handleNewItemChange = (e) => setNewItemForm({ ...newItemForm, [e.target.name]: e.target.value });
 
   const handleNewItemSubmit = async (e) => {
     e.preventDefault();
@@ -96,128 +120,61 @@ export default function Dashboard() {
         reorder_level: parseInt(newItemForm.reorder_level) || 10
       });
       alert('Item added!');
-      setNewItemForm({
-        next_code: '',
-        item_name: '',
-        department: '',
-        type: '',
-        reorder_level: 10
-      });
-      // Refresh next code
+      setNewItemForm({ next_code: '', item_name: '', department: '', type: '', reorder_level: 10 });
       const res = await axios.get('http://127.0.0.1:5000/next_item_code');
       setNewItemForm(prev => ({ ...prev, next_code: res.data.next_code }));
-      fetchItems(); // refresh list
+      fetchItems();
     } catch (err) {
       alert('Error: ' + (err.response?.data?.error || err.message));
     }
   };
 
-  useEffect(() => {
-    if (items.length > 0) {
-      const maxItemCode = Math.max(...items.map(i => parseInt(i.item_code) || 0));
-      setNewItemForm(prev => ({ ...prev, item_code: (maxItemCode + 1).toString() }));
-    }
-  }, [items]);
-
-  useLayoutEffect(() => {
-    const handleResize = () => window.dispatchEvent(new Event('resize'));
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const fetchItems = async () => {
+  const handleSingleSaleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.get('http://127.0.0.1:5000/items');
-      setItems(response.data);
-      setFilteredItems(response.data);
-    } catch (err) {
-      console.error('Error fetching items:', err);
-    }
+      await axios.post('http://127.0.0.1:5000/add_sale', { item_id: selectedSaleItemId, quantity_sold: parseInt(quantitySold) });
+      alert('Sale added!');
+      setQuantitySold(''); setSelectedSaleItemId('');
+      fetchInventorySales(selectedItemId); fetchInventory();
+    } catch (err) { alert('Error: ' + (err.response?.data?.error || err.message)); }
+  };
+
+  const handleBulkSaleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) return alert('Select a file');
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      await axios.post('http://127.0.0.1:5000/bulk_sales_upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      alert('Bulk sales added!');
+      setFile(null);
+      fetchInventorySales(selectedItemId); fetchInventory();
+    } catch (err) { alert('Error: ' + (err.response?.data?.error || err.message)); }
+  };
+
+  const handleAddSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedItem.item_id) return alert('Select an item');
+    try {
+      await axios.post('http://127.0.0.1:5000/add_inventory', { ...addForm, item_id: selectedItem.item_id });
+      alert('Stock added!');
+      fetchExpiry(); fetchInventory();
+      setAddForm({ stock_quantity: '', expire_date: '', supplier: '', batch_number: '' });
+      setSelectedItem({ item_id: '', name: '' });
+      setSelectedDept(''); setSelectedType('');
+    } catch (err) { alert('Error: ' + (err.response?.data?.error || err.message)); }
   };
 
   useEffect(() => {
     let filtered = items;
-    if (selectedDept) filtered = filtered.filter(item => item.department === selectedDept);
-    if (selectedType) filtered = filtered.filter(item => item.type === selectedType);
+    if (selectedDept) filtered = filtered.filter(i => i.department === selectedDept);
+    if (selectedType) filtered = filtered.filter(i => i.type === selectedType);
     setFilteredItems(filtered);
-    setSelectedItem({ item_id: '', name: '' });
   }, [selectedDept, selectedType, items]);
 
-  const handleItemSelect = (item) => {
-    setSelectedItem({ item_id: item.item_id, name: item.item_name });
-  };
+  const handleItemSelect = (item) => setSelectedItem({ item_id: item.item_id, name: item.item_name });
 
-  const handleChange = (e) => setAddForm({ ...addForm, [e.target.name]: e.target.value });
-
-  const handleAddSubmit = async (e) => {
-    e.preventDefault();
-    if (!selectedItem.item_id) return alert('Select an item first');
-    try {
-      await axios.post('http://127.0.0.1:5000/add_inventory', {
-        ...addForm,
-        item_id: selectedItem.item_id
-      });
-      alert('Stock added successfully!');
-      fetchExpiry();
-      fetchInventory();
-      setAddForm({ stock_quantity: '', expire_date: '', supplier: '', batch_number: '' });
-      setSelectedItem({ item_id: '', name: '' });
-      setSelectedDept('');
-      setSelectedType('');
-    } catch (err) {
-      alert('Error adding stock: ' + (err.response?.data?.error || err.message));
-    }
-  };
-
-  const fetchInventorySales = async (itemId) => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:5000/inventory_sales/${itemId}`);
-      const sortedSales = response.data.sort((a, b) => {
-        const dateA = new Date(`${a.name.split('/')[1]}-${a.name.split('/')[0]}-01`);
-        const dateB = new Date(`${b.name.split('/')[1]}-${b.name.split('/')[0]}-01`);
-        return dateA - dateB;
-      });
-      setSalesData(sortedSales);
-    } catch (err) {
-      console.error('Error fetching inventory sales:', err);
-    }
-  };
-
-  const fetchInventory = async () => {
-    try {
-      const response = await axios.get('http://127.0.0.1:5000/inventory');
-      setInventoryData(response.data);
-    } catch (err) {
-      console.error('Error fetching inventory:', err);
-    }
-  };
-
-  const fetchExpiry = useCallback(async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:5000/near_expiry?days=${expiryDays}`); // Use backticks for interpolation
-      setExpiryItems(response.data);
-    } catch (err) {
-      console.error('Error fetching expiry:', err);
-    }
-  }, [expiryDays]);
-
-  const fetchDeadStock = async () => {
-    try {
-      const response = await axios.get('http://127.0.0.1:5000/dead_stock?months_back=3');
-      setDeadStock(response.data);
-    } catch (err) {
-      console.error('Error fetching dead stock:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchInventorySales(selectedItemId);
-    fetchInventory();
-    fetchExpiry();
-    fetchDeadStock();
-    fetchItems();
-  }, [selectedItemId, expiryDays, fetchExpiry]);
-
+  // ──────────────────────── CHARTS ────────────────────────
   const deptStockMap = useMemo(() => {
     const map = {};
     inventoryData.forEach(item => {
@@ -227,145 +184,130 @@ export default function Dashboard() {
     return Object.entries(map);
   }, [inventoryData]);
 
-  const pieData = deptStockMap.length > 0 ? [
-    {
-      values: deptStockMap.map(([, stock]) => stock),
-      labels: deptStockMap.map(([dept]) => dept),
-      type: 'pie',
-      marker: { colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#FF9999'] },
-      textinfo: 'label+percent',
-      insidetextorientation: 'radial'
-    }
-  ] : [];
+  const pieData = deptStockMap.length > 0 ? [{
+    values: deptStockMap.map(([, stock]) => stock),
+    labels: deptStockMap.map(([dept]) => dept),
+    type: 'pie',
+    marker: { colors: ['#10B37F', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'] },
+    textinfo: 'label+percent',
+    insidetextorientation: 'radial'
+  }] : [];
 
-  const expiryCounts = expiryItems.length > 0 ? 
-    Object.entries(expiryItems.reduce((acc, item) => {
-      acc[item.type || 'Unknown'] = (acc[item.type || 'Unknown'] || 0) + 1;
-      return acc;
-    }, {})) : [];
-  const barColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'];
-  const barData = [
-    {
-      x: expiryCounts.map(([type]) => type),
-      y: expiryCounts.map(([, count]) => count),
-      type: 'bar',
-      marker: { color: expiryCounts.map((_, i) => barColors[i % barColors.length]) }
-    }
-  ];
+  const expiryCounts = expiryItems.length > 0
+    ? Object.entries(expiryItems.reduce((acc, item) => {
+        acc[item.type || 'Unknown'] = (acc[item.type || 'Unknown'] || 0) + 1;
+        return acc;
+      }, {}))
+    : [];
+
+  const barData = [{
+    x: expiryCounts.map(([type]) => type),
+    y: expiryCounts.map(([, count]) => count),
+    type: 'bar',
+    marker: { color: '#F59E0B' }
+  }];
 
   return (
-    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      {/* Greeting - Large, modern style */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6 flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Greeting */}
+      <div className="card flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 text-transparent bg-clip-text">
-            {getGreeting()} {username}!
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-stockly-green to-stockly-blue bg-clip-text text-transparent">
+            {getGreeting()}, {username}!
           </h1>
-          <p className="text-lg text-gray-600 mt-2">You've got {inventoryData.length} items in stock. Check your progress below.</p>
-          {/* Optional: Add progress bar or badges */}
+          <p className="text-lg text-gray-600 mt-2">
+            You've got <strong>{inventoryData.length}</strong> items in stock.
+          </p>
           <div className="w-64 bg-gray-200 rounded-full h-2.5 mt-4">
-            <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: '70%' }}></div>
+            <div className="bg-stockly-green h-2.5 rounded-full" style={{ width: '70%' }}></div>
           </div>
           <p className="text-sm text-gray-500 mt-1">70% of monthly goals achieved</p>
         </div>
-        <img 
-          src={dashboardImg}
-          alt="Hi User" 
-          className="w-48 h-48 object-contain" 
-        />
+        <img src={dashboardImg} alt="Welcome" className="w-48 h-48 object-contain" />
       </div>
-      {/* Manager Sections: Add Inventory, Add Sales, Add New Item */}
+
+      {/* Manager Actions */}
       {role === 'manager' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          {/* Quick Add Inventory */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4 flex items-center"><PlusIcon className="h-5 w-5 mr-2" /> Quick Add Inventory</h2>
-            <form onSubmit={handleAddSubmit} className="grid grid-cols-1 gap-4">
-              <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="border p-2 rounded">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Add Inventory */}
+          <div className="card">
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <PlusIcon className="h-5 w-5 mr-2 text-stockly-green" /> Quick Add Inventory
+            </h2>
+            <form onSubmit={handleAddSubmit} className="space-y-3">
+              <select value={selectedDept} onChange={e => setSelectedDept(e.target.value)} className="w-full border p-2 rounded">
                 <option value="">All Departments</option>
-                {[...new Set(items.map(i => i.department))].sort().map(dept => <option key={dept}>{dept}</option>)}
+                {[...new Set(items.map(i => i.department))].sort().map(d => <option key={d}>{d}</option>)}
               </select>
-              <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className="border p-2 rounded">
+              <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className="w-full border p-2 rounded">
                 <option value="">All Types</option>
-                {[...new Set(items.map(i => i.type))].sort().map(typ => <option key={typ}>{typ}</option>)}
+                {[...new Set(items.map(i => i.type))].sort().map(t => <option key={t}>{t}</option>)}
               </select>
-              <select onChange={(e) => {
-                const selectedValue = e.target.value;
-                const item = filteredItems.find(i => `${i.item_name} (${i.item_code})` === selectedValue);
+              <select onChange={e => {
+                const val = e.target.value;
+                const item = filteredItems.find(i => `${i.item_name} (${i.item_code})` === val);
                 if (item) handleItemSelect(item);
-              }} className="border p-2 rounded">
-                <option value="">Select Item ({filteredItems.length} available)</option>
-                {filteredItems.map(item => <option key={item.item_id}>{item.item_name} ({item.item_code})</option>)}
+              }} className="w-full border p-2 rounded">
+                <option>Select Item ({filteredItems.length})</option>
+                {filteredItems.map(i => <option key={i.item_id}>{i.item_name} ({i.item_code})</option>)}
               </select>
-              <input type="number" name="stock_quantity" placeholder="Quantity to Add" value={addForm.stock_quantity} onChange={handleChange} required className="border p-2 rounded" />
-              <input type="date" name="expire_date" value={addForm.expire_date} onChange={handleChange} required className="border p-2 rounded" />
-              <input type="text" name="supplier" placeholder="Supplier (Optional)" value={addForm.supplier} onChange={handleChange} className="border p-2 rounded" />
-              <input type="text" name="batch_number" placeholder="Batch Number (Optional)" value={addForm.batch_number} onChange={handleChange} className="border p-2 rounded" />
-              <button type="submit" className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700">Add Stock</button>
+              <input type="number" name="stock_quantity" placeholder="Quantity" value={addForm.stock_quantity} onChange={e => setAddForm({ ...addForm, stock_quantity: e.target.value })} required className="w-full border p-2 rounded" />
+              <input type="date" name="expire_date" value={addForm.expire_date} onChange={e => setAddForm({ ...addForm, expire_date: e.target.value })} required className="w-full border p-2 rounded" />
+              <input type="text" name="supplier" placeholder="Supplier (opt)" value={addForm.supplier} onChange={e => setAddForm({ ...addForm, supplier: e.target.value })} className="w-full border p-2 rounded" />
+              <input type="text" name="batch_number" placeholder="Batch (opt)" value={addForm.batch_number} onChange={e => setAddForm({ ...addForm, batch_number: e.target.value })} className="w-full border p-2 rounded" />
+              <button type="submit" className="btn-primary w-full">Add Stock</button>
             </form>
           </div>
 
           {/* Add Sales */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4 flex items-center"><PlusIcon className="h-5 w-5 mr-2" /> Add Sales</h2>
-            <form onSubmit={handleSingleSaleSubmit} className="grid grid-cols-1 gap-4 mb-6">
-              <select value={selectedSaleItemId} onChange={(e) => setSelectedSaleItemId(e.target.value)} className="border p-2 rounded">
+          <div className="card">
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <PlusIcon className="h-5 w-5 mr-2 text-stockly-blue" /> Add Sales
+            </h2>
+            <form onSubmit={handleSingleSaleSubmit} className="space-y-3 mb-4">
+              <select value={selectedSaleItemId} onChange={e => setSelectedSaleItemId(e.target.value)} className="w-full border p-2 rounded">
                 <option value="">Select Item</option>
-                {items.map(item => (
-                  <option key={item.item_id} value={item.item_id}>{item.item_name} ({item.item_code})</option>
-                ))}
+                {items.map(i => <option key={i.item_id} value={i.item_id}>{i.item_name} ({i.item_code})</option>)}
               </select>
-              <input type="number" value={quantitySold} onChange={(e) => setQuantitySold(e.target.value)} placeholder="Quantity Sold" required className="border p-2 rounded" />
-              <button type="submit" className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700">Add Single Sale</button>
+              <input type="number" value={quantitySold} onChange={e => setQuantitySold(e.target.value)} placeholder="Qty Sold" required className="w-full border p-2 rounded" />
+              <button type="submit" className="btn-primary w-full">Add Sale</button>
             </form>
-            <h3 className="text-lg font-semibold mb-2">Bulk Upload Sales (Excel)</h3>
-            <p className="mb-2 text-gray-500">Columns: item_id, quantity_sold, sale_date (optional)</p>
             <form onSubmit={handleBulkSaleSubmit}>
-              <input type="file" accept=".xlsx" onChange={(e) => setFile(e.target.files[0])} className="mb-2" />
-              <button type="submit" className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700">Upload Bulk</button>
+              <input type="file" accept=".xlsx" onChange={e => setFile(e.target.files[0])} className="mb-2 w-full" />
+              <button type="submit" className="btn-primary w-full">Upload Bulk</button>
             </form>
           </div>
 
           {/* Add New Item */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="card">
             <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <PlusIcon className="h-5 w-5 mr-2" /> Add New Item
+              <PlusIcon className="h-5 w-5 mr-2 text-stockly-green" /> Add New Item
             </h2>
-            <form onSubmit={handleNewItemSubmit} className="grid grid-cols-1 gap-4">
-              
-              {/* Auto-generated Code */}
+            <form onSubmit={handleNewItemSubmit} className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Item Code</label>
                 <div className="bg-gray-100 border border-gray-300 text-gray-800 font-mono p-2 rounded text-center">
                   {newItemForm.next_code || 'Loading...'}
                 </div>
               </div>
-
-              <input name="item_name" value={newItemForm.item_name} onChange={handleNewItemChange} placeholder="Item Name" required className="border p-2 rounded" />
-              
-              <select name="department" value={newItemForm.department} onChange={handleNewItemChange} required className="border p-2 rounded">
+              <input name="item_name" value={newItemForm.item_name} onChange={handleNewItemChange} placeholder="Item Name" required className="w-full border p-2 rounded" />
+              <select name="department" value={newItemForm.department} onChange={handleNewItemChange} required className="w-full border p-2 rounded">
                 <option value="">Select Department</option>
-                {[...new Set(items.map(i => i.department))].sort().map(d => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
+                {[...new Set(items.map(i => i.department))].sort().map(d => <option key={d} value={d}>{d}</option>)}
               </select>
-
-              <select name="type" value={newItemForm.type} onChange={handleNewItemChange} required className="border p-2 rounded">
+              <select name="type" value={newItemForm.type} onChange={handleNewItemChange} required className="w-full border p-2 rounded">
                 <option value="">Select Type</option>
-                {[...new Set(items.map(i => i.type))].sort().map(t => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
+                {[...new Set(items.map(i => i.type))].sort().map(t => <option key={t} value={t}>{t}</option>)}
               </select>
-
-              <input type="number" name="reorder_level" value={newItemForm.reorder_level} onChange={handleNewItemChange} placeholder="Reorder Level (e.g., 10)" className="border p-2 rounded" />
-
-              <button type="submit" className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700">Add Item</button>
+              <label className="block text-sm font-medium text-gray-700">Reorder Level</label>
+              <input type="number" name="reorder_level" value={newItemForm.reorder_level} onChange={handleNewItemChange} placeholder="Reorder Level" className="w-full border p-2 rounded" />
+              <button type="submit" className="btn-primary w-full">Add Item</button>
             </form>
           </div>
         </div>
       )}
 
-      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+      <div className="card mb-6">
         <h2 className="text-xl font-semibold mb-4">Monthly Sales Trends (Last 12 Months)</h2>
         <input 
           type="text" 
@@ -416,7 +358,7 @@ export default function Dashboard() {
       {/* Expiry List, Dead Stock */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Stock Distribution Pie */}
-        <div className="bg-white p-6 rounded-lg shadow-md flex-1">
+        <div className="card flex-1">
           <h2 className="text-xl font-semibold mb-4">Stock Distribution by Department</h2>
           {deptStockMap.length > 0 ? (
             <div className="h-80 w-full flex-1">
@@ -438,7 +380,7 @@ export default function Dashboard() {
         </div>
 
         {/* Expiry by Type Bar */}
-        <div className="bg-white p-6 rounded-lg shadow-md flex-1">
+        <div className="card flex-1">
           <h2 className="text-xl font-semibold mb-4 flex items-center"><ExclamationTriangleIcon className="h-5 w-5 mr-2 text-yellow-500" /> Expiry Items by Type</h2>
           {expiryCounts.length > 0 ? (
             <div className="h-80 w-full flex-1">
@@ -499,7 +441,7 @@ export default function Dashboard() {
       </div>
 
       {/* Reorder Alerts */}
-      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+      <div className="card mt-6">
         <h2 className="text-xl font-semibold mb-4">Reorder Alerts</h2>
         {inventoryData.filter(item => item.stock_quantity <= item.reorder_level).length === 0 ? (
           <p className="text-gray-500">No items need reordering.</p>

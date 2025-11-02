@@ -46,7 +46,7 @@ export default function ExpiryAlerts() {
         />
         <button
           onClick={handleUpdate}                     // <-- use the new handler
-          className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
+          className="bg-stockly-green text-white px-3 py-1 rounded hover:bg-purple-700"
         >
           Update
         </button>

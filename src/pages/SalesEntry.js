@@ -67,7 +67,7 @@ export default function SalesEntry() {
             required
             className="border p-2 rounded"
           />
-          <button type="submit" className="md:col-span-2 bg-purple-600 text-white p-2 rounded hover:bg-purple-700">Add Sale</button>
+          <button type="submit" className="md:col-span-2 bg-stockly-green text-white p-2 rounded hover:bg-purple-700">Add Sale</button>
         </form>
       </div>
       <div className="bg-white p-6 rounded-lg shadow-md">
@@ -75,7 +75,7 @@ export default function SalesEntry() {
         <p className="mb-4 text-gray-500">Excel columns: item_id (required), quantity_sold (required), sale_date (optional, YYYY-MM-DD)</p>
         <form onSubmit={handleBulkSubmit}>
           <input type="file" accept=".xlsx" onChange={(e) => setFile(e.target.files[0])} className="mb-4" />
-          <button type="submit" className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700">Upload and Process</button>
+          <button type="submit" className="bg-stockly-green text-white p-2 rounded hover:bg-purple-700">Upload and Process</button>
         </form>
       </div>
     </div>
