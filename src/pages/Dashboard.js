@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useLayoutEffect } from 'react';
 import axios from 'axios';
 import Plot from 'react-plotly.js';
-import { PlusIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, ExclamationTriangleIcon, CloudIcon} from '@heroicons/react/24/outline';
 import dashboardImg from '../assets/img.png';
 import { useExpiry } from '../contexts/ExpiryContext';
 import { useCallback } from 'react';
@@ -23,6 +23,9 @@ export default function Dashboard() {
   const [selectedSaleItemId, setSelectedSaleItemId] = useState('');
   const [quantitySold, setQuantitySold] = useState('');
   const [file, setFile] = useState(null);
+
+  const [weather, setWeather] = useState(null);
+  const [weatherCity, setWeatherCity] = useState('Colombo');  // Default
 
   const [newItemForm, setNewItemForm] = useState({
     next_code: '',
@@ -98,12 +101,22 @@ export default function Dashboard() {
     } catch (err) { console.error(err); }
   };
 
+  const fetchWeather = async () => {
+    try {
+      const res = await axios.get(`http://127.0.0.1:5000/weather?city=${weatherCity}`);
+      setWeather(res.data);
+    } catch (err) {
+      alert('Weather fetch failed: ' + err.message);
+    }
+  };
+
   useEffect(() => {
     fetchInventorySales(selectedItemId);
     fetchInventory();
     fetchExpiry();
     fetchDeadStock();
     fetchItems();
+    fetchWeather();
   }, [selectedItemId, expiryDays, fetchExpiry]);
 
   // ──────────────────────── HANDLERS ────────────────────────
@@ -224,6 +237,36 @@ export default function Dashboard() {
           <p className="text-sm text-gray-500 mt-1">70% of monthly goals achieved</p>
         </div>
         <img src={dashboardImg} alt="Welcome" className="w-48 h-48 object-contain" />
+      </div>
+
+      <div className="card">
+        <h2 className="text-xl font-semibold mb-4 flex items-center">
+          <CloudIcon className="h-5 w-5 mr-2 text-blue-500" /> Weather Insights
+        </h2>
+        <div className="flex gap-4 mb-4">
+          <input
+            type="text"
+            value={weatherCity}
+            onChange={e => setWeatherCity(e.target.value)}
+            placeholder="City (e.g., Colombo)"
+            className="flex-1 border p-2 rounded"
+          />
+          <button onClick={fetchWeather} className="btn-primary">Get Forecast</button>
+        </div>
+        {weather ? (
+          <div className="space-y-2">
+            <h3 className="font-bold">{weather.city} – {weather.date}</h3>
+            <p>🌡️ High: {weather.max_temp}°C | Low: {weather.min_temp}°C</p>
+            <p>🌧️ Rain Chance: {weather.rain_prob}%</p>
+            <ul className="list-disc pl-5 space-y-1">
+              {weather.suggestions.map((s, i) => (
+                <li key={i} className="text-sm text-blue-600">{s}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="text-gray-500">Click "Get Forecast" for weather-based stocking tips!</p>
+        )}
       </div>
 
       {/* Manager Actions */}
