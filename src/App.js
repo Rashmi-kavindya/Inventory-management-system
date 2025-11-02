@@ -1,9 +1,9 @@
 // src/App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import {
   HomeIcon, ChartBarIcon, PlusIcon, ExclamationTriangleIcon,
-  Bars3Icon, XMarkIcon, UserPlusIcon
+  Bars3Icon, XMarkIcon, UserPlusIcon, SunIcon, MoonIcon
 } from '@heroicons/react/24/outline';
 
 import Dashboard from './pages/Dashboard';
@@ -20,7 +20,24 @@ function App() {
   const [role, setRole] = useState(localStorage.getItem('role') || '');
   const location = useLocation();
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  // ──────────────────────── DARK MODE ────────────────────────
+  const [isDark, setIsDark] = useState(localStorage.getItem('darkMode') === 'true');
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
+    }
+  }, [isDark]);
+
+  const toggleDarkMode = () => setIsDark(prev => !prev);
+
+  // ──────────────────────── MENU HELPERS ────────────────────────
+  const toggleMobileMenu = () => setIsMobileMenuOpen(prev => !prev);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -42,10 +59,11 @@ function App() {
 
   const isActive = (path) => location.pathname === path;
 
+  // ──────────────────────── JSX ────────────────────────
   return (
     <div className="min-h-screen bg-gradient-cover pt-16">
       {/* ──────────────────────── NAVBAR ──────────────────────── */}
-      <nav className="bg-white shadow-xl fixed top-0 left-0 w-full z-50 border-b border-gray-100">
+      <nav className="bg-white dark:bg-gray-900 shadow-xl fixed top-0 left-0 w-full z-50 border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo + Brand */}
@@ -56,50 +74,47 @@ function App() {
               </Link>
             </div>
 
-            {/* Desktop Menu */}
+            {/* ───── Desktop Menu ───── */}
             <div className="hidden md:flex items-center space-x-1">
-              <Link
-                to="/"
-                className={isActive('/') ? 'navbar-link-active' : 'navbar-link'}
-              >
-                <HomeIcon className="h-5 w-5 mr-2" /> Dashboard
-              </Link>
-              <Link
-                to="/predict"
-                className={isActive('/predict') ? 'navbar-link-active' : 'navbar-link'}
-              >
-                <ChartBarIcon className="h-5 w-5 mr-2" /> Predict Reorder
-              </Link>
-              <Link
-                to="/inventory"
-                className={isActive('/inventory') ? 'navbar-link-active' : 'navbar-link'}
-              >
-                <PlusIcon className="h-5 w-5 mr-2" /> Inventory List
-              </Link>
-              <Link
-                to="/expiry"
-                className={isActive('/expiry') ? 'navbar-link-active' : 'navbar-link'}
-              >
-                <ExclamationTriangleIcon className="h-5 w-5 mr-2" /> Expiry Alerts
-              </Link>
-              {role === 'manager' && (
+              {[
+                { to: '/', label: 'Dashboard', Icon: HomeIcon },
+                { to: '/predict', label: 'Predict Reorder', Icon: ChartBarIcon },
+                { to: '/inventory', label: 'Inventory List', Icon: PlusIcon },
+                { to: '/expiry', label: 'Expiry Alerts', Icon: ExclamationTriangleIcon },
+                ...(role === 'manager' ? [{ to: '/create-user', label: 'Create User', Icon: UserPlusIcon }] : []),
+              ].map(({ to, label, Icon }) => (
                 <Link
-                  to="/create-user"
-                  className={isActive('/create-user') ? 'navbar-link-active' : 'navbar-link'}
+                  key={to}
+                  to={to}
+                  className={isActive(to) ? 'navbar-link-active' : 'navbar-link'}
                 >
-                  <UserPlusIcon className="h-5 w-5 mr-2" /> Create User
+                  <Icon className="h-5 w-5 mr-2" /> {label}
                 </Link>
-              )}
+              ))}
+
+              {/* Dark‑mode toggle (desktop) */}
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition ml-2"
+                aria-label="Toggle dark mode"
+              >
+                {isDark ? (
+                  <SunIcon className="h-5 w-5 text-yellow-400" />
+                ) : (
+                  <MoonIcon className="h-5 w-5 text-gray-700" />
+                )}
+              </button>
+
               <button onClick={handleLogout} className="btn-secondary ml-4">
                 Logout
               </button>
             </div>
 
-            {/* Mobile Toggle */}
+            {/* ───── Mobile Toggle ───── */}
             <div className="md:hidden">
               <button
                 onClick={toggleMobileMenu}
-                className="p-2 text-gray-700 hover:text-stockly-green transition"
+                className="p-2 text-gray-700 dark:text-gray-300 hover:text-stockly-green transition"
               >
                 {isMobileMenuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
               </button>
@@ -107,29 +122,48 @@ function App() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* ───── Mobile Menu ───── */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg">
             <div className="px-4 pt-2 pb-3 space-y-1">
               {[
-                { to: '/', label: 'Dashboard', icon: HomeIcon },
-                { to: '/predict', label: 'Predict Reorder', icon: ChartBarIcon },
-                { to: '/inventory', label: 'Inventory List', icon: PlusIcon },
-                { to: '/expiry', label: 'Expiry Alerts', icon: ExclamationTriangleIcon },
-                ...(role === 'manager' ? [{ to: '/create-user', label: 'Create User', icon: UserPlusIcon }] : [])
-              ].map(({ to, label, icon: Icon }) => (
+                { to: '/', label: 'Dashboard', Icon: HomeIcon },
+                { to: '/predict', label: 'Predict Reorder', Icon: ChartBarIcon },
+                { to: '/inventory', label: 'Inventory List', Icon: PlusIcon },
+                { to: '/expiry', label: 'Expiry Alerts', Icon: ExclamationTriangleIcon },
+                ...(role === 'manager' ? [{ to: '/create-user', label: 'Create User', Icon: UserPlusIcon }] : []),
+              ].map(({ to, label, Icon }) => (
                 <Link
                   key={to}
                   to={to}
                   onClick={toggleMobileMenu}
-                  className={`block px-3 py-2 text-gray-700 hover:text-stockly-green font-medium flex items-center rounded-md transition ${isActive(to) ? 'text-stockly-green bg-green-50' : ''}`}
+                  className={`block px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-stockly-green font-medium flex items-center rounded-md transition ${
+                    isActive(to) ? 'text-stockly-green bg-green-50 dark:bg-green-900' : ''
+                  }`}
                 >
                   <Icon className="h-5 w-5 mr-2" /> {label}
                 </Link>
               ))}
+
+              {/* Dark‑mode toggle (mobile) */}
+              <button
+                onClick={toggleDarkMode}
+                className="flex items-center w-full px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-stockly-green font-medium"
+              >
+                {isDark ? (
+                  <>
+                    <SunIcon className="h-5 w-5 mr-2 text-yellow-400" /> Light Mode
+                  </>
+                ) : (
+                  <>
+                    <MoonIcon className="h-5 w-5 mr-2" /> Dark Mode
+                  </>
+                )}
+              </button>
+
               <button
                 onClick={() => { handleLogout(); toggleMobileMenu(); }}
-                className="block w-full text-left px-3 py-2 text-gray-700 hover:text-stockly-green font-medium"
+                className="block w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-stockly-green font-medium"
               >
                 Logout
               </button>
@@ -138,7 +172,7 @@ function App() {
         )}
       </nav>
 
-      {/* ──────────────────────── MAIN CONTENT ──────────────────────── */}
+      {/* ───── MAIN CONTENT ───── */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Routes>
           <Route path="/" element={<Dashboard />} />

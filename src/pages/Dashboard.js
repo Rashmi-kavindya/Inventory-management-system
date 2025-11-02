@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useLayoutEffect } from 'react';
 import axios from 'axios';
 import Plot from 'react-plotly.js';
 import { PlusIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import dashboardImg from '../assets/dashboard.png';
+import dashboardImg from '../assets/img.png';
 import { useExpiry } from '../contexts/ExpiryContext';
 import { useCallback } from 'react';
 
