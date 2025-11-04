@@ -101,14 +101,16 @@ export default function Dashboard() {
     } catch (err) { console.error(err); }
   };
 
-  const fetchWeather = async () => {
+  const fetchWeather = useCallback(async () => {
     try {
-      const res = await axios.get(`http://127.0.0.1:5000/weather?city=${weatherCity}`);
-      setWeather(res.data);
+      const { data } = await axios.get(
+        `http://127.0.0.1:5000/weather?city=${weatherCity}`
+      );
+      setWeather(data);
     } catch (err) {
       alert('Weather fetch failed: ' + err.message);
     }
-  };
+  }, [weatherCity]); // ← only re‑create when city changes
 
   useEffect(() => {
     fetchInventorySales(selectedItemId);
@@ -117,7 +119,7 @@ export default function Dashboard() {
     fetchDeadStock();
     fetchItems();
     fetchWeather();
-  }, [selectedItemId, expiryDays, fetchExpiry]);
+  }, [selectedItemId, expiryDays, fetchExpiry, fetchWeather, weatherCity]);
 
   // ──────────────────────── HANDLERS ────────────────────────
   const handleNewItemChange = (e) => setNewItemForm({ ...newItemForm, [e.target.name]: e.target.value });
