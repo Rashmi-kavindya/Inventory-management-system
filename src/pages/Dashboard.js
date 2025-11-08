@@ -39,6 +39,8 @@ export default function Dashboard() {
   const username = localStorage.getItem('username') || 'User';
   const { expiryDays } = useExpiry();
 
+  const [forecastData, setForecastData] = useState([]);
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good Morning';
@@ -80,6 +82,16 @@ export default function Dashboard() {
     } catch (err) { console.error(err); }
   };
 
+  const fetchSalesForecast = async (itemId) => {
+    try {
+      const res = await axios.get(`http://127.0.0.1:5000/predict_sales/${itemId}`);
+      setForecastData(res.data);
+    } catch (err) {
+      console.error('Forecast failed:', err);
+      setForecastData([]);
+    }
+  };
+
   const fetchInventory = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:5000/inventory');
@@ -113,7 +125,11 @@ export default function Dashboard() {
   }, [weatherCity]); // ← only re‑create when city changes
 
   useEffect(() => {
-    fetchInventorySales(selectedItemId);
+    // fetchInventorySales(selectedItemId);
+    if (selectedItemId) {
+      fetchInventorySales(selectedItemId);
+      fetchSalesForecast(selectedItemId);
+    }
     fetchInventory();
     fetchExpiry();
     fetchDeadStock();
@@ -377,20 +393,36 @@ export default function Dashboard() {
         {salesData.length > 0 ? (
           <div className="h-80 w-full flex-1">
             <Plot
-              data={[{
-                x: salesData.map(d => d.name),
-                y: salesData.map(d => d.quantity),
-                type: 'scatter',
-                mode: 'lines+markers',
-                marker: { color: '#8B5CF6' },
-                line: { color: '#8B5CF6', width: 2 }
-              }]}
+              data={[
+                // Historical
+                {
+                  x: salesData.map(d => d.name),
+                  y: salesData.map(d => d.quantity),
+                  type: 'scatter',
+                  mode: 'lines+markers',
+                  name: 'Historical Sales',
+                  line: { color: '#8B5CF6', width: 3 },
+                  marker: { size: 8 }
+                },
+                // Forecast
+                ...(forecastData.length > 0 ? [{
+                  x: forecastData.map(d => d.name),
+                  y: forecastData.map(d => d.quantity),
+                  type: 'scatter',
+                  mode: 'lines+markers',
+                  name: 'Forecast (Next 3 Months)',
+                  line: { color: '#10B981', width: 3, dash: 'dot' },
+                  marker: { size: 10, symbol: 'diamond', color: '#10B981' }
+                }] : [])
+              ]}
               layout={{
-                title: 'Sales Quantity Over Time',
+                title: 'Sales Trends + AI Forecast',
                 xaxis: { title: 'Month/Year' },
-                yaxis: { title: 'Quantity Sold' },
-                height: 300,
-                margin: { t: 40, b: 40, l: 40, r: 40 }
+                yaxis: { title: 'Units Sold' },
+                height: 350,
+                legend: { x: 0, y: 1.1, orientation: 'h' },
+                margin: { t: 60, b: 50, l: 50, r: 50 },
+                hovermode: 'x unified'
               }}
               config={{ responsive: true, displayModeBar: false }}
               style={{ width: '100%', height: '100%' }}
@@ -494,7 +526,7 @@ export default function Dashboard() {
           <ul className="space-y-2">
             {inventoryData.filter(item => item.stock_quantity <= item.reorder_level).map((item, index) => (
               <li key={index} className="p-3 bg-orange-50 rounded border-l-4 border-orange-400">
-                <div>{item.product_name}: Stock {item.stock_quantity} ≤ Reorder Level {item.reorder_level}</div> {/* FIXED: Use ≤ symbol */}
+                <div className="text-black">{item.product_name}: Stock {item.stock_quantity} ≤ Reorder Level {item.reorder_level}</div> {/* FIXED: Use ≤ symbol */}
                 <div className="text-sm text-purple-600">Suggest ordering {item.reorder_quantity} units.</div>
               </li>
             ))}
