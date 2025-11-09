@@ -1,7 +1,7 @@
 // src/pages/Login.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
+import logo from '../assets/Logo.png';
 
 export default function Login({ onLogin }) {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -25,14 +25,19 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="max-w-md mx-auto py-20 px-4">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Login to Stockly</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input type="text" name="username" placeholder="Username" onChange={handleChange} required className="w-full border p-3 rounded-lg" />
-        <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="w-full border p-3 rounded-lg" />
-        <button type="submit" className="w-full bg-stockly-green text-white p-3 rounded-lg hover:bg-purple-700">Login</button>
-      </form>
-      {error && <p className="mt-4 text-red-600 font-semibold">Error: {error}</p>}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900 dark:to-indigo-900 flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8">
+        <div className="flex justify-center mb-8">
+          <img src={logo} alt="Stockly" className="h-24 w-24 rounded-full" />
+        </div>
+        <h1 className="text-3xl font-bold text-purple-700 dark:text-purple-300 mb-6 text-center">Login to Stockly</h1>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <input type="text" name="username" placeholder="Username" onChange={handleChange} required className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500" />
+          <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500" />
+          <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-xl transition">Login</button>
+        </form>
+        {error && <p className="mt-4 text-red-600 text-center font-semibold">Error: {error}</p>}
+      </div>
     </div>
   );
 }
