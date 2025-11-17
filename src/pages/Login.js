@@ -18,6 +18,16 @@ export default function Login({ onLogin }) {
       localStorage.setItem('role', response.data.role);
       localStorage.setItem('username', response.data.username);
       localStorage.setItem('userId', response.data.id);
+
+      // Build and set profilePic URL if filename exists
+      const filename = response.data.profile_pic;
+      if (filename) {
+        const imageUrl = `http://127.0.0.1:5000/uploads/profile/${filename}`;
+        localStorage.setItem('profilePic', imageUrl);
+      } else {
+        localStorage.setItem('profilePic', 'https://via.placeholder.com/40');  // Fallback
+      }
+
       onLogin();  // Redirect to dashboard
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed');

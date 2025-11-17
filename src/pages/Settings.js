@@ -7,17 +7,35 @@ export default function Settings() {
   const [file, setFile] = useState(null);
 
   const handleSave = async () => {
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        localStorage.setItem('profilePic', reader.result);
-        alert('Profile updated!');
-        window.location.reload();
-      };
-      reader.readAsDataURL(file);
+    if (!file) {
+      alert('Please select an image');
+      return;
     }
-    if (name) {
-      localStorage.setItem('username', name);
+
+    const formData = new FormData();
+    formData.append('profile_pic', file);
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(
+        'http://127.0.0.1:5000/upload_profile_pic',
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      const filename = res.data.filename;
+      const imageUrl = `http://127.0.0.1:5000/uploads/profile/${filename}?t=${Date.now()}`; // cache bust
+
+      localStorage.setItem('profilePic', imageUrl);
+      alert('Profile picture updated!');
+      window.location.reload();
+    } catch (err) {
+      alert('Upload failed: ' + (err.response?.data?.error || err.message));
     }
   };
 
