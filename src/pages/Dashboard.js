@@ -7,6 +7,8 @@ import dashboardImg from '../assets/img.png';
 import { useExpiry } from '../contexts/ExpiryContext';
 import { useCallback } from 'react';
 
+import ChatWidget from '../components/ChatWidget';
+
 export default function Dashboard() {
   const [salesData, setSalesData] = useState([]);
   const [inventoryData, setInventoryData] = useState([]);
@@ -239,7 +241,7 @@ export default function Dashboard() {
   }];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative">
       {/* Greeting */}
       <div className="card flex items-center justify-between">
         <div>
@@ -534,6 +536,8 @@ export default function Dashboard() {
         )}
         <button onClick={fetchInventory} className="mt-4 text-purple-600 underline">Refresh</button>
       </div>
+      {/* Floating Chat Widget – only on Dashboard */}
+      <ChatWidget />
     </div>
   );
 }
