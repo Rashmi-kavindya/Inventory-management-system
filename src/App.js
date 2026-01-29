@@ -4,7 +4,7 @@ import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   HomeIcon, ArchiveBoxIcon, BellAlertIcon,
   UserPlusIcon, Cog6ToothIcon, ArrowRightOnRectangleIcon,
-  SunIcon, MoonIcon, ChevronDownIcon, Bars3Icon, XMarkIcon
+  SunIcon, MoonIcon, ChevronDownIcon, Bars3Icon, XMarkIcon, TrophyIcon
 } from '@heroicons/react/24/outline';
 
 import Dashboard from './pages/Dashboard';
@@ -15,6 +15,7 @@ import CreateUser from './pages/CreateUser';
 import Settings from './pages/Settings';
 import RestockAlerts from './pages/RestockAlerts';
 import DeadstockAlerts from './pages/DeadstockAlerts';
+import Goals from './pages/Goals';
 import Login from './pages/Login';
 import logo from './assets/Logo - Stockly.png';
 
@@ -85,6 +86,9 @@ function App() {
               </Link>
               <Link to="/inventory" className={`text-white hover:bg-white/20 px-4 py-2 rounded-lg transition flex items-center gap-2 ${isActive('/inventory') ? 'bg-white/20' : ''}`}>
                 <ArchiveBoxIcon className="h-5 w-5" /> Inventory
+              </Link>
+              <Link to="/goals" className={`text-white hover:bg-white/20 px-4 py-2 rounded-lg transition flex items-center gap-2 ${isActive('/goals') ? 'bg-white/20' : ''}`}>
+                <TrophyIcon className="h-5 w-5" /> Goals
               </Link>
 
               {/* Alerts Dropdown */}
@@ -161,6 +165,7 @@ function App() {
             <div className="px-4 pt-2 pb-4 space-y-2">
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-white hover:bg-white/20 rounded-lg">Dashboard</Link>
               <Link to="/inventory" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-white hover:bg-white/20 rounded-lg">Inventory</Link>
+              <Link to="/goals" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-white hover:bg-white/20 rounded-lg">Goals</Link>
               <div className="space-y-1">
                 <div className="px-4 py-3 text-white font-medium">Alerts</div>
                 <Link to="/expiry-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10">Expiry</Link>
@@ -178,6 +183,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/predict" element={<Predict />} />
           <Route path="/inventory" element={<InventoryList />} />
+          <Route path="/goals" element={<Goals />} />
           <Route path="/expiry" element={<ExpiryAlerts />} />
           <Route path="/expiry-alerts" element={<ExpiryAlerts />} />
           <Route path="/restock-alerts" element={<RestockAlerts />} />
