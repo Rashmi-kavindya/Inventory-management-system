@@ -1,5 +1,5 @@
 // src/pages/Goals.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { PlusIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
@@ -23,14 +23,7 @@ export default function Goals() {
 
   const userId = localStorage.getItem('user_id') || 1;
 
-  useEffect(() => {
-    fetchItems();
-    fetchGoals();
-    const interval = setInterval(fetchGoals, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
     try {
       const response = await axios.get(`${API_BASE}/items`);
       setItems(response.data);
@@ -38,9 +31,9 @@ export default function Goals() {
       console.error('Failed to load items:', err);
       toast.error('Failed to load items');
     }
-  };
+  }, []);
 
-  const fetchGoals = async () => {
+  const fetchGoals = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${API_BASE}/goals`, { 
@@ -54,7 +47,14 @@ export default function Goals() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchItems();
+    fetchGoals();
+    const interval = setInterval(fetchGoals, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [fetchItems, fetchGoals]);
 
   const handleOpenModal = (goal = null) => {
     if (goal) {

@@ -28,6 +28,9 @@ export default function Dashboard() {
 
   const [weather, setWeather] = useState(null);
   const [weatherCity, setWeatherCity] = useState('Colombo');  // Default
+  const [expiryIndex, setExpiryIndex] = useState(0);
+  const [deadIndex, setDeadIndex] = useState(0);
+  const [reorderIndex, setReorderIndex] = useState(0);
 
   const [newItemForm, setNewItemForm] = useState({
     next_code: '',
@@ -139,6 +142,17 @@ export default function Dashboard() {
     fetchWeather();
   }, [selectedItemId, expiryDays, fetchExpiry, fetchWeather, weatherCity]);
 
+  useEffect(() => {
+    // cycle through each alert's item lists every ~1500ms
+    const interval = setInterval(() => {
+      if (expiryItems && expiryItems.length > 0) setExpiryIndex(i => (i + 1) % expiryItems.length);
+      if (deadStock && deadStock.length > 0) setDeadIndex(i => (i + 1) % deadStock.length);
+      const rList = inventoryData.filter(item => item.stock_quantity <= item.reorder_level);
+      if (rList && rList.length > 0) setReorderIndex(i => (i + 1) % rList.length);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [expiryItems, deadStock, inventoryData]);
+
   // ──────────────────────── HANDLERS ────────────────────────
   const handleNewItemChange = (e) => setNewItemForm({ ...newItemForm, [e.target.name]: e.target.value });
 
@@ -240,6 +254,15 @@ export default function Dashboard() {
     marker: { color: '#F59E0B' }
   }];
 
+  // prepare lists for each alert type and compute current item per type
+  const expiryList = expiryItems || [];
+  const deadList = deadStock || [];
+  const rList = inventoryData.filter(item => item.stock_quantity <= item.reorder_level) || [];
+
+  const expiryCurrent = expiryList.length > 0 ? expiryList[expiryIndex % expiryList.length] : null;
+  const deadCurrent = deadList.length > 0 ? deadList[deadIndex % deadList.length] : null;
+  const reorderCurrent = rList.length > 0 ? rList[reorderIndex % rList.length] : null;
+
   return (
     <div className="space-y-8 relative">
       {/* Greeting */}
@@ -259,34 +282,67 @@ export default function Dashboard() {
         <img src={dashboardImg} alt="Welcome" className="w-48 h-48 object-contain" />
       </div>
 
-      <div className="card">
-        <h2 className="text-xl font-semibold mb-4 flex items-center">
-          <CloudIcon className="h-5 w-5 mr-2 text-blue-500" /> Weather Insights
-        </h2>
-        <div className="flex gap-4 mb-4">
-          <input
-            type="text"
-            value={weatherCity}
-            onChange={e => setWeatherCity(e.target.value)}
-            placeholder="City (e.g., Colombo)"
-            className="flex-1 border p-2 rounded"
-          />
-          <button onClick={fetchWeather} className="btn-primary">Get Forecast</button>
-        </div>
-        {weather ? (
-          <div className="space-y-2">
-            <h3 className="font-bold">{weather.city} – {weather.date}</h3>
-            <p>🌡️ High: {weather.max_temp}°C | Low: {weather.min_temp}°C</p>
-            <p>🌧️ Rain Chance: {weather.rain_prob}%</p>
-            <ul className="list-disc pl-5 space-y-1">
-              {weather.suggestions.map((s, i) => (
-                <li key={i} className="text-sm text-blue-600">{s}</li>
-              ))}
-            </ul>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="card">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <CloudIcon className="h-5 w-5 mr-2 text-blue-500" /> Weather Insights
+          </h2>
+          <div className="flex gap-4 mb-4">
+            <input
+              type="text"
+              value={weatherCity}
+              onChange={e => setWeatherCity(e.target.value)}
+              placeholder="City (e.g., Colombo)"
+              className="flex-1 border p-2 rounded"
+            />
+            <button onClick={fetchWeather} className="btn-primary">Get Forecast</button>
           </div>
-        ) : (
-          <p className="text-gray-500">Click "Get Forecast" for weather-based stocking tips!</p>
-        )}
+          {weather ? (
+            <div className="space-y-2">
+              <h3 className="font-bold">{weather.city} – {weather.date}</h3>
+              <p>🌡️ High: {weather.max_temp}°C | Low: {weather.min_temp}°C</p>
+              <p>🌧️ Rain Chance: {weather.rain_prob}%</p>
+              <ul className="list-disc pl-5 space-y-1">
+                {weather.suggestions.map((s, i) => (
+                  <li key={i} className="text-sm text-blue-600">{s}</li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="text-gray-500">Click "Get Forecast" for weather-based stocking tips!</p>
+          )}
+        </div>
+
+        <div className="card">
+          <h2 className="text-xl font-semibold mb-4">Alerts</h2>
+          <div className="p-4">
+            <div className="mt-2 space-y-3">
+              {/* Expiry row */}
+              <div className="p-3 rounded border-l-4 border-yellow-400 bg-yellow-50">
+                <div className="text-sm font-medium text-gray-700">Expiry</div>
+                <div className="font-semibold mt-1">{expiryCurrent ? expiryCurrent.product_name : 'No expiry alerts'}</div>
+                {expiryCurrent && <div className="text-sm text-gray-600 mt-1">{expiryCurrent.stock_quantity} units — {expiryCurrent.days_left} days left</div>}
+                {expiryCurrent && expiryCurrent.recommended_discount && <div className="text-xs text-purple-600 mt-1">Discount: {expiryCurrent.recommended_discount}%</div>}
+              </div>
+
+              {/* Dead stock row */}
+              <div className="p-3 rounded border-l-4 border-red-400 bg-red-50">
+                <div className="text-sm font-medium text-gray-700">Dead Stock</div>
+                <div className="font-semibold mt-1">{deadCurrent ? (deadCurrent.item_name || `Item #${deadCurrent.item_id}`) : 'No dead stock'}</div>
+                {deadCurrent && <div className="text-sm text-gray-600 mt-1">{deadCurrent.stock_quantity} units — recent sales: {deadCurrent.recent_sales}</div>}
+                {deadCurrent && deadCurrent.recommendation && <div className="text-xs text-purple-600 mt-1">{deadCurrent.recommendation}</div>}
+              </div>
+
+              {/* Reorder row */}
+              <div className="p-3 rounded border-l-4 border-orange-400 bg-orange-50">
+                <div className="text-sm font-medium text-gray-700">Reorder</div>
+                <div className="font-semibold mt-1">{reorderCurrent ? (reorderCurrent.product_name || `Item #${reorderCurrent.item_id}`) : 'No reorder alerts'}</div>
+                {reorderCurrent && <div className="text-sm text-gray-600 mt-1">Stock: {reorderCurrent.stock_quantity} ≤ Reorder: {reorderCurrent.reorder_level}</div>}
+                {reorderCurrent && reorderCurrent.reorder_quantity && <div className="text-xs text-purple-600 mt-1">Suggest: {reorderCurrent.reorder_quantity}</div>}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Manager Actions */}
@@ -483,59 +539,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Detailed Expiry Tracking List */}
-      {expiryItems.length > 0 && (
-        <div className="bg-yellow-50 p-6 rounded-lg shadow-md mb-6">
-          <h3 className="text-lg font-semibold mb-2">Detailed Near-Expiry Items</h3>
-          <ul className="space-y-2">
-            {expiryItems.map((item, index) => (
-              <li key={index} className="p-3 bg-white rounded border-l-4 border-yellow-400 text-sm">
-                <div className="font-medium">{item.product_name}</div>
-                <div>{item.stock_quantity} units, {item.days_left} days left ({item.type})</div>
-                <div className="text-purple-600">Recommended Discount: {item.recommended_discount}%</div>
-                <div className="text-blue-600">Bundle Suggestion: {item.bundling_suggestion}</div>
-                <div className="text-green-600">Tip: {item.loyalty_tip}</div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Dead Stock Alerts */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Dead Stock Alerts</h2>
-        {deadStock.length === 0 ? (
-          <p className="text-gray-500">No dead stock detected.</p>
-        ) : (
-          <ul className="space-y-2">
-            {deadStock.map((item, index) => (
-              <li key={index} className="p-3 bg-red-50 rounded border-l-4 border-red-400">
-                <div>{item.item_name}: {item.stock_quantity} units, Recent Sales: {item.recent_sales}</div>
-                <div className="text-sm text-purple-600">{item.recommendation}</div>
-              </li>
-            ))}
-          </ul>
-        )}
-        <button onClick={fetchDeadStock} className="mt-4 text-purple-600 underline">Refresh</button>
-      </div>
-
-      {/* Reorder Alerts */}
-      <div className="card mt-6">
-        <h2 className="text-xl font-semibold mb-4">Reorder Alerts</h2>
-        {inventoryData.filter(item => item.stock_quantity <= item.reorder_level).length === 0 ? (
-          <p className="text-gray-500">No items need reordering.</p>
-        ) : (
-          <ul className="space-y-2">
-            {inventoryData.filter(item => item.stock_quantity <= item.reorder_level).map((item, index) => (
-              <li key={index} className="p-3 bg-orange-50 rounded border-l-4 border-orange-400">
-                <div className="text-black">{item.product_name}: Stock {item.stock_quantity} ≤ Reorder Level {item.reorder_level}</div> {/* FIXED: Use ≤ symbol */}
-                <div className="text-sm text-purple-600">Suggest ordering {item.reorder_quantity} units.</div>
-              </li>
-            ))}
-          </ul>
-        )}
-        <button onClick={fetchInventory} className="mt-4 text-purple-600 underline">Refresh</button>
-      </div>
       {/* Floating Chat Widget – only on Dashboard */}
       <ChatWidget />
     </div>
