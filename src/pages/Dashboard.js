@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [inventoryData, setInventoryData] = useState([]);
   const [expiryItems, setExpiryItems] = useState([]);
   const [deadStock, setDeadStock] = useState([]);
+  const [goals, setGoals] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(15);
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
@@ -118,6 +119,17 @@ export default function Dashboard() {
     } catch (err) { console.error(err); }
   };
 
+  const fetchGoals = async () => {
+    try {
+      const userId = localStorage.getItem('user_id') || 1;
+      const response = await axios.get('http://127.0.0.1:5000/goals', {
+        headers: { 'user-id': userId },
+        params: { user_id: userId }
+      });
+      setGoals(response.data);
+    } catch (err) { console.error('Failed to load goals:', err); }
+  };
+
   const fetchWeather = useCallback(async () => {
     try {
       const { data } = await axios.get(
@@ -140,6 +152,7 @@ export default function Dashboard() {
     fetchDeadStock();
     fetchItems();
     fetchWeather();
+    fetchGoals();
   }, [selectedItemId, expiryDays, fetchExpiry, fetchWeather, weatherCity]);
 
   useEffect(() => {
@@ -275,9 +288,9 @@ export default function Dashboard() {
             You've got <strong>{inventoryData.length}</strong> items in stock.
           </p>
           <div className="w-64 bg-gray-200 rounded-full h-2.5 mt-4">
-            <div className="bg-stockly-green h-2.5 rounded-full" style={{ width: '70%' }}></div>
+            <div className="bg-stockly-green h-2.5 rounded-full" style={{ width: `${goals && goals.length > 0 ? Math.round(goals.reduce((sum, goal) => sum + Math.min((goal.current_sales || 0) / goal.target * 100, 100), 0) / goals.length) : 0}%` }}></div>
           </div>
-          <p className="text-sm text-gray-500 mt-1">70% of monthly goals achieved</p>
+          <p className="text-sm text-gray-500 mt-1">{goals && goals.length > 0 ? Math.round(goals.reduce((sum, goal) => sum + Math.min((goal.current_sales || 0) / goal.target * 100, 100), 0) / goals.length) : 0}% of sales goals achieved</p>
         </div>
         <img src={dashboardImg} alt="Welcome" className="w-48 h-48 object-contain" />
       </div>
