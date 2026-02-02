@@ -47,7 +47,7 @@ export default function Settings() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
           <div className="space-y-8">
             <div className="flex items-center gap-6">
-              <img src={localStorage.getItem('profilePic') || 'https://via.placeholder.com/120'} alt="Profile" className="h-32 w-32 rounded-full ring-4 ring-purple-500" />
+              <img src={localStorage.getItem('profilePic') || 'https://via.placeholder.com/120'} alt="Profile" className="h-32 w-32 rounded-full ring-4 ring-stockly-green shadow-lg" />
               <div>
                 <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} className="block" />
                 <p className="text-sm text-gray-500 mt-2">JPG, PNG up to 2MB</p>
@@ -60,13 +60,13 @@ export default function Settings() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stockly-green dark:bg-slate-700 dark:border-gray-600 dark:text-white"
               />
             </div>
 
             <button
               onClick={handleSave}
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition"
+              className="w-full bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 py-3 rounded-lg font-semibold hover:shadow-lg transition shadow-lg"
             >
               Save Changes
             </button>

@@ -70,24 +70,24 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* NAVBAR */}
-      <nav className="bg-gradient-to-r from-purple-600 to-indigo-700 dark:from-purple-900 dark:to-indigo-900 shadow-2xl fixed top-0 left-0 right-0 z-50">
+      <nav className="bg-gradient-to-r from-stockly-blue to-teal-600 dark:from-slate-900 dark:to-slate-800 shadow-2xl fixed top-0 left-0 right-0 z-50 border-b-4 border-stockly-green">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo + Name */}
             <div className="flex items-center">
-              <img src={logo} alt="Stockly" className="h-10 w-10 rounded-lg" />
-              <Link to="/" className="ml-3 text-2xl font-bold text-white tracking-wider">Stockly</Link>
+              <img src={logo} alt="Stockly" className="h-11 w-11 rounded-lg shadow-lg" />
+              <Link to="/" className="ml-3 text-2xl font-bold text-white tracking-wider hover:text-stockly-green transition-colors">Stockly</Link>
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/" className={`text-white hover:bg-white/20 px-4 py-2 rounded-lg transition flex items-center gap-2 ${isActive('/') ? 'bg-white/20' : ''}`}>
+            <div className="hidden md:flex items-center space-x-2">
+              <Link to="/" className={`text-white hover:bg-white/20 px-4 py-2 rounded-lg transition flex items-center gap-2 ${isActive('/') ? 'bg-stockly-green text-slate-900 font-semibold' : ''}`}>
                 <HomeIcon className="h-5 w-5" /> Dashboard
               </Link>
-              <Link to="/inventory" className={`text-white hover:bg-white/20 px-4 py-2 rounded-lg transition flex items-center gap-2 ${isActive('/inventory') ? 'bg-white/20' : ''}`}>
+              <Link to="/inventory" className={`text-white hover:bg-white/20 px-4 py-2 rounded-lg transition flex items-center gap-2 ${isActive('/inventory') ? 'bg-stockly-green text-slate-900 font-semibold' : ''}`}>
                 <ArchiveBoxIcon className="h-5 w-5" /> Inventory
               </Link>
-              <Link to="/goals" className={`text-white hover:bg-white/20 px-4 py-2 rounded-lg transition flex items-center gap-2 ${isActive('/goals') ? 'bg-white/20' : ''}`}>
+              <Link to="/goals" className={`text-white hover:bg-white/20 px-4 py-2 rounded-lg transition flex items-center gap-2 ${isActive('/goals') ? 'bg-stockly-green text-slate-900 font-semibold' : ''}`}>
                 <TrophyIcon className="h-5 w-5" /> Goals
               </Link>
 
@@ -100,10 +100,10 @@ function App() {
                   <BellAlertIcon className="h-5 w-5" /> Alerts <ChevronDownIcon className="h-4 w-4" />
                 </button>
                 {isAlertsOpen && (
-                  <div className="absolute top-12 left-0 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 w-56">
-                    <Link to="/expiry-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-900 transition">Expiry Alerts</Link>
-                    <Link to="/restock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-900 transition">Restock Alerts</Link>
-                    <Link to="/deadstock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-900 transition border-t dark:border-gray-700">Dead Stock Alerts</Link>
+                  <div className="absolute top-12 left-0 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-stockly-green dark:border-stockly-green/50 w-56">
+                    <Link to="/expiry-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Expiry Alerts</Link>
+                    <Link to="/restock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Restock Alerts</Link>
+                    <Link to="/deadstock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition border-t dark:border-gray-700">Dead Stock Alerts</Link>
                   </div>
                 )}
               </div>
@@ -115,24 +115,24 @@ function App() {
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-3 text-white hover:bg-white/20 px-4 py-2 rounded-full transition"
               >
-                <img src={profilePic} alt="Profile" className="h-10 w-10 rounded-full ring-2 ring-white object-cover" />
+                <img src={profilePic} alt="Profile" className="h-10 w-10 rounded-full ring-2 ring-stockly-green object-cover shadow-lg" />
                 <span className="hidden lg:block font-medium">{username}</span>
                 <ChevronDownIcon className="h-4 w-4" />
               </button>
 
               {isProfileOpen && (
-                <div className="absolute top-14 right-0 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 w-64">
+                <div className="absolute top-14 right-0 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-stockly-green dark:border-stockly-green/50 w-64">
                   {role === 'manager' && (
-                    <Link to="/create-user" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-900 transition">
+                    <Link to="/create-user" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">
                       <UserPlusIcon className="h-5 w-5" /> Create User
                     </Link>
                   )}
-                  <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-900 transition">
+                  <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">
                     <Cog6ToothIcon className="h-5 w-5" /> Settings
                   </Link>
                   <button
                     onClick={() => { setIsDark(!isDark); setIsProfileOpen(false); }}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-900 transition w-full text-left"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition w-full text-left"
                   >
                     {isDark ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
                     {isDark ? 'Light Mode' : 'Dark Mode'}
@@ -161,16 +161,16 @@ function App() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-purple-800 dark:bg-purple-950">
+          <div className="md:hidden bg-gradient-to-b from-stockly-blue to-teal-600 dark:from-slate-800 dark:to-slate-900 animate-slide-down">
             <div className="px-4 pt-2 pb-4 space-y-2">
-              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-white hover:bg-white/20 rounded-lg">Dashboard</Link>
-              <Link to="/inventory" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-white hover:bg-white/20 rounded-lg">Inventory</Link>
-              <Link to="/goals" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-white hover:bg-white/20 rounded-lg">Goals</Link>
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={`block px-4 py-3 text-white rounded-lg transition ${isActive('/') ? 'bg-stockly-green text-slate-900 font-semibold' : 'hover:bg-white/20'}`}>Dashboard</Link>
+              <Link to="/inventory" onClick={() => setIsMobileMenuOpen(false)} className={`block px-4 py-3 text-white rounded-lg transition ${isActive('/inventory') ? 'bg-stockly-green text-slate-900 font-semibold' : 'hover:bg-white/20'}`}>Inventory</Link>
+              <Link to="/goals" onClick={() => setIsMobileMenuOpen(false)} className={`block px-4 py-3 text-white rounded-lg transition ${isActive('/goals') ? 'bg-stockly-green text-slate-900 font-semibold' : 'hover:bg-white/20'}`}>Goals</Link>
               <div className="space-y-1">
-                <div className="px-4 py-3 text-white font-medium">Alerts</div>
-                <Link to="/expiry-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10">Expiry</Link>
-                <Link to="/restock-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10">Restock</Link>
-                <Link to="/deadstock-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10">Dead Stock</Link>
+                <div className="px-4 py-3 text-white font-bold text-sm uppercase tracking-wide">Alerts</div>
+                <Link to="/expiry-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10 rounded transition">Expiry</Link>
+                <Link to="/restock-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10 rounded transition">Restock</Link>
+                <Link to="/deadstock-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10 rounded transition">Dead Stock</Link>
               </div>
             </div>
           </div>

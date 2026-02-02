@@ -45,8 +45,8 @@ export default function ExpiryAlerts() {
           className="border p-1 rounded w-20"
         />
         <button
-          onClick={handleUpdate}                     // <-- use the new handler
-          className="bg-stockly-green text-white px-3 py-1 rounded hover:bg-purple-700"
+          onClick={handleUpdate}
+          className="bg-stockly-green text-slate-900 px-3 py-1 rounded hover:bg-emerald-400 transition font-semibold"
         >
           Update
         </button>
@@ -56,7 +56,7 @@ export default function ExpiryAlerts() {
           <div key={item.id || item.product_name} className="bg-yellow-50 p-4 rounded border-l-4 border-yellow-400">
             <h3 className="font-semibold">{item.product_name}</h3>
             <p>Stock: {item.stock_quantity} | Days Left: {item.days_left}</p>
-            <p className="text-purple-600 font-medium">Suggested Discount: {item.recommended_discount}%</p>
+            <p className="text-stockly-green dark:text-emerald-400 font-medium">Suggested Discount: {item.recommended_discount}%</p>
             <p className="text-blue-600">Bundle: {item.bundling_suggestion}</p>
             <p className="text-green-600">Tip: {item.loyalty_tip}</p>
           </div>

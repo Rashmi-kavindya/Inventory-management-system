@@ -39,8 +39,8 @@ export default function ChatWidget() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full 
-                   bg-gradient-to-br from-purple-600 to-indigo-600 
-                   text-white flex items-center justify-center 
+                   bg-gradient-to-br from-stockly-green to-teal-500 
+                   text-slate-900 flex items-center justify-center 
                    shadow-2xl hover:scale-110 transition-transform duration-200"
         title="Chat with Stockly Assistant"
       >
@@ -57,14 +57,14 @@ export default function ChatWidget() {
                      flex flex-col overflow-hidden"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 flex justify-between items-center">
+          <div className="bg-gradient-to-r from-stockly-green to-emerald-400 text-slate-900 p-4 flex justify-between items-center font-semibold">
             <div>
-              <h3 className="font-semibold">Stockly Assistant</h3>
-              <p className="text-xs opacity-80">Ask about stock, expiry, sales...</p>
+              <h3 className="font-bold">Stockly Assistant</h3>
+              <p className="text-xs opacity-70 font-normal">Ask about stock, expiry, sales...</p>
             </div>
             <button 
               onClick={() => setIsOpen(false)}
-              className="text-white hover:text-gray-200"
+              className="text-slate-900 hover:opacity-70 transition"
             >
               <X size={20} />
             </button>
@@ -80,7 +80,7 @@ export default function ChatWidget() {
                 <div
                   className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm
                     ${msg.role === 'user' 
-                      ? 'bg-purple-600 text-white rounded-br-none' 
+                      ? 'bg-stockly-green text-slate-900 font-semibold rounded-br-none' 
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-none'}`}
                 >
                   {msg.content}
@@ -100,11 +100,11 @@ export default function ChatWidget() {
                 placeholder="Type your question..."
                 className="flex-1 px-4 py-2.5 rounded-l-lg border 
                          border-gray-300 dark:border-gray-600 
-                         dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                         dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-stockly-green"
               />
               <button
                 onClick={handleSend}
-                className="bg-purple-600 text-white px-5 rounded-r-lg hover:bg-purple-700 transition"
+                className="bg-stockly-green text-slate-900 px-5 rounded-r-lg hover:bg-emerald-400 font-semibold transition shadow-md"
               >
                 Send
               </button>

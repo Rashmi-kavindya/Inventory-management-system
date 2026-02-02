@@ -12,11 +12,11 @@ const SortIcon = ({ isActive, direction }) => {
     );
   }
   return direction === 'asc' ? (
-    <svg className="w-4 h-4 inline ml-1 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-4 h-4 inline ml-1 text-stockly-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
     </svg>
   ) : (
-    <svg className="w-4 h-4 inline ml-1 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-4 h-4 inline ml-1 text-stockly-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
     </svg>
   );
@@ -98,7 +98,7 @@ export default function InventoryList() {
           placeholder="Search by name, code, department or type..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full md:w-96 border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+          className="w-full md:w-96 border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-slate-700 dark:border-gray-600 dark:text-white"
         />
       </div>
 
@@ -107,49 +107,49 @@ export default function InventoryList() {
         <div className="inline-block min-w-full align-middle">
           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
             <table className="min-w-full divide-y divide-gray-300">
-              <thead className="bg-purple-50 sticky top-0 z-10">
+              <thead className="bg-green-50 dark:bg-slate-700 sticky top-0 z-10">
                 <tr>
                   {/* CODE – now has left padding */}
                   <th
                     onClick={() => handleSort('item_code')}
-                    className="cursor-pointer pl-6 pr-3 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider hover:bg-purple-100"
+                    className="cursor-pointer pl-6 pr-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-green uppercase tracking-wider hover:bg-green-100 dark:hover:bg-slate-600 transition"
                   >
                     Code <SortIcon isActive={sortConfig.key === 'item_code'} direction={sortConfig.direction} />
                   </th>
                   <th
                     onClick={() => handleSort('product_name')}
-                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider hover:bg-purple-100"
+                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-green uppercase tracking-wider hover:bg-green-100 dark:hover:bg-slate-600 transition"
                   >
                     Product <SortIcon isActive={sortConfig.key === 'product_name'} direction={sortConfig.direction} />
                   </th>
                   <th
                     onClick={() => handleSort('department')}
-                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider hover:bg-purple-100 hidden sm:table-cell"
+                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-green uppercase tracking-wider hover:bg-green-100 dark:hover:bg-slate-600 transition hidden sm:table-cell"
                   >
                     Dept <SortIcon isActive={sortConfig.key === 'department'} direction={sortConfig.direction} />
                   </th>
                   <th
                     onClick={() => handleSort('type')}
-                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider hover:bg-purple-100 hidden md:table-cell"
+                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-green uppercase tracking-wider hover:bg-green-100 dark:hover:bg-slate-600 transition hidden md:table-cell"
                   >
                     Type <SortIcon isActive={sortConfig.key === 'type'} direction={sortConfig.direction} />
                   </th>
                   <th
                     onClick={() => handleSort('stock_quantity')}
-                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider hover:bg-purple-100"
+                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-green uppercase tracking-wider hover:bg-green-100 dark:hover:bg-slate-600 transition"
                   >
                     Stock <SortIcon isActive={sortConfig.key === 'stock_quantity'} direction={sortConfig.direction} />
                   </th>
                   <th
                     onClick={() => handleSort('expire_date')}
-                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider hover:bg-purple-100 hidden lg:table-cell"
+                    className="cursor-pointer px-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-green uppercase tracking-wider hover:bg-green-100 dark:hover:bg-slate-600 transition hidden lg:table-cell"
                   >
                     Expire <SortIcon isActive={sortConfig.key === 'expire_date'} direction={sortConfig.direction} />
                   </th>
                   {/* REORDER – right padding */}
                   <th
                     onClick={() => handleSort('reorder_level')}
-                    className="cursor-pointer pr-6 pl-3 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider hover:bg-purple-100"
+                    className="cursor-pointer pr-6 pl-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-green uppercase tracking-wider hover:bg-green-100 dark:hover:bg-slate-600 transition"
                   >
                     Reorder <SortIcon isActive={sortConfig.key === 'reorder_level'} direction={sortConfig.direction} />
                   </th>
@@ -180,7 +180,7 @@ export default function InventoryList() {
                       {item.expire_date ? new Date(item.expire_date).toLocaleDateString() : '—'}
                     </td>
                     <td className="pr-6 pl-3 py-3">
-                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-slate-700 text-stockly-green dark:text-emerald-400">
                         {item.reorder_level}
                       </span>
                     </td>
@@ -195,7 +195,7 @@ export default function InventoryList() {
       {/* REFRESH */}
       <button
         onClick={fetchInventory}
-        className="mt-6 bg-stockly-green text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+        className="mt-6 bg-stockly-green text-slate-900 px-6 py-2 rounded-lg hover:bg-emerald-400 transition font-semibold shadow-lg hover:shadow-xl"
       >
         Refresh List
       </button>

@@ -149,7 +149,7 @@ export default function Goals() {
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Sales Goals</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">Track and monitor your sales targets by product</p>
           </div>
-          <button onClick={() => handleOpenModal()} className="bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white font-semibold py-3 px-6 rounded-lg transition flex items-center gap-2 shadow-lg">
+          <button onClick={() => handleOpenModal()} className="bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl">
             <PlusIcon className="h-5 w-5" /> New Goal
           </button>
         </div>
@@ -170,7 +170,7 @@ export default function Goals() {
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Avg Progress</p>
-              <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">{goals.length > 0 ? Math.round(goals.reduce((sum, g) => sum + getProgressPercentage(g), 0) / goals.length) : 0}%</p>
+              <p className="text-3xl font-bold text-stockly-green dark:text-emerald-400 mt-2">{goals.length > 0 ? Math.round(goals.reduce((sum, g) => sum + getProgressPercentage(g), 0) / goals.length) : 0}%</p>
             </div>
           </div>
         )}
@@ -183,7 +183,7 @@ export default function Goals() {
           ) : sortedGoals.length === 0 ? (
             <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center shadow-md">
               <p className="text-gray-600 dark:text-gray-400 mb-4">No goals yet. Create one to get started!</p>
-              <button onClick={() => handleOpenModal()} className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+              <button onClick={() => handleOpenModal()} className="bg-stockly-green hover:bg-emerald-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition">
                 Create Your First Goal
               </button>
             </div>
@@ -192,7 +192,7 @@ export default function Goals() {
               const progress = getProgressPercentage(goal);
               const deadlineStatus = getDeadlineStatus(goal.deadline);
               return (
-                <div key={goal.id} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md border-l-4 border-purple-500 transition hover:shadow-lg">
+                <div key={goal.id} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md border-l-4 border-stockly-green transition hover:shadow-lg hover:border-emerald-400">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
@@ -230,25 +230,25 @@ export default function Goals() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-indigo-700 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-white">{isEditing ? 'Edit Sales Goal' : 'Create New Sales Goal'}</h2>
-              <button onClick={handleCloseModal} className="text-white hover:bg-white/20 p-2 rounded-lg transition">✕</button>
+            <div className="sticky top-0 bg-gradient-to-r from-stockly-green to-emerald-400 text-slate-900 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-slate-900">{isEditing ? 'Edit Sales Goal' : 'Create New Sales Goal'}</h2>
+              <button onClick={handleCloseModal} className="text-slate-900 hover:bg-slate-900/10 p-2 rounded-lg transition">✕</button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
               <div>
                 <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Goal Title *</label>
-                <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g., Increase Coca Cola sales" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required />
+                <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g., Increase Coca Cola sales" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition" required />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Description</label>
-                <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Add details about this sales goal..." className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent dark:bg-gray-700 dark:text-white transition resize-none h-20" />
+                <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Add details about this sales goal..." className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition resize-none h-20" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Select Product *</label>
-                <select name="item_id" value={formData.item_id} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required>
+                <select name="item_id" value={formData.item_id} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition" required>
                   <option value="">-- Choose a product --</option>
                   {items.map((item) => (
                     <option key={item.item_id} value={item.item_id}>{item.item_name} (ID: {item.item_id})</option>
@@ -258,16 +258,16 @@ export default function Goals() {
 
               <div>
                 <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Target Quantity (units) *</label>
-                <input type="number" name="target" value={formData.target} onChange={handleInputChange} placeholder="e.g., 1000" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required min="1" />
+                <input type="number" name="target" value={formData.target} onChange={handleInputChange} placeholder="e.g., 1000" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition" required min="1" />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Deadline</label>
-                <input type="date" name="deadline" value={formData.deadline} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent dark:bg-gray-700 dark:text-white transition" />
+                <input type="date" name="deadline" value={formData.deadline} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition" />
               </div>
 
               <div className="flex gap-3 pt-4">
-                <button type="submit" className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white font-semibold py-2 px-4 rounded-lg transition">
+                <button type="submit" className="flex-1 bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition shadow-lg hover:shadow-xl">
                   {isEditing ? 'Update Goal' : 'Create Goal'}
                 </button>
                 <button type="button" onClick={handleCloseModal} className="flex-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-900 dark:text-white font-semibold py-2 px-4 rounded-lg transition">

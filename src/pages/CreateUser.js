@@ -53,7 +53,7 @@ export default function CreateUser() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 px-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-purple-700 dark:text-purple-400 mb-10">Create New User</h1>
+        <h1 className="text-4xl font-bold text-center text-stockly-blue dark:text-stockly-green mb-10">Create New User</h1>
 
         {/* Form */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-12">
@@ -65,7 +65,7 @@ export default function CreateUser() {
               value={formData.username}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green"
             />
             <input
               type="password"
@@ -74,20 +74,20 @@ export default function CreateUser() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green"
             />
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green"
             >
               <option value="employee">Employee/Cashier</option>
               <option value="manager">Manager/Owner</option>
             </select>
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-lg font-bold text-lg hover:shadow-xl transition"
+              className="w-full bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 py-4 rounded-lg font-bold text-lg hover:shadow-xl transition"
             >
               Create User
             </button>
@@ -98,8 +98,8 @@ export default function CreateUser() {
 
         {/* User List */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6">
-            <h2 className="text-2xl font-bold text-white">All Users ({users.length})</h2>
+          <div className="bg-gradient-to-r from-stockly-green to-emerald-400 p-6">
+            <h2 className="text-2xl font-bold text-slate-900">All Users ({users.length})</h2>
           </div>
           {loading ? (
             <p className="text-center py-10 text-gray-500">Loading users...</p>
@@ -107,16 +107,16 @@ export default function CreateUser() {
             <p className="text-center py-10 text-gray-500">No users found.</p>
           ) : (
             <table className="w-full">
-              <thead className="bg-purple-100 dark:bg-purple-900">
+              <thead className="bg-green-100 dark:bg-slate-700">
                 <tr>
-                  <th className="px-6 py-4 text-left text-purple-800 dark:text-purple-200 font-bold">Username</th>
-                  <th className="px-6 py-4 text-left text-purple-800 dark:text-purple-200 font-bold">Role</th>
-                  <th className="px-6 py-4 text-left text-purple-800 dark:text-purple-200 font-bold">Created</th>
+                  <th className="px-6 py-4 text-left text-stockly-blue dark:text-stockly-green font-bold">Username</th>
+                  <th className="px-6 py-4 text-left text-stockly-blue dark:text-stockly-green font-bold">Role</th>
+                  <th className="px-6 py-4 text-left text-stockly-blue dark:text-stockly-green font-bold">Created</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map(user => (
-                  <tr key={user.id} className="border-t dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition">
+                  <tr key={user.id} className="border-t dark:border-gray-700 hover:bg-green-50 dark:hover:bg-slate-700/50 transition">
                     <td className="px-6 py-4 font-medium">{user.username}</td>
                     <td className="px-6 py-4">
                       <span className={`px-4 py-2 rounded-full text-xs font-bold ${

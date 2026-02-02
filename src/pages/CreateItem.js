@@ -46,26 +46,26 @@ export default function CreateItem() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
-          <input name="item_name" value={form.item_name} onChange={handleChange} placeholder="e.g., Coca Cola 1L" required className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-600" />
+          <input name="item_name" value={form.item_name} onChange={handleChange} placeholder="e.g., Coca Cola 1L" required className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-stockly-green dark:bg-slate-700 dark:border-gray-600 dark:text-white" />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-          <input name="department" value={form.department} onChange={handleChange} placeholder="e.g., Beverages" required className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-600" />
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Department</label>
+          <input name="department" value={form.department} onChange={handleChange} placeholder="e.g., Beverages" required className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-stockly-green dark:bg-slate-700 dark:border-gray-600 dark:text-white" />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-          <input name="type" value={form.type} onChange={handleChange} placeholder="e.g., Beverages" required className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-600" />
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Type</label>
+          <input name="type" value={form.type} onChange={handleChange} placeholder="e.g., Beverages" required className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-stockly-green dark:bg-slate-700 dark:border-gray-600 dark:text-white" />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Reorder Level (units)</label>
-          <input type="number" name="reorder_level" value={form.reorder_level} onChange={handleChange} min="1" className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-purple-600" />
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Reorder Level (units)</label>
+          <input type="number" name="reorder_level" value={form.reorder_level} onChange={handleChange} min="1" className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-stockly-green dark:bg-slate-700 dark:border-gray-600 dark:text-white" />
           <p className="text-xs text-gray-500 mt-1">Alert when stock ≤ this number</p>
         </div>
 
-        <button type="submit" className="md:col-span-2 bg-stockly-green text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+        <button type="submit" className="md:col-span-2 bg-stockly-green text-slate-900 py-3 rounded-lg font-semibold hover:bg-emerald-400 transition shadow-lg hover:shadow-xl">
           Add Item
         </button>
       </form>

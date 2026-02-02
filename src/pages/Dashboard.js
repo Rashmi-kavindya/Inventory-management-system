@@ -335,7 +335,7 @@ export default function Dashboard() {
                 <div className="text-sm font-medium text-gray-700">Expiry</div>
                 <div className="font-semibold mt-1">{expiryCurrent ? expiryCurrent.product_name : 'No expiry alerts'}</div>
                 {expiryCurrent && <div className="text-sm text-gray-600 mt-1">{expiryCurrent.stock_quantity} units — {expiryCurrent.days_left} days left</div>}
-                {expiryCurrent && expiryCurrent.recommended_discount && <div className="text-xs text-purple-600 mt-1">Discount: {expiryCurrent.recommended_discount}%</div>}
+                {expiryCurrent && expiryCurrent.recommended_discount && <div className="text-xs text-stockly-green dark:text-emerald-400 mt-1">Discount: {expiryCurrent.recommended_discount}%</div>}
               </div>
 
               {/* Dead stock row */}
@@ -343,7 +343,7 @@ export default function Dashboard() {
                 <div className="text-sm font-medium text-gray-700">Dead Stock</div>
                 <div className="font-semibold mt-1">{deadCurrent ? (deadCurrent.item_name || `Item #${deadCurrent.item_id}`) : 'No dead stock'}</div>
                 {deadCurrent && <div className="text-sm text-gray-600 mt-1">{deadCurrent.stock_quantity} units — recent sales: {deadCurrent.recent_sales}</div>}
-                {deadCurrent && deadCurrent.recommendation && <div className="text-xs text-purple-600 mt-1">{deadCurrent.recommendation}</div>}
+                {deadCurrent && deadCurrent.recommendation && <div className="text-xs text-stockly-green dark:text-emerald-400 mt-1">{deadCurrent.recommendation}</div>}
               </div>
 
               {/* Reorder row */}
@@ -351,7 +351,7 @@ export default function Dashboard() {
                 <div className="text-sm font-medium text-gray-700">Reorder</div>
                 <div className="font-semibold mt-1">{reorderCurrent ? (reorderCurrent.product_name || `Item #${reorderCurrent.item_id}`) : 'No reorder alerts'}</div>
                 {reorderCurrent && <div className="text-sm text-gray-600 mt-1">Stock: {reorderCurrent.stock_quantity} ≤ Reorder: {reorderCurrent.reorder_level}</div>}
-                {reorderCurrent && reorderCurrent.reorder_quantity && <div className="text-xs text-purple-600 mt-1">Suggest: {reorderCurrent.reorder_quantity}</div>}
+                {reorderCurrent && reorderCurrent.reorder_quantity && <div className="text-xs text-stockly-green dark:text-emerald-400 mt-1">Suggest: {reorderCurrent.reorder_quantity}</div>}
               </div>
             </div>
           </div>
@@ -524,7 +524,7 @@ export default function Dashboard() {
           ) : (
             <p className="text-gray-500">No inventory data—add more samples for multi-slice pie</p>
           )}
-          <button onClick={fetchInventory} className="mt-4 text-purple-600 underline">Refresh</button>
+          <button onClick={fetchInventory} className="mt-4 text-stockly-green hover:text-emerald-400 underline font-semibold transition">Refresh</button>
         </div>
 
         {/* Expiry by Type Bar */}
@@ -548,7 +548,7 @@ export default function Dashboard() {
           ) : (
             <p className="text-gray-500">No expiry data—add samples with repeated types for varied bars</p>
           )}
-          <button onClick={fetchExpiry} className="mt-4 text-purple-600 underline">Refresh</button>
+          <button onClick={fetchExpiry} className="mt-4 text-stockly-green hover:text-emerald-400 underline font-semibold transition">Refresh</button>
         </div>
       </div>
 

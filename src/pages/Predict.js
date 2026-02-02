@@ -28,7 +28,7 @@ export default function Predict() {
         <input type="number" name="month" placeholder="Month (1-12)" min="1" max="12" onChange={handleChange} required className="w-full border p-3 rounded-lg" />
         <input type="text" name="type" placeholder="Type" onChange={handleChange} required className="w-full border p-3 rounded-lg" />
         <input type="text" name="department" placeholder="Department" onChange={handleChange} required className="w-full border p-3 rounded-lg" />
-        <button type="submit" className="w-full bg-stockly-green text-white p-3 rounded-lg hover:bg-purple-700">Predict</button>
+        <button type="submit" className="w-full bg-stockly-green text-slate-900 p-3 rounded-lg hover:bg-emerald-400 transition font-semibold shadow-lg hover:shadow-xl">Predict</button>
       </form>
       {prediction && <p className="mt-4 text-green-600 font-semibold">Predicted Quantity: {prediction}</p>}
       {error && <p className="mt-4 text-red-600 font-semibold">Error: {error}</p>}
