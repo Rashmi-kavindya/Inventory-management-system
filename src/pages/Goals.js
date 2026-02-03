@@ -37,7 +37,7 @@ export default function Goals() {
     try {
       setLoading(true);
       const response = await axios.get(`${API_BASE}/goals`, { 
-        headers: { 'user-id': userId },
+        headers: { 'user_id': userId },
         params: { user_id: userId }
       });
       setGoals(response.data);
@@ -149,24 +149,33 @@ export default function Goals() {
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Sales Goals</h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">Track and monitor your sales targets by product</p>
           </div>
-          <button onClick={() => handleOpenModal()} className="bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl">
-            <PlusIcon className="h-5 w-5" /> New Goal
-          </button>
+          <div className="flex gap-3">
+            <button onClick={fetchGoals} className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 px-4 rounded-lg transition">
+              Refresh
+            </button>
+            <button onClick={() => handleOpenModal()} className="bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl">
+              <PlusIcon className="h-5 w-5" /> New Goal
+            </button>
+          </div>
         </div>
 
         {goals.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Goals</p>
               <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{goals.length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Completed</p>
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{goals.filter((g) => (g.current_sales || 0) >= g.target).length}</p>
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{goals.filter((g) => g.status === 'completed').length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">In Progress</p>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{goals.filter((g) => (g.current_sales || 0) < g.target).length}</p>
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{goals.filter((g) => g.status === 'active').length}</p>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
+              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Overdue</p>
+              <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">{goals.filter((g) => g.status === 'overdue').length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Avg Progress</p>
@@ -197,6 +206,11 @@ export default function Goals() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{goal.title}</h3>
+                        <span className={`text-sm font-medium px-3 py-1 rounded-full ${
+                          goal.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                          goal.status === 'overdue' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                        }`}>{goal.status}</span>
                         <span className="text-sm font-medium px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full">{goal.item_name || `Item #${goal.item_id}`}</span>
                       </div>
                       {goal.description && <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">{goal.description}</p>}
