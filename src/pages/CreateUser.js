@@ -6,8 +6,9 @@ export default function CreateUser() {
   const [formData, setFormData] = useState({ username: '', password: '', role: 'employee' });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [users, setUsers] = useState([]); 
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState(null);
 
   const token = localStorage.getItem('token');
 
@@ -35,10 +36,20 @@ export default function CreateUser() {
     e.preventDefault();
     setMessage(''); setError('');
     try {
-      const response = await axios.post('http://127.0.0.1:5000/register', formData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setMessage(response.data.message);
+      let response;
+      if (editingUser) {
+        // Update existing user (backend must implement PUT /users/<id>)
+        response = await axios.put(`http://127.0.0.1:5000/users/${editingUser.id}`, formData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setMessage(response.data.message || 'User updated');
+        setEditingUser(null);
+      } else {
+        response = await axios.post('http://127.0.0.1:5000/register', formData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setMessage(response.data.message);
+      }
       setFormData({ username: '', password: '', role: 'employee' });
       // Refresh user list
       const res = await axios.get('http://127.0.0.1:5000/users', {
@@ -48,6 +59,18 @@ export default function CreateUser() {
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to create user');
     }
+  };
+
+  const handleEditClick = (user) => {
+    setEditingUser(user);
+    setFormData({ username: user.username || '', password: '', role: user.role || 'employee' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingUser(null);
+    setFormData({ username: '', password: '', role: 'employee' });
+    setError(''); setMessage('');
   };
 
   return (
@@ -85,12 +108,23 @@ export default function CreateUser() {
               <option value="employee">Employee/Cashier</option>
               <option value="manager">Manager/Owner</option>
             </select>
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 py-4 rounded-lg font-bold text-lg hover:shadow-xl transition"
-            >
-              Create User
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="flex-1 bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 py-4 rounded-lg font-bold text-lg hover:shadow-xl transition"
+              >
+                {editingUser ? 'Update User' : 'Create User'}
+              </button>
+              {editingUser && (
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="w-40 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-4 rounded-lg font-semibold"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
           {message && <p className="mt-6 text-green-600 text-center font-semibold text-lg">{message}</p>}
           {error && <p className="mt-6 text-red-600 text-center font-semibold text-lg">Error: {error}</p>}
@@ -117,17 +151,27 @@ export default function CreateUser() {
               <tbody>
                 {users.map(user => (
                   <tr key={user.id} className="border-t dark:border-gray-700 hover:bg-green-50 dark:hover:bg-slate-700/50 transition">
-                    <td className="px-6 py-4 font-medium">{user.username}</td>
+                    <td className="px-6 py-4 font-medium flex items-center justify-between">
+                      <span>{user.username}</span>
+                      <div className="ml-4 flex items-center gap-2">
+                        <button
+                          onClick={() => handleEditClick(user)}
+                          className="text-sm px-3 py-1 bg-blue-50 text-blue-700 rounded hover:underline"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    </td>
                     <td className="px-6 py-4">
                       <span className={`px-4 py-2 rounded-full text-xs font-bold ${
-                        user.role === 'manager' 
-                          ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' 
+                        user.role === 'manager'
+                          ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
                           : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
                       }`}>
                         {user.role.toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-500">2025-11-01</td>
+                    <td className="px-6 py-4 text-gray-500">{user.created_at ? user.created_at.split(' ')[0] : '-'}</td>
                   </tr>
                 ))}
               </tbody>

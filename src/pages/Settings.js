@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 export default function Settings() {
-  const [name, setName] = useState(localStorage.getItem('username') || '');
+  const name = localStorage.getItem('username') || '';
   const [file, setFile] = useState(null);
 
   const handleSave = async () => {
@@ -55,13 +55,14 @@ export default function Settings() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Display Name</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-stockly-green dark:bg-slate-700 dark:border-gray-600 dark:text-white"
+                readOnly
+                className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed dark:bg-slate-700 dark:border-gray-600 dark:text-gray-400"
               />
+              <p className="text-xs text-gray-500 mt-2">Username cannot be changed here. Contact an admin to request a username change.</p>
             </div>
 
             <button
