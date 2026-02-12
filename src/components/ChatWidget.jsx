@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -145,8 +146,23 @@ export default function ChatWidget() {
                       <span className="animate-bounce" style={{animationDelay: '0.2s'}}>●</span>
                       <span className="animate-bounce" style={{animationDelay: '0.4s'}}>●</span>
                     </div>
-                  ) : (
+                  ) : msg.role === 'user' ? (
                     msg.content
+                  ) : (
+                    // Parse markdown for bot messages
+                    <ReactMarkdown
+                      components={{
+                        p: ({node, ...props}) => <p {...props} className="mb-1 last:mb-0" />,
+                        strong: ({node, ...props}) => <strong {...props} className="font-bold" />,
+                        em: ({node, ...props}) => <em {...props} className="italic" />,
+                        ul: ({node, ...props}) => <ul {...props} className="list-disc list-inside mb-1" />,
+                        ol: ({node, ...props}) => <ol {...props} className="list-decimal list-inside mb-1" />,
+                        li: ({node, ...props}) => <li {...props} className="ml-2" />,
+                        code: ({node, ...props}) => <code {...props} className="bg-opacity-20 px-1 rounded" />,
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
                   )}
                 </div>
               </div>
