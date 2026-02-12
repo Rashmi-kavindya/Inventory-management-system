@@ -3,45 +3,48 @@ import { MessageCircle, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 export default function ChatWidget() {
+  const genId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'bot', content: 'Hi! How can I help you with Stockly today?' }
+    { id: genId(), role: 'bot', content: 'Hi! How can I help you with Stockly today?' }
   ]);
   const [input, setInput] = useState('');
 
-  // Use an env var for API base, fallback to localhost:5000
+  // Use env var for API base; fallback to localhost for dev
   const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+  const addMessage = (msg) => {
+    setMessages(prev => [...prev, { ...msg, id: genId() }]);
+  };
+
+  // Helper: append a bot message (string or object)
+  const pushBotMessage = (payload) => {
+    addMessage({ role: 'bot', content: payload });
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
     // Add user message
-    const userMsg = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMsg]);
+    addMessage({ role: 'user', content: input });
     const userQuery = input;
     setInput('');
 
     // Add loading state
-    setMessages(prev => [...prev, { role: 'bot', content: '⏳ Processing your query...', isLoading: true }]);
+    addMessage({ role: 'bot', content: '⏳ Processing your query...', isLoading: true });
 
     try {
-      // Get JWT token from localStorage
       const token = localStorage.getItem('token');
 
       if (!token) {
         setMessages(prev => {
           const withoutLoading = prev.filter(msg => !msg.isLoading);
-          return [...withoutLoading, {
-            role: 'bot',
-            content: '❌ Please log in to use the chat assistant.',
-            isLoading: false,
-            error: true
-          }];
+          return [...withoutLoading, { id: genId(), role: 'bot', content: '❌ Please log in to use the chat assistant.', isLoading: false, error: true }];
         });
         return;
       }
 
-      // Call backend chat endpoint (use absolute URL to avoid hitting frontend dev server HTML)
       const response = await fetch(`${API_BASE}/chat`, {
         method: 'POST',
         headers: {
@@ -51,7 +54,6 @@ export default function ChatWidget() {
         body: JSON.stringify({ message: userQuery })
       });
 
-      // Read as text first so we can show helpful diagnostics if server returns HTML
       const text = await response.text();
       let data;
       try {
@@ -64,29 +66,113 @@ export default function ChatWidget() {
         throw new Error(data.error || data.message || 'Chat request failed');
       }
 
-      // Remove loading message and add actual response
+      // Remove loading message(s) and add actual response
       setMessages(prev => {
         const withoutLoading = prev.filter(msg => !msg.isLoading);
-        return [...withoutLoading, {
-          role: 'bot',
-          content: data.response || "Sorry, I couldn't process that request.",
-          isLoading: false
-        }];
+        const botPayload = data.response || "Sorry, I couldn't process that request.";
+        return [...withoutLoading, { id: genId(), role: 'bot', content: botPayload }];
       });
     } catch (error) {
       console.error('Chat error:', error);
 
       setMessages(prev => {
         const withoutLoading = prev.filter(msg => !msg.isLoading);
-        return [...withoutLoading, {
-          role: 'bot',
-          content: `❌ ${error.message || 'Connection error. Please try again.'}`,
-          isLoading: false,
-          error: true
-        }];
+        return [...withoutLoading, { id: genId(), role: 'bot', content: `❌ ${error.message || 'Connection error. Please try again.'}`, isLoading: false, error: true }];
       });
     }
   };
+
+  // Child component: form that appears when backend returns report_prompt payload
+  function ReportForm({ payload, onStart }) {
+    const [reportType, setReportType] = useState(payload.options?.[0] || 'sales');
+    const [month, setMonth] = useState(payload.months?.[0] || 'All');
+    const [loading, setLoading] = useState(false);
+
+    const generateReport = async () => {
+      setLoading(true);
+      onStart && onStart(); // parent can show message
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('Please log in to generate reports.');
+
+        const resp = await fetch(`${API_BASE}/generate_report`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ report_type: reportType, month })
+        });
+
+        if (!resp.ok) {
+          const txt = await resp.text();
+          let parsed;
+          try { parsed = JSON.parse(txt); } catch { parsed = null; }
+          const msg = parsed?.error || parsed?.message || txt || 'Failed to generate report';
+          throw new Error(msg);
+        }
+
+        const blob = await resp.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const filename = resp.headers.get('Content-Disposition')?.match(/filename=(.*)$/)?.[1] || `${reportType}_report_${month}.pdf`;
+        a.href = url;
+        a.download = filename.replace(/['"]/g, '');
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        // Push a success message
+        pushBotMessage(`✅ ${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report for ${month} generated and downloaded.`);
+      } catch (err) {
+        pushBotMessage({ error: true, text: `❌ ${err.message}` });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+      <div className="space-y-2">
+        <div className="text-sm font-medium mb-1">{payload.title}</div>
+
+        <div className="flex space-x-2">
+          {payload.options.map(opt => (
+            <button
+              key={opt}
+              onClick={() => setReportType(opt)}
+              className={`px-3 py-1 rounded-md border ${reportType === opt ? 'bg-stockly-green text-slate-900 font-semibold' : 'bg-white dark:bg-gray-800'}`}
+            >
+              {opt.charAt(0).toUpperCase() + opt.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-2">
+          <label className="text-xs block mb-1">Select month</label>
+          <select
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+            className="w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-700"
+          >
+            {payload.months.map(m => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex justify-end mt-2">
+          <button
+            onClick={generateReport}
+            disabled={loading}
+            className="bg-stockly-green text-slate-900 px-4 py-1 rounded-lg hover:bg-emerald-400 font-semibold"
+          >
+            {loading ? 'Generating...' : 'Generate & Download PDF'}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -104,9 +190,9 @@ export default function ChatWidget() {
 
       {/* Chat window */}
       {isOpen && (
-        <div 
+        <div
           className="fixed bottom-24 right-6 z-50 
-                     w-80 sm:w-96 h-[480px] 
+                     w-80 sm:w-96 h-[520px] 
                      bg-white dark:bg-gray-800 
                      rounded-2xl shadow-2xl 
                      flex flex-col overflow-hidden"
@@ -115,9 +201,9 @@ export default function ChatWidget() {
           <div className="bg-gradient-to-r from-stockly-green to-emerald-400 text-slate-900 p-4 flex justify-between items-center font-semibold">
             <div>
               <h3 className="font-bold">Stockly Assistant</h3>
-              <p className="text-xs opacity-70 font-normal">Ask about stock, expiry, sales...</p>
+              <p className="text-xs opacity-70 font-normal">Ask about stock, expiry, sales, or generate reports...</p>
             </div>
-            <button 
+            <button
               onClick={() => setIsOpen(false)}
               className="text-slate-900 hover:opacity-70 transition"
             >
@@ -127,42 +213,56 @@ export default function ChatWidget() {
 
           {/* Messages */}
           <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50 dark:bg-gray-900">
-            {messages.map((msg, index) => (
+            {messages.map((msg) => (
               <div
-                key={index}
+                key={msg.id}
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
                   className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm whitespace-pre-wrap break-words
-                    ${msg.role === 'user' 
-                      ? 'bg-stockly-green text-slate-900 font-semibold rounded-br-none' 
-                      : msg.error
+                    ${msg.role === 'user'
+                      ? 'bg-stockly-green text-slate-900 font-semibold rounded-br-none'
+                      : msg.error || (msg.content && msg.content.error)
                         ? 'bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-100 rounded-bl-none'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-none'}`}
                 >
                   {msg.isLoading ? (
                     <div className="flex items-center space-x-2">
                       <span className="animate-bounce">●</span>
-                      <span className="animate-bounce" style={{animationDelay: '0.2s'}}>●</span>
-                      <span className="animate-bounce" style={{animationDelay: '0.4s'}}>●</span>
+                      <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>●</span>
+                      <span className="animate-bounce" style={{ animationDelay: '0.4s' }}>●</span>
                     </div>
                   ) : msg.role === 'user' ? (
                     msg.content
-                  ) : (
-                    // Parse markdown for bot messages
+                  ) : (typeof msg.content === 'object' && msg.content !== null && msg.content.type === 'report_prompt') ? (
+                    // Render report form component when backend returns structured prompt
+                    <ReportForm
+                      payload={msg.content}
+                      onStart={() => {
+                        // Insert a small 'Generating...' placeholder message so user sees progress
+                        addMessage({ role: 'bot', content: '⏳ Generating your report...', isLoading: true });
+                      }}
+                    />
+                  ) : typeof msg.content === 'object' && msg.content !== null && msg.content.text ? (
+                    // Backend returned structured error or message object
+                    msg.content.text
+                  ) : typeof msg.content === 'string' ? (
                     <ReactMarkdown
                       components={{
-                        p: ({node, ...props}) => <p {...props} className="mb-1 last:mb-0" />,
-                        strong: ({node, ...props}) => <strong {...props} className="font-bold" />,
-                        em: ({node, ...props}) => <em {...props} className="italic" />,
-                        ul: ({node, ...props}) => <ul {...props} className="list-disc list-inside mb-1" />,
-                        ol: ({node, ...props}) => <ol {...props} className="list-decimal list-inside mb-1" />,
-                        li: ({node, ...props}) => <li {...props} className="ml-2" />,
-                        code: ({node, ...props}) => <code {...props} className="bg-opacity-20 px-1 rounded" />,
+                        p: ({ node, ...props }) => <p {...props} className="mb-1 last:mb-0" />,
+                        strong: ({ node, ...props }) => <strong {...props} className="font-bold" />,
+                        em: ({ node, ...props }) => <em {...props} className="italic" />,
+                        ul: ({ node, ...props }) => <ul {...props} className="list-disc list-inside mb-1" />,
+                        ol: ({ node, ...props }) => <ol {...props} className="list-decimal list-inside mb-1" />,
+                        li: ({ node, ...props }) => <li {...props} className="ml-2" />,
+                        code: ({ node, ...props }) => <code {...props} className="bg-opacity-20 px-1 rounded" />,
                       }}
                     >
                       {msg.content}
                     </ReactMarkdown>
+                  ) : (
+                    // Fallback: stringify
+                    String(msg.content)
                   )}
                 </div>
               </div>
