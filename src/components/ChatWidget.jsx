@@ -1,7 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
+// ================================================================
+// ReportForm: MOVED OUTSIDE so it doesn't remount on parent re-render
+// ================================================================
+const ReportForm = React.memo(({ payload, API_BASE, pushBotMessage, addMessage }) => {
+  const [reportType, setReportType] = useState(payload.options?.[0] || 'sales');
+  const [month, setMonth] = useState(payload.months?.[0] || 'All');
+  const [loading, setLoading] = useState(false);
+
+  const generateReport = async () => {
+    setLoading(true);
+    addMessage({ role: 'bot', content: '⏳ Generating your report...', isLoading: true });
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('Please log in to generate reports.');
+
+      const resp = await fetch(`${API_BASE}/generate_report`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ report_type: reportType, month })
+      });
+
+      if (!resp.ok) {
+        const txt = await resp.text();
+        let parsed;
+        try { parsed = JSON.parse(txt); } catch { parsed = null; }
+        const msg = parsed?.error || parsed?.message || txt || 'Failed to generate report';
+        throw new Error(msg);
+      }
+
+      const blob = await resp.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const filename = resp.headers.get('Content-Disposition')?.match(/filename=(.*)$/)?.[1] || `${reportType}_report_${month}.pdf`;
+      a.href = url;
+      a.download = filename.replace(/['"]/g, '');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      // Push a success message
+      pushBotMessage(`✅ ${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report for ${month} generated and downloaded.`);
+    } catch (err) {
+      pushBotMessage({ error: true, text: `❌ ${err.message}` });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="text-sm font-medium mb-1">{payload.title}</div>
+
+      <div className="flex space-x-2">
+        {payload.options.map(opt => (
+          <button
+            key={opt}
+            onClick={() => setReportType(opt)}
+            className={`px-3 py-1 rounded-md border ${reportType === opt ? 'bg-stockly-green text-slate-900 font-semibold' : 'bg-white dark:bg-gray-800'}`}
+          >
+            {opt.charAt(0).toUpperCase() + opt.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-2">
+        <label className="text-xs block mb-1">Select month</label>
+        <select
+          value={month}
+          onChange={(e) => setMonth(e.target.value)}
+          className="w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-700"
+        >
+          {payload.months.map(m => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex justify-end mt-2">
+        <button
+          onClick={generateReport}
+          disabled={loading}
+          className="bg-stockly-green text-slate-900 px-4 py-1 rounded-lg hover:bg-emerald-400 font-semibold disabled:opacity-50"
+        >
+          {loading ? 'Generating...' : 'Generate & Download PDF'}
+        </button>
+      </div>
+    </div>
+  );
+});
+
+ReportForm.displayName = 'ReportForm';
+
+// ================================================================
+// Main ChatWidget Component
+// ================================================================
 export default function ChatWidget() {
   const genId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
@@ -11,27 +111,25 @@ export default function ChatWidget() {
   ]);
   const [input, setInput] = useState('');
 
-  // Use env var for API base; fallback to localhost for dev
   const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  const addMessage = (msg) => {
+  // Memoized addMessage so it doesn't change on every render
+  const addMessage = useCallback((msg) => {
     setMessages(prev => [...prev, { ...msg, id: genId() }]);
-  };
+  }, []);
 
-  // Helper: append a bot message (string or object)
-  const pushBotMessage = (payload) => {
+  // Memoized pushBotMessage
+  const pushBotMessage = useCallback((payload) => {
     addMessage({ role: 'bot', content: payload });
-  };
+  }, [addMessage]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    // Add user message
     addMessage({ role: 'user', content: input });
     const userQuery = input;
     setInput('');
 
-    // Add loading state
     addMessage({ role: 'bot', content: '⏳ Processing your query...', isLoading: true });
 
     try {
@@ -66,7 +164,6 @@ export default function ChatWidget() {
         throw new Error(data.error || data.message || 'Chat request failed');
       }
 
-      // Remove loading message(s) and add actual response
       setMessages(prev => {
         const withoutLoading = prev.filter(msg => !msg.isLoading);
         const botPayload = data.response || "Sorry, I couldn't process that request.";
@@ -81,98 +178,6 @@ export default function ChatWidget() {
       });
     }
   };
-
-  // Child component: form that appears when backend returns report_prompt payload
-  function ReportForm({ payload, onStart }) {
-    const [reportType, setReportType] = useState(payload.options?.[0] || 'sales');
-    const [month, setMonth] = useState(payload.months?.[0] || 'All');
-    const [loading, setLoading] = useState(false);
-
-    const generateReport = async () => {
-      setLoading(true);
-      onStart && onStart(); // parent can show message
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error('Please log in to generate reports.');
-
-        const resp = await fetch(`${API_BASE}/generate_report`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ report_type: reportType, month })
-        });
-
-        if (!resp.ok) {
-          const txt = await resp.text();
-          let parsed;
-          try { parsed = JSON.parse(txt); } catch { parsed = null; }
-          const msg = parsed?.error || parsed?.message || txt || 'Failed to generate report';
-          throw new Error(msg);
-        }
-
-        const blob = await resp.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        const filename = resp.headers.get('Content-Disposition')?.match(/filename=(.*)$/)?.[1] || `${reportType}_report_${month}.pdf`;
-        a.href = url;
-        a.download = filename.replace(/['"]/g, '');
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        // Push a success message
-        pushBotMessage(`✅ ${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report for ${month} generated and downloaded.`);
-      } catch (err) {
-        pushBotMessage({ error: true, text: `❌ ${err.message}` });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return (
-      <div className="space-y-2">
-        <div className="text-sm font-medium mb-1">{payload.title}</div>
-
-        <div className="flex space-x-2">
-          {payload.options.map(opt => (
-            <button
-              key={opt}
-              onClick={() => setReportType(opt)}
-              className={`px-3 py-1 rounded-md border ${reportType === opt ? 'bg-stockly-green text-slate-900 font-semibold' : 'bg-white dark:bg-gray-800'}`}
-            >
-              {opt.charAt(0).toUpperCase() + opt.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-2">
-          <label className="text-xs block mb-1">Select month</label>
-          <select
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border bg-white dark:bg-gray-700"
-          >
-            {payload.months.map(m => (
-              <option key={m} value={m}>{m}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-end mt-2">
-          <button
-            onClick={generateReport}
-            disabled={loading}
-            className="bg-stockly-green text-slate-900 px-4 py-1 rounded-lg hover:bg-emerald-400 font-semibold"
-          >
-            {loading ? 'Generating...' : 'Generate & Download PDF'}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -235,16 +240,13 @@ export default function ChatWidget() {
                   ) : msg.role === 'user' ? (
                     msg.content
                   ) : (typeof msg.content === 'object' && msg.content !== null && msg.content.type === 'report_prompt') ? (
-                    // Render report form component when backend returns structured prompt
                     <ReportForm
                       payload={msg.content}
-                      onStart={() => {
-                        // Insert a small 'Generating...' placeholder message so user sees progress
-                        addMessage({ role: 'bot', content: '⏳ Generating your report...', isLoading: true });
-                      }}
+                      API_BASE={API_BASE}
+                      pushBotMessage={pushBotMessage}
+                      addMessage={addMessage}
                     />
                   ) : typeof msg.content === 'object' && msg.content !== null && msg.content.text ? (
-                    // Backend returned structured error or message object
                     msg.content.text
                   ) : typeof msg.content === 'string' ? (
                     <ReactMarkdown
@@ -261,7 +263,6 @@ export default function ChatWidget() {
                       {msg.content}
                     </ReactMarkdown>
                   ) : (
-                    // Fallback: stringify
                     String(msg.content)
                   )}
                 </div>
