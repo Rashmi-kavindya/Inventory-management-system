@@ -1,6 +1,5 @@
-// src/components/ChatWidget.jsx
 import React, { useState } from 'react';
-import { MessageCircle, X } from 'lucide-react'; // or use heroicons if you prefer
+import { MessageCircle, X } from 'lucide-react';
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,28 +8,83 @@ export default function ChatWidget() {
   ]);
   const [input, setInput] = useState('');
 
-  const handleSend = () => {
+  // Use an env var for API base, fallback to localhost:5000
+  const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     // Add user message
     const userMsg = { role: 'user', content: input };
     setMessages(prev => [...prev, userMsg]);
+    const userQuery = input;
     setInput('');
 
-    // Sample bot reply
-    setTimeout(() => {
-      let botReply = "I'm still learning... Ask me about stock, expiry, sales or predictions!";
-      
-      if (input.toLowerCase().includes('stock') || input.toLowerCase().includes('quantity')) {
-        botReply = "You can check current stock levels in the Inventory section.";
-      } else if (input.toLowerCase().includes('expiry') || input.toLowerCase().includes('expire')) {
-        botReply = "Near expiry items are shown in the Expiry Alerts page.";
-      } else if (input.toLowerCase().includes('predict') || input.toLowerCase().includes('forecast')) {
-        botReply = "Go to the Predict page to forecast reorder quantities.";
+    // Add loading state
+    setMessages(prev => [...prev, { role: 'bot', content: '⏳ Processing your query...', isLoading: true }]);
+
+    try {
+      // Get JWT token from localStorage
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        setMessages(prev => {
+          const withoutLoading = prev.filter(msg => !msg.isLoading);
+          return [...withoutLoading, {
+            role: 'bot',
+            content: '❌ Please log in to use the chat assistant.',
+            isLoading: false,
+            error: true
+          }];
+        });
+        return;
       }
 
-      setMessages(prev => [...prev, { role: 'bot', content: botReply }]);
-    }, 800);
+      // Call backend chat endpoint (use absolute URL to avoid hitting frontend dev server HTML)
+      const response = await fetch(`${API_BASE}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ message: userQuery })
+      });
+
+      // Read as text first so we can show helpful diagnostics if server returns HTML
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        throw new Error('Invalid JSON response from server: ' + (text || '').slice(0, 1000));
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Chat request failed');
+      }
+
+      // Remove loading message and add actual response
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => !msg.isLoading);
+        return [...withoutLoading, {
+          role: 'bot',
+          content: data.response || "Sorry, I couldn't process that request.",
+          isLoading: false
+        }];
+      });
+    } catch (error) {
+      console.error('Chat error:', error);
+
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => !msg.isLoading);
+        return [...withoutLoading, {
+          role: 'bot',
+          content: `❌ ${error.message || 'Connection error. Please try again.'}`,
+          isLoading: false,
+          error: true
+        }];
+      });
+    }
   };
 
   return (
@@ -78,12 +132,22 @@ export default function ChatWidget() {
                 className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm
+                  className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm whitespace-pre-wrap break-words
                     ${msg.role === 'user' 
                       ? 'bg-stockly-green text-slate-900 font-semibold rounded-br-none' 
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-none'}`}
+                      : msg.error
+                        ? 'bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-100 rounded-bl-none'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-none'}`}
                 >
-                  {msg.content}
+                  {msg.isLoading ? (
+                    <div className="flex items-center space-x-2">
+                      <span className="animate-bounce">●</span>
+                      <span className="animate-bounce" style={{animationDelay: '0.2s'}}>●</span>
+                      <span className="animate-bounce" style={{animationDelay: '0.4s'}}>●</span>
+                    </div>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               </div>
             ))}
