@@ -18,6 +18,7 @@ import DeadstockAlerts from './pages/DeadstockAlerts';
 import Goals from './pages/Goals';
 import Login from './pages/Login';
 import logo from './assets/Logo - Stockly.png';
+import Calendar from './pages/Calendar';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -190,6 +191,7 @@ function App() {
           <Route path="/deadstock-alerts" element={<DeadstockAlerts />} />
           <Route path="/settings" element={<Settings />} />
           {role === 'manager' && <Route path="/create-user" element={<CreateUser />} />}
+          <Route path="/calendar" element={<Calendar />} />
         </Routes>
       </main>
     </div>

@@ -6,6 +6,7 @@ import { PlusIcon, ExclamationTriangleIcon, CloudIcon} from '@heroicons/react/24
 import dashboardImg from '../assets/img.png';
 import { useExpiry } from '../contexts/ExpiryContext';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ChatWidget from '../components/ChatWidget';
 
@@ -46,6 +47,7 @@ export default function Dashboard() {
   const { expiryDays } = useExpiry();
 
   const [forecastData, setForecastData] = useState([]);
+  const navigate = useNavigate();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -53,6 +55,8 @@ export default function Dashboard() {
     if (hour < 18) return 'Good Afternoon';
     return 'Good Evening';
   };
+
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   // ──────────────────────── EFFECTS ────────────────────────
   useEffect(() => {
@@ -141,6 +145,20 @@ export default function Dashboard() {
     }
   }, [weatherCity]); // ← only re‑create when city changes
 
+  const fetchUpcomingEvents = useCallback(async () => {
+    try {
+      const res = await axios.get('http://127.0.0.1:5000/events');
+      const today = new Date();
+      const upcoming = res.data
+        .filter(e => new Date(e.date) > today)
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 4);   // show max 4 events
+      setUpcomingEvents(upcoming);
+    } catch (err) {
+      console.error('Failed to load upcoming events:', err);
+    }
+  }, []);
+
   useEffect(() => {
     // fetchInventorySales(selectedItemId);
     if (selectedItemId) {
@@ -153,7 +171,8 @@ export default function Dashboard() {
     fetchItems();
     fetchWeather();
     fetchGoals();
-  }, [selectedItemId, expiryDays, fetchExpiry, fetchWeather, weatherCity]);
+    fetchUpcomingEvents();
+  }, [selectedItemId, expiryDays, fetchExpiry, fetchWeather, weatherCity, fetchUpcomingEvents]);
 
   useEffect(() => {
     // cycle through each alert's item lists every ~1500ms
@@ -324,6 +343,41 @@ export default function Dashboard() {
           ) : (
             <p className="text-gray-500">Click "Get Forecast" for weather-based stocking tips!</p>
           )}
+
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="font-semibold text-lg">Upcoming Festivals &amp; Events</h4>
+              <button
+                onClick={() => navigate('/calendar')}
+                className="text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
+              >
+                View Calendar →
+              </button>
+            </div>
+
+            {upcomingEvents.length > 0 ? (
+              <div className="space-y-3">
+                {upcomingEvents.map(event => (
+                  <div key={event.id} className="flex gap-4 bg-white/70 p-3 rounded-xl border border-gray-100">
+                    <div className="text-4xl">🎉</div>
+                    <div className="flex-1">
+                      <div className="font-medium">{event.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {new Date(event.date).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400 text-center py-4">No upcoming festivals in the next 30 days</p>
+            )}
+          </div>
+
         </div>
 
         <div className="card">
