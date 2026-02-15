@@ -265,6 +265,7 @@ export default function Dashboard() {
     type: 'pie',
     marker: { colors: ['#10B37F', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'] },
     textinfo: 'label+percent',
+    textposition: 'inside',
     insidetextorientation: 'radial'
   }] : [];
 
@@ -520,8 +521,9 @@ export default function Dashboard() {
             ))}
         </select>
         {salesData.length > 0 ? (
-          <div className="h-80 w-full flex-1">
+          <div className="h-[420px] w-full min-w-0 overflow-hidden">
             <Plot
+              useResizeHandler
               data={[
                 // Historical
                 {
@@ -545,12 +547,11 @@ export default function Dashboard() {
                 }] : [])
               ]}
               layout={{
-                title: 'Sales Trends + AI Forecast',
-                xaxis: { title: 'Month/Year' },
-                yaxis: { title: 'Units Sold' },
-                height: 350,
-                legend: { x: 0, y: 1.1, orientation: 'h' },
-                margin: { t: 60, b: 50, l: 50, r: 50 },
+                autosize: true,
+                xaxis: { title: 'Month/Year', automargin: true },
+                yaxis: { title: 'Units Sold', automargin: true },
+                legend: { x: 0, y: 1.08, orientation: 'h' },
+                margin: { t: 24, b: 60, l: 50, r: 20 },
                 hovermode: 'x unified'
               }}
               config={{ responsive: true, displayModeBar: false }}
@@ -567,13 +568,14 @@ export default function Dashboard() {
         <div className="card flex-1">
           <h2 className="text-xl font-semibold mb-4">Stock Distribution by Department</h2>
           {deptStockMap.length > 0 ? (
-            <div className="h-80 w-full flex-1">
+            <div className="h-[340px] w-full min-w-0 overflow-hidden">
               <Plot
+                useResizeHandler
                 data={pieData}
                 layout={{
-                  title: 'Total Stock by Department',
-                  height: 300,
-                  margin: { t: 40, b: 40, l: 40, r: 40 }
+                  autosize: true,
+                  showlegend: true,
+                  margin: { t: 8, b: 24, l: 24, r: 24 }
                 }}
                 config={{ responsive: true, displayModeBar: false }}
                 style={{ width: '100%', height: '100%' }}
@@ -589,15 +591,15 @@ export default function Dashboard() {
         <div className="card flex-1">
           <h2 className="text-xl font-semibold mb-4 flex items-center"><ExclamationTriangleIcon className="h-5 w-5 mr-2 text-yellow-500" /> Expiry Items by Type</h2>
           {expiryCounts.length > 0 ? (
-            <div className="h-80 w-full flex-1">
+            <div className="h-[340px] w-full min-w-0 overflow-hidden">
               <Plot
+                useResizeHandler
                 data={barData}
                 layout={{
-                  title: 'Near-Expiry Count by Type',
+                  autosize: true,
                   xaxis: { title: 'Type' },
                   yaxis: { title: 'Number of Items' },
-                  height: 300,
-                  margin: { t: 40, b: 40, l: 40, r: 40 }
+                  margin: { t: 10, b: 50, l: 50, r: 20 }
                 }}
                 config={{ responsive: true, displayModeBar: false }}
                 style={{ width: '100%', height: '100%' }}

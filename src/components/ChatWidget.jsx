@@ -190,7 +190,7 @@ export default function ChatWidget() {
       {/* Floating button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full 
+        className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full 
                    bg-gradient-to-br from-stockly-green to-teal-500 
                    text-slate-900 flex items-center justify-center 
                    shadow-2xl hover:scale-110 transition-transform duration-200"
