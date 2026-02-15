@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useLayoutEffect } from 'react';
 import axios from 'axios';
 import Plot from 'react-plotly.js';
-import { PlusIcon, ExclamationTriangleIcon, CloudIcon} from '@heroicons/react/24/outline';
+import { PlusIcon, ExclamationTriangleIcon, CloudIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import dashboardImg from '../assets/img.png';
 import { useExpiry } from '../contexts/ExpiryContext';
 import { useCallback } from 'react';
@@ -342,7 +342,7 @@ export default function Dashboard() {
 
           <div className="mt-6 pt-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="font-semibold text-lg">Upcoming Festivals & Events</h4>
+              <h4 className="font-semibold text-lg">Upcoming Holidays</h4>
               <button
                 onClick={() => navigate('/calendar')}
                 className="text-teal-600 hover:text-teal-700 text-sm font-medium flex items-center gap-1"
@@ -353,17 +353,25 @@ export default function Dashboard() {
 
             {upcomingEvents.length > 0 ? (
               <div className="space-y-3">
-                {upcomingEvents.slice(0, 4).map(event => (   // show first 4
-                  <div key={event.id} className="flex items-start gap-3 bg-white/60 p-3 rounded-xl border border-gray-100">
-                    <div className="text-3xl">🎉</div>
-                    <div>
-                      <p className="font-medium">{event.name}</p>
-                      <p className="text-sm text-gray-600">
+                {upcomingEvents.slice(0, 1).map(event => (
+                  <div key={event.id} className="flex items-start gap-3 bg-white p-3 rounded-xl border border-gray-100 border-l-4 border-l-teal-500 shadow-sm">
+                    <div className="mt-0.5 text-teal-600">
+                      <CalendarDaysIcon className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-gray-900">{event.name}</p>
+                      <p className="text-sm text-gray-600 mt-1">
                         {new Date(event.date).toLocaleDateString('en-US', {
                           weekday: 'short',
                           month: 'short',
                           day: 'numeric'
                         })}
+                      </p>
+                    </div>
+                    <div className="shrink-0 rounded-lg bg-teal-50 px-2 py-1 text-center">
+                      <p className="text-[10px] uppercase tracking-wide text-teal-700">Date</p>
+                      <p className="text-sm font-semibold text-teal-800">
+                        {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </p>
                     </div>
                   </div>

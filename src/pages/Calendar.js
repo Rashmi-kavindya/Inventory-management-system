@@ -1,6 +1,7 @@
 // src/pages/Calendar.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 
 export default function Calendar() {
   const [events, setEvents] = useState([]);
@@ -18,7 +19,7 @@ export default function Calendar() {
         setEvents([]);
       });
   }, [currentMonth]);   // re-fetch when user changes month/year
-  
+
   // Simple calendar grid
   const monthName = currentMonth.toLocaleString('default', { month: 'long' });
   const year = currentMonth.getFullYear();
@@ -38,7 +39,7 @@ export default function Calendar() {
   return (
     <div className="min-h-screen bg-gray-50 pt-20 px-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-2">Festival Calendar</h1>
+        <h1 className="text-4xl font-bold text-center mb-2">Calendar</h1>
         <p className="text-center text-gray-600 mb-8">Explore Sri Lankan festivals &amp; cultural celebrations</p>
 
         {/* Month Navigation */}
@@ -76,12 +77,18 @@ export default function Calendar() {
         {tab === 'list' && (
           <div className="space-y-6">
             {events.map(event => (
-              <div key={event.id} className="bg-white rounded-3xl shadow p-6 flex gap-6">
-                <div className="text-6xl">🎊</div>
-                <div>
+              <div key={event.id} className="bg-white rounded-3xl shadow p-6 flex gap-4 border-l-4 border-l-teal-500">
+                <div className="mt-1 text-teal-600">
+                  <CalendarDaysIcon className="h-6 w-6" />
+                </div>
+                <div className="flex-1 min-w-0">
                   <div className="text-2xl font-bold">{event.name}</div>
                   <div className="text-teal-600 text-xl mt-1">{new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
                   <p className="text-gray-600 mt-3 leading-relaxed">{event.description}</p>
+                </div>
+                <div className="shrink-0 self-start rounded-xl bg-teal-50 px-3 py-2 text-center">
+                  <p className="text-[10px] uppercase tracking-wide text-teal-700">Date</p>
+                  <p className="text-sm font-semibold text-teal-800">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
                 </div>
               </div>
             ))}
