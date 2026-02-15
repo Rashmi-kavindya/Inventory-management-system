@@ -345,7 +345,7 @@ export default function Dashboard() {
               <h4 className="font-semibold text-lg">Upcoming Holidays</h4>
               <button
                 onClick={() => navigate('/calendar')}
-                className="inline-flex items-center rounded-lg bg-teal-600 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1"
+                className="inline-flex items-center rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1"
               >
                 View Calendar
               </button>
