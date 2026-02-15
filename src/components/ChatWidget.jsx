@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import chatAssistantImg from '../assets/ChatAssistant.jpg';
 
 // ================================================================
 // ReportForm: MOVED OUTSIDE so it doesn't remount on parent re-render
@@ -195,13 +196,29 @@ export default function ChatWidget() {
                    shadow-2xl hover:scale-110 transition-transform duration-200"
         title="Chat with Stockly Assistant"
       >
-        {isOpen ? <X size={26} /> : <MessageCircle size={26} />}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-1 rounded-full border-2 border-stockly-green/80 animate-ping"
+        />
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-1 rounded-full border-2 border-stockly-blue/60"
+        />
+        {isOpen ? (
+          <X size={28} />
+        ) : (
+          <img
+            src={chatAssistantImg}
+            alt="Chat Assistant"
+            className="w-12 h-12 rounded-full object-cover border border-white/70"
+          />
+        )}
       </button>
 
       {/* Chat window */}
       {isOpen && (
         <div
-          className="fixed bottom-24 right-6 z-50 
+          className="fixed bottom-24 right-6 left-auto z-50 
                      w-80 sm:w-96 h-[520px] 
                      bg-white dark:bg-gray-800 
                      rounded-2xl shadow-2xl 
