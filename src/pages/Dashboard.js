@@ -340,14 +340,14 @@ export default function Dashboard() {
             <p className="text-gray-500">Click "Get Forecast" for weather-based stocking tips!</p>
           )}
 
-          <div className="mt-6 pt-4 border-t border-gray-200">
+          <div className="mt-10 pt-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold text-lg">Upcoming Holidays</h4>
               <button
                 onClick={() => navigate('/calendar')}
-                className="text-teal-600 hover:text-teal-700 text-sm font-medium flex items-center gap-1"
+                className="inline-flex items-center rounded-lg bg-teal-600 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1"
               >
-                View Calendar →
+                View Calendar
               </button>
             </div>
 
@@ -378,7 +378,7 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-400 text-center py-3">No upcoming festivals found</p>
+              <p className="text-gray-400 text-center py-3">No upcoming holidays found</p>
             )}
           </div>
 
@@ -615,3 +615,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

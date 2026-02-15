@@ -35,6 +35,11 @@ export default function Calendar() {
   const eventDates = new Set(
     events.map(e => new Date(e.date).toISOString().slice(0, 10))
   );
+  const eventNameByDate = events.reduce((acc, event) => {
+    const dateKey = new Date(event.date).toISOString().slice(0, 10);
+    if (!acc[dateKey]) acc[dateKey] = event.name;
+    return acc;
+  }, {});
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20 px-6">
@@ -60,15 +65,22 @@ export default function Calendar() {
           <div className="bg-white rounded-3xl shadow p-6">
             <div className="grid grid-cols-7 gap-2 text-center text-sm">
               {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => <div key={d} className="font-bold py-2">{d}</div>)}
-              {days.map((day, i) => (
-                <div
-                  key={i}
-                  className={`h-14 flex flex-col items-center justify-center rounded-2xl text-lg font-medium border-2 ${day && eventDates.has(`${year}-${String(currentMonth.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`) ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`}
-                >
-                  {day}
-                  {day && eventDates.has(`${year}-${String(currentMonth.getMonth()+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`) && <div className="text-[10px] text-orange-600">Festival</div>}
-                </div>
-              ))}
+              {days.map((day, i) => {
+                const dateKey = day
+                  ? `${year}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+                  : null;
+                const holidayName = dateKey ? eventNameByDate[dateKey] : null;
+
+                return (
+                  <div
+                    key={i}
+                    className={`h-14 flex flex-col items-center justify-center rounded-2xl text-lg font-medium border-2 px-1 ${day && eventDates.has(dateKey) ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`}
+                  >
+                    {day}
+                    {holidayName && <div className="w-full truncate text-[10px] text-orange-700">{holidayName}</div>}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
