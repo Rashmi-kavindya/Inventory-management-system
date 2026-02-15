@@ -8,11 +8,17 @@ export default function Calendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1, 1)); // February 2026
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/events')
-      .then(res => setEvents(res.data))
-      .catch(err => console.error(err));
-  }, []);
-
+    const year = currentMonth.getFullYear();
+    axios.get(`http://127.0.0.1:5000/api/festivals?year=${year}`)
+      .then(res => {
+        setEvents(res.data || []);
+      })
+      .catch(err => {
+        console.error(err);
+        setEvents([]);
+      });
+  }, [currentMonth]);   // re-fetch when user changes month/year
+  
   // Simple calendar grid
   const monthName = currentMonth.toLocaleString('default', { month: 'long' });
   const year = currentMonth.getFullYear();

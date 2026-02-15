@@ -147,15 +147,11 @@ export default function Dashboard() {
 
   const fetchUpcomingEvents = useCallback(async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:5000/events');
-      const today = new Date();
-      const upcoming = res.data
-        .filter(e => new Date(e.date) > today)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .slice(0, 4);   // show max 4 events
-      setUpcomingEvents(upcoming);
+      const res = await axios.get('http://127.0.0.1:5000/api/festivals/upcoming');
+      setUpcomingEvents(res.data || []);
     } catch (err) {
-      console.error('Failed to load upcoming events:', err);
+      console.error("Upcoming festivals fetch failed:", err);
+      setUpcomingEvents([]);
     }
   }, []);
 
@@ -344,12 +340,12 @@ export default function Dashboard() {
             <p className="text-gray-500">Click "Get Forecast" for weather-based stocking tips!</p>
           )}
 
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-lg">Upcoming Festivals &amp; Events</h4>
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-semibold text-lg">Upcoming Festivals & Events</h4>
               <button
                 onClick={() => navigate('/calendar')}
-                className="text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
+                className="text-teal-600 hover:text-teal-700 text-sm font-medium flex items-center gap-1"
               >
                 View Calendar →
               </button>
@@ -357,24 +353,24 @@ export default function Dashboard() {
 
             {upcomingEvents.length > 0 ? (
               <div className="space-y-3">
-                {upcomingEvents.map(event => (
-                  <div key={event.id} className="flex gap-4 bg-white/70 p-3 rounded-xl border border-gray-100">
-                    <div className="text-4xl">🎉</div>
-                    <div className="flex-1">
-                      <div className="font-medium">{event.name}</div>
-                      <div className="text-sm text-gray-500">
+                {upcomingEvents.slice(0, 4).map(event => (   // show first 4
+                  <div key={event.id} className="flex items-start gap-3 bg-white/60 p-3 rounded-xl border border-gray-100">
+                    <div className="text-3xl">🎉</div>
+                    <div>
+                      <p className="font-medium">{event.name}</p>
+                      <p className="text-sm text-gray-600">
                         {new Date(event.date).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          month: 'long',
+                          weekday: 'short',
+                          month: 'short',
                           day: 'numeric'
                         })}
-                      </div>
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-400 text-center py-4">No upcoming festivals in the next 30 days</p>
+              <p className="text-gray-400 text-center py-3">No upcoming festivals found</p>
             )}
           </div>
 
