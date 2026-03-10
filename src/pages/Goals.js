@@ -40,7 +40,9 @@ export default function Goals() {
         headers: { 'user_id': userId },
         params: { user_id: userId }
       });
-      setGoals(response.data);
+      const data = response.data;
+      const normalized = Array.isArray(data) ? data : (data && Array.isArray(data.goals) ? data.goals : []);
+      setGoals(normalized);
     } catch (err) {
       console.error('Failed to load goals:', err);
       toast.error('Failed to load goals');
@@ -135,7 +137,8 @@ export default function Goals() {
     return { text: `${daysRemaining} days left`, color: 'text-green-600 dark:text-green-400' };
   };
 
-  const sortedGoals = [...goals].sort((a, b) => {
+  const goalsList = Array.isArray(goals) ? goals : [];
+  const sortedGoals = [...goalsList].sort((a, b) => {
     const aDeadline = a.deadline ? new Date(a.deadline) : new Date('2099-12-31');
     const bDeadline = b.deadline ? new Date(b.deadline) : new Date('2099-12-31');
     return aDeadline - bDeadline;
@@ -159,27 +162,27 @@ export default function Goals() {
           </div>
         </div>
 
-        {goals.length > 0 && (
+        {goalsList.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Goals</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{goals.length}</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{goalsList.length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Completed</p>
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{goals.filter((g) => g.status === 'completed').length}</p>
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{goalsList.filter((g) => g.status === 'completed').length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">In Progress</p>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{goals.filter((g) => g.status === 'active').length}</p>
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{goalsList.filter((g) => g.status === 'active').length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Overdue</p>
-              <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">{goals.filter((g) => g.status === 'overdue').length}</p>
+              <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">{goalsList.filter((g) => g.status === 'overdue').length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Avg Progress</p>
-              <p className="text-3xl font-bold text-stockly-green dark:text-emerald-400 mt-2">{goals.length > 0 ? Math.round(goals.reduce((sum, g) => sum + getProgressPercentage(g), 0) / goals.length) : 0}%</p>
+              <p className="text-3xl font-bold text-stockly-green dark:text-emerald-400 mt-2">{goalsList.length > 0 ? Math.round(goalsList.reduce((sum, g) => sum + getProgressPercentage(g), 0) / goalsList.length) : 0}%</p>
             </div>
           </div>
         )}
@@ -223,7 +226,7 @@ export default function Goals() {
                           <div className={`h-3 rounded-full transition-all ${progress >= 100 ? 'bg-green-500' : progress >= 75 ? 'bg-blue-500' : progress >= 50 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${Math.min(progress, 100)}%` }}></div>
                         </div>
                       </div>
-                      {goal.deadline && <p className={`text-sm font-medium ${deadlineStatus.color}`}>📅 {deadlineStatus.text}</p>}
+                      {goal.deadline && <p className={`text-sm font-medium ${deadlineStatus.color}`}>Deadline: {deadlineStatus.text}</p>}
                     </div>
                     <div className="flex items-center gap-2 ml-4">
                       <button onClick={() => handleOpenModal(goal)} className="p-2 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-lg hover:bg-blue-100 hover:text-blue-600 transition" title="Edit goal">
@@ -246,7 +249,7 @@ export default function Goals() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
             <div className="sticky top-0 bg-gradient-to-r from-stockly-green to-emerald-400 text-slate-900 px-6 py-4 flex justify-between items-center">
               <h2 className="text-2xl font-bold text-slate-900">{isEditing ? 'Edit Sales Goal' : 'Create New Sales Goal'}</h2>
-              <button onClick={handleCloseModal} className="text-slate-900 hover:bg-slate-900/10 p-2 rounded-lg transition">✕</button>
+              <button onClick={handleCloseModal} className="text-slate-900 hover:bg-slate-900/10 p-2 rounded-lg transition">X</button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
