@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { X, Mic, PenLine } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import chatAssistantImg from '../assets/ChatAssistant.jpg';
 
@@ -114,10 +114,14 @@ export default function ChatWidget() {
   const genId = () => `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
   const [messages, setMessages] = useState([
     { id: genId(), role: 'bot', content: 'Hi! How can I help you with Stockly today?' }
   ]);
   const [input, setInput] = useState('');
+  const recognitionRef = useRef(null);
+  const baseInputRef = useRef('');
 
   const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -128,6 +132,62 @@ export default function ChatWidget() {
   const pushBotMessage = useCallback((payload) => {
     addMessage({ role: 'bot', content: payload });
   }, [addMessage]);
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setSpeechSupported(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = false;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0]?.transcript || '')
+        .join(' ')
+        .trim();
+
+      setInput((prev) => {
+        const base = baseInputRef.current || prev;
+        if (!transcript) return base;
+        return base ? `${base} ${transcript}` : transcript;
+      });
+    };
+
+    recognitionRef.current = recognition;
+    setSpeechSupported(true);
+
+    return () => {
+      recognitionRef.current = null;
+    };
+  }, []);
+
+  const handleMicClick = () => {
+    if (!speechSupported || !recognitionRef.current) {
+      alert('Speech-to-text is not supported in this browser.');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      return;
+    }
+
+    baseInputRef.current = input;
+    recognitionRef.current.start();
+  };
+
+  const handleNewChat = () => {
+    setMessages([{ id: genId(), role: 'bot', content: 'Hi! How can I help you with Stockly today?' }]);
+    setInput('');
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -228,12 +288,24 @@ export default function ChatWidget() {
               <h3 className="font-bold">Stockly Assistant</h3>
               <p className="text-xs opacity-70 font-normal">Ask about stock, expiry, sales, or generate reports...</p>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-slate-900 hover:opacity-70 transition"
-            >
-              <X size={20} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleNewChat}
+                className="text-slate-900 hover:opacity-80 transition"
+                title="New chat"
+                aria-label="New chat"
+              >
+                <PenLine size={18} />
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-slate-900 hover:opacity-70 transition"
+                title="Close chat"
+                aria-label="Close chat"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
@@ -293,6 +365,24 @@ export default function ChatWidget() {
           {/* Input area */}
           <div className="p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
             <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleMicClick}
+                className={`px-3 py-2.5 rounded-lg border border-stockly-200 bg-white text-stockly-900 shadow-sm transition 
+                  hover:bg-stockly-50 focus:outline-none focus:ring-2 focus:ring-stockly-300 
+                  dark:bg-stockly-900 dark:text-stockly-50 dark:border-stockly-800 dark:hover:bg-stockly-800 ${
+                    isListening ? 'ring-2 ring-stockly-400 bg-stockly-50 dark:bg-stockly-800' : ''
+                  }`}
+                title={speechSupported ? (isListening ? 'Stop listening' : 'Start voice input') : 'Speech-to-text not supported'}
+                aria-label="Voice input"
+              >
+                <span className="relative flex items-center justify-center">
+                  {isListening && (
+                    <span className="absolute -inset-1 rounded-full bg-stockly-300/40 animate-ping" />
+                  )}
+                  <Mic size={18} className={isListening ? 'text-stockly-700 dark:text-stockly-200' : ''} />
+                </span>
+              </button>
               <input
                 type="text"
                 value={input}
