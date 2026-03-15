@@ -96,7 +96,7 @@ const ReportForm = React.memo(({ payload, API_BASE, pushBotMessage, addMessage }
         <button
           onClick={generateReport}
           disabled={loading}
-          className="bg-stockly-green text-slate-900 px-6 py-2 rounded-lg hover:bg-emerald-500 font-semibold transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+          className="bg-stockly-green text-slate-900 px-6 py-2 rounded-lg hover:bg-stockly-500 font-semibold transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? '⏳ Generating...' : '📥 Generate & Download'}
         </button>
@@ -191,7 +191,7 @@ export default function ChatWidget() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full 
-                   bg-gradient-to-br from-stockly-green to-teal-500 
+                   bg-gradient-to-br from-stockly-green to-stockly-500 
                    text-slate-900 flex items-center justify-center 
                    shadow-2xl hover:shadow-[0_12px_28px_rgba(16,185,129,0.45)] transition-shadow duration-200"
         title="Chat with Stockly Assistant"
@@ -223,7 +223,7 @@ export default function ChatWidget() {
                      flex flex-col overflow-hidden"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-stockly-green to-emerald-400 text-slate-900 p-4 flex justify-between items-center font-semibold">
+          <div className="bg-gradient-to-r from-stockly-green to-stockly-400 text-slate-900 p-4 flex justify-between items-center font-semibold">
             <div>
               <h3 className="font-bold">Stockly Assistant</h3>
               <p className="text-xs opacity-70 font-normal">Ask about stock, expiry, sales, or generate reports...</p>
@@ -305,7 +305,7 @@ export default function ChatWidget() {
               />
               <button
                 onClick={handleSend}
-                className="bg-stockly-green text-slate-900 px-4 py-2.5 rounded-lg hover:bg-emerald-500 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+                className="bg-stockly-green text-slate-900 px-4 py-2.5 rounded-lg hover:bg-stockly-500 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 ➤
               </button>
@@ -316,3 +316,5 @@ export default function ChatWidget() {
     </>
   );
 }
+
+

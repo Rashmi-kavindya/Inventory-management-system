@@ -71,7 +71,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* NAVBAR */}
-      <nav className="bg-gradient-to-r from-stockly-blue to-teal-600 dark:from-slate-900 dark:to-slate-800 shadow-2xl fixed top-0 left-0 right-0 z-50 border-b-4 border-stockly-green">
+      <nav className="bg-gradient-to-r from-stockly-blue to-stockly-600 dark:from-slate-900 dark:to-slate-800 shadow-2xl fixed top-0 left-0 right-0 z-50 border-b-4 border-stockly-green">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo + Name */}
@@ -102,9 +102,9 @@ function App() {
                 </button>
                 {isAlertsOpen && (
                   <div className="absolute top-12 left-0 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-stockly-green dark:border-stockly-green/50 w-56">
-                    <Link to="/expiry-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Expiry Alerts</Link>
-                    <Link to="/restock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Restock Alerts</Link>
-                    <Link to="/deadstock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition border-t dark:border-gray-700">Dead Stock Alerts</Link>
+                    <Link to="/expiry-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Expiry Alerts</Link>
+                    <Link to="/restock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Restock Alerts</Link>
+                    <Link to="/deadstock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition border-t dark:border-gray-700">Dead Stock Alerts</Link>
                   </div>
                 )}
               </div>
@@ -124,16 +124,16 @@ function App() {
               {isProfileOpen && (
                 <div className="absolute top-14 right-0 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-stockly-green dark:border-stockly-green/50 w-64">
                   {role === 'manager' && (
-                    <Link to="/create-user" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">
+                    <Link to="/create-user" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">
                       <UserPlusIcon className="h-5 w-5" /> Create User
                     </Link>
                   )}
-                  <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">
+                  <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">
                     <Cog6ToothIcon className="h-5 w-5" /> Settings
                   </Link>
                   <button
                     onClick={() => { setIsDark(!isDark); setIsProfileOpen(false); }}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-green-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition w-full text-left"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition w-full text-left"
                   >
                     {isDark ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
                     {isDark ? 'Light Mode' : 'Dark Mode'}
@@ -162,7 +162,7 @@ function App() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-gradient-to-b from-stockly-blue to-teal-600 dark:from-slate-800 dark:to-slate-900 animate-slide-down">
+          <div className="md:hidden bg-gradient-to-b from-stockly-blue to-stockly-600 dark:from-slate-800 dark:to-slate-900 animate-slide-down">
             <div className="px-4 pt-2 pb-4 space-y-2">
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={`block px-4 py-3 text-white rounded-lg transition ${isActive('/') ? 'bg-stockly-green text-slate-900 font-semibold' : 'hover:bg-white/20'}`}>Dashboard</Link>
               <Link to="/inventory" onClick={() => setIsMobileMenuOpen(false)} className={`block px-4 py-3 text-white rounded-lg transition ${isActive('/inventory') ? 'bg-stockly-green text-slate-900 font-semibold' : 'hover:bg-white/20'}`}>Inventory</Link>
@@ -199,3 +199,4 @@ function App() {
 }
 
 export default App;
+

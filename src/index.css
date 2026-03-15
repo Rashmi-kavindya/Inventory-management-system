@@ -11,7 +11,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply bg-gradient-to-br from-slate-50 via-slate-50 to-teal-50 min-h-screen;
+  @apply bg-gradient-to-br from-stockly-50 via-stockly-50 to-stockly-100 min-h-screen;
 }
 
 code {
@@ -20,31 +20,31 @@ code {
 
 /* ──────────────────────── DARK MODE ──────────────────────── */
 .dark body {
-  @apply bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800;
+  @apply bg-gradient-to-br from-stockly-950 via-stockly-950 to-stockly-900;
 }
 
 .dark .card {
-  @apply bg-slate-800 border-slate-700 text-gray-100 shadow-xl;
+  @apply bg-stockly-900 border-stockly-800 text-stockly-50 shadow-xl;
 }
 
 .dark .btn-primary {
-  @apply bg-stockly-green hover:bg-emerald-400 text-slate-900 font-semibold shadow-lg hover:shadow-xl;
+  @apply bg-stockly-400 hover:bg-stockly-500 text-stockly-950 font-semibold shadow-lg hover:shadow-xl;
 }
 
 .dark .btn-secondary {
-  @apply bg-stockly-blue hover:bg-blue-600 text-white shadow-lg hover:shadow-xl;
+  @apply bg-stockly-800 hover:bg-stockly-900 text-stockly-50 shadow-lg hover:shadow-xl;
 }
 
 .dark .navbar-link {
-  @apply text-gray-300 hover:text-stockly-green font-medium;
+  @apply text-stockly-100 hover:text-stockly-400 font-medium;
 }
 
 .dark .navbar-link-active {
-  @apply text-stockly-green border-stockly-green bg-stockly-green/20 font-semibold;
+  @apply text-stockly-200 border-stockly-400 bg-stockly-950/40 font-semibold;
 }
 
 .dark .text-gradient {
-  @apply bg-gradient-to-r from-stockly-green to-teal-400 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-stockly-400 to-stockly-200 bg-clip-text text-transparent;
 }
 
 .dark table {
@@ -52,41 +52,41 @@ code {
 }
 
 .dark th {
-  @apply bg-slate-800 text-gray-300 font-semibold border-b-2 border-stockly-green/30;
+  @apply bg-stockly-900 text-stockly-100 font-semibold border-b-2 border-stockly-700/40;
 }
 
 .dark td {
-  @apply border-slate-700;
+  @apply border-stockly-800;
 }
 
 .dark input, .dark select, .dark textarea {
-  @apply bg-slate-700 border-slate-600 text-gray-100 placeholder-gray-400 focus:border-stockly-green focus:ring-stockly-green;
+  @apply bg-stockly-900 border-stockly-800 text-stockly-100 placeholder-stockly-200 focus:border-stockly-400 focus:ring-stockly-400;
 }
 
 /* ──────────────────────── COMPONENTS ──────────────────────── */
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 font-semibold px-5 py-2.5 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 hover:shadow-xl;
+    @apply bg-gradient-to-r from-stockly-400 to-stockly-300 hover:from-stockly-500 hover:to-stockly-400 text-stockly-950 font-semibold px-5 py-2.5 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105 hover:shadow-xl;
   }
 
   .btn-secondary {
-    @apply bg-gradient-to-r from-stockly-blue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl;
+    @apply bg-gradient-to-r from-stockly-900 to-stockly-800 hover:from-stockly-950 hover:to-stockly-900 text-stockly-50 font-semibold px-5 py-2.5 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl;
   }
 
   .card {
-    @apply bg-white p-6 rounded-2xl shadow-lg border-2 border-green-100 hover:shadow-2xl hover:border-stockly-green/30 transition-all duration-300;
+    @apply bg-white p-6 rounded-2xl shadow-lg border-2 border-stockly-100 hover:shadow-2xl hover:border-stockly-200 transition-all duration-300;
   }
 
   .navbar-link {
-    @apply flex items-center px-3 py-2 text-gray-700 hover:text-stockly-green font-semibold transition-all duration-200 rounded-lg hover:bg-green-50;
+    @apply flex items-center px-3 py-2 text-stockly-900 hover:text-stockly-500 font-semibold transition-all duration-200 rounded-lg hover:bg-stockly-50;
   }
 
   .navbar-link-active {
-    @apply text-stockly-green border-b-2 border-stockly-green font-bold bg-green-50;
+    @apply text-stockly-900 border-b-2 border-stockly-400 font-bold bg-stockly-100;
   }
 
   .text-gradient {
-    @apply bg-gradient-to-r from-stockly-green to-teal-500 bg-clip-text text-transparent font-bold;
+    @apply bg-gradient-to-r from-stockly-600 to-stockly-300 bg-clip-text text-transparent font-bold;
   }
 
   /* Enhanced Alert Styles */
@@ -104,15 +104,17 @@ code {
 
   /* Progress Bar Enhanced */
   .progress-bar {
-    @apply relative h-3 rounded-full bg-gray-200 dark:bg-slate-700 overflow-hidden shadow-inner;
+    @apply relative h-3 rounded-full bg-stockly-100 dark:bg-stockly-900 overflow-hidden shadow-inner;
   }
 
   .progress-fill {
-    @apply h-full rounded-full bg-gradient-to-r from-stockly-green to-emerald-400 transition-all duration-500 shadow-lg;
+    @apply h-full rounded-full bg-gradient-to-r from-stockly-400 to-stockly-300 transition-all duration-500 shadow-lg;
   }
 
   /* Input Focus Enhancement */
   input:focus, select:focus, textarea:focus {
-    @apply border-stockly-green ring-2 ring-stockly-green/30 outline-none;
+    @apply border-stockly-400 ring-2 ring-stockly-300/30 outline-none;
   }
 }
+
+

@@ -46,7 +46,7 @@ export default function ExpiryAlerts() {
         />
         <button
           onClick={handleUpdate}
-          className="bg-stockly-green text-slate-900 px-3 py-1 rounded hover:bg-emerald-400 transition font-semibold"
+          className="bg-stockly-green text-slate-900 px-3 py-1 rounded hover:bg-stockly-400 transition font-semibold"
         >
           Update
         </button>
@@ -56,12 +56,13 @@ export default function ExpiryAlerts() {
           <div key={item.id || item.product_name} className="bg-yellow-50 p-4 rounded border-l-4 border-yellow-400">
             <h3 className="font-semibold">{item.product_name}</h3>
             <p>Stock: {item.stock_quantity} | Days Left: {item.days_left}</p>
-            <p className="text-stockly-green dark:text-emerald-400 font-medium">Suggested Discount: {item.recommended_discount}%</p>
+            <p className="text-stockly-green dark:text-stockly-400 font-medium">Suggested Discount: {item.recommended_discount}%</p>
             <p className="text-blue-600">Bundle: {item.bundling_suggestion}</p>
-            <p className="text-green-600">Tip: {item.loyalty_tip}</p>
+            <p className="text-stockly-600">Tip: {item.loyalty_tip}</p>
           </div>
         ))}
       </div>
     </div>
   );
 }
+

@@ -120,7 +120,7 @@ export default function Goals() {
 
   const getStatusColor = (goal) => {
     const progress = getProgressPercentage(goal);
-    if (progress >= 100) return 'text-green-600 dark:text-green-400';
+    if (progress >= 100) return 'text-stockly-600 dark:text-stockly-400';
     if (progress >= 75) return 'text-blue-600 dark:text-blue-400';
     if (progress >= 50) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
@@ -134,7 +134,7 @@ export default function Goals() {
     if (daysRemaining < 0) return { text: 'Expired', color: 'text-red-600 dark:text-red-400' };
     if (daysRemaining === 0) return { text: 'Today', color: 'text-red-600 dark:text-red-400' };
     if (daysRemaining <= 7) return { text: `${daysRemaining} days left`, color: 'text-orange-600 dark:text-orange-400' };
-    return { text: `${daysRemaining} days left`, color: 'text-green-600 dark:text-green-400' };
+    return { text: `${daysRemaining} days left`, color: 'text-stockly-600 dark:text-stockly-400' };
   };
 
   const goalsList = Array.isArray(goals) ? goals : [];
@@ -156,7 +156,7 @@ export default function Goals() {
             <button onClick={fetchGoals} className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 px-4 rounded-lg transition">
               Refresh
             </button>
-            <button onClick={() => handleOpenModal()} className="bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl">
+            <button onClick={() => handleOpenModal()} className="bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl">
               <PlusIcon className="h-5 w-5" /> New Goal
             </button>
           </div>
@@ -170,7 +170,7 @@ export default function Goals() {
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Completed</p>
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{goalsList.filter((g) => g.status === 'completed').length}</p>
+              <p className="text-3xl font-bold text-stockly-600 dark:text-stockly-400 mt-2">{goalsList.filter((g) => g.status === 'completed').length}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">In Progress</p>
@@ -182,7 +182,7 @@ export default function Goals() {
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
               <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Avg Progress</p>
-              <p className="text-3xl font-bold text-stockly-green dark:text-emerald-400 mt-2">{goalsList.length > 0 ? Math.round(goalsList.reduce((sum, g) => sum + getProgressPercentage(g), 0) / goalsList.length) : 0}%</p>
+              <p className="text-3xl font-bold text-stockly-green dark:text-stockly-400 mt-2">{goalsList.length > 0 ? Math.round(goalsList.reduce((sum, g) => sum + getProgressPercentage(g), 0) / goalsList.length) : 0}%</p>
             </div>
           </div>
         )}
@@ -195,7 +195,7 @@ export default function Goals() {
           ) : sortedGoals.length === 0 ? (
             <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center shadow-md">
               <p className="text-gray-600 dark:text-gray-400 mb-4">No goals yet. Create one to get started!</p>
-              <button onClick={() => handleOpenModal()} className="bg-stockly-green hover:bg-emerald-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition">
+              <button onClick={() => handleOpenModal()} className="bg-stockly-green hover:bg-stockly-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition">
                 Create Your First Goal
               </button>
             </div>
@@ -204,13 +204,13 @@ export default function Goals() {
               const progress = getProgressPercentage(goal);
               const deadlineStatus = getDeadlineStatus(goal.deadline);
               return (
-                <div key={goal.id} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md border-l-4 border-stockly-green transition hover:shadow-lg hover:border-emerald-400">
+                <div key={goal.id} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md border-l-4 border-stockly-green transition hover:shadow-lg hover:border-stockly-400">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{goal.title}</h3>
                         <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                          goal.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                          goal.status === 'completed' ? 'bg-stockly-100 text-stockly-800 dark:bg-stockly-900 dark:text-stockly-200' :
                           goal.status === 'overdue' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
                           'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
                         }`}>{goal.status}</span>
@@ -223,7 +223,7 @@ export default function Goals() {
                           <span className={`text-sm font-bold ${getStatusColor(goal)}`}>{progress.toFixed(1)}%</span>
                         </div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
-                          <div className={`h-3 rounded-full transition-all ${progress >= 100 ? 'bg-green-500' : progress >= 75 ? 'bg-blue-500' : progress >= 50 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${Math.min(progress, 100)}%` }}></div>
+                          <div className={`h-3 rounded-full transition-all ${progress >= 100 ? 'bg-stockly-500' : progress >= 75 ? 'bg-blue-500' : progress >= 50 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${Math.min(progress, 100)}%` }}></div>
                         </div>
                       </div>
                       {goal.deadline && <p className={`text-sm font-medium ${deadlineStatus.color}`}>Deadline: {deadlineStatus.text}</p>}
@@ -247,7 +247,7 @@ export default function Goals() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-stockly-green to-emerald-400 text-slate-900 px-6 py-4 flex justify-between items-center">
+            <div className="sticky top-0 bg-gradient-to-r from-stockly-green to-stockly-400 text-slate-900 px-6 py-4 flex justify-between items-center">
               <h2 className="text-2xl font-bold text-slate-900">{isEditing ? 'Edit Sales Goal' : 'Create New Sales Goal'}</h2>
               <button onClick={handleCloseModal} className="text-slate-900 hover:bg-slate-900/10 p-2 rounded-lg transition">X</button>
             </div>
@@ -284,7 +284,7 @@ export default function Goals() {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <button type="submit" className="flex-1 bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition shadow-lg hover:shadow-xl">
+                <button type="submit" className="flex-1 bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition shadow-lg hover:shadow-xl">
                   {isEditing ? 'Update Goal' : 'Create Goal'}
                 </button>
                 <button type="button" onClick={handleCloseModal} className="flex-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-900 dark:text-white font-semibold py-2 px-4 rounded-lg transition">
@@ -298,3 +298,5 @@ export default function Goals() {
     </div>
   );
 }
+
+

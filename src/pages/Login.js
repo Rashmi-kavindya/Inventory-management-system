@@ -35,7 +35,7 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-teal-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-stockly-50 to-stockly-50 dark:from-slate-900 dark:via-slate-800 dark:to-stockly-900 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-stockly-green/20 p-8">
         <div className="flex justify-center mb-8">
           <img src={logo} alt="Stockly" className="h-24 w-24 rounded-full shadow-lg ring-2 ring-stockly-green" />
@@ -44,10 +44,11 @@ export default function Login({ onLogin }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <input type="text" name="username" placeholder="Username" onChange={handleChange} required className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-stockly-green dark:bg-slate-700 dark:text-white transition" />
           <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-stockly-green dark:bg-slate-700 dark:text-white transition" />
-          <button type="submit" className="w-full bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition">Login</button>
+          <button type="submit" className="w-full bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition">Login</button>
         </form>
         {error && <p className="mt-4 text-red-600 text-center font-semibold">Error: {error}</p>}
       </div>
     </div>
   );
 }
+

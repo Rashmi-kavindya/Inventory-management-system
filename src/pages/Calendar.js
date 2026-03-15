@@ -89,18 +89,18 @@ export default function Calendar() {
         {tab === 'list' && (
           <div className="space-y-6">
             {events.map(event => (
-              <div key={event.id} className="bg-white rounded-3xl shadow p-6 flex gap-4 border-l-4 border-l-teal-500">
-                <div className="mt-1 text-teal-600">
+              <div key={event.id} className="bg-white rounded-3xl shadow p-6 flex gap-4 border-l-4 border-l-stockly-500">
+                <div className="mt-1 text-stockly-600">
                   <CalendarDaysIcon className="h-6 w-6" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-2xl font-bold">{event.name}</div>
-                  <div className="text-teal-600 text-xl mt-1">{new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+                  <div className="text-stockly-600 text-xl mt-1">{new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
                   <p className="text-gray-600 mt-3 leading-relaxed">{event.description}</p>
                 </div>
-                <div className="shrink-0 self-start rounded-xl bg-teal-50 px-3 py-2 text-center">
-                  <p className="text-[10px] uppercase tracking-wide text-teal-700">Date</p>
-                  <p className="text-sm font-semibold text-teal-800">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                <div className="shrink-0 self-start rounded-xl bg-stockly-50 px-3 py-2 text-center">
+                  <p className="text-[10px] uppercase tracking-wide text-stockly-700">Date</p>
+                  <p className="text-sm font-semibold text-stockly-800">{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
                 </div>
               </div>
             ))}
@@ -110,3 +110,5 @@ export default function Calendar() {
     </div>
   );
 }
+
+

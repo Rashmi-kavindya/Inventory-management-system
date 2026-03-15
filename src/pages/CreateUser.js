@@ -111,7 +111,7 @@ export default function CreateUser() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 py-4 rounded-lg font-bold text-lg hover:shadow-xl transition"
+                className="flex-1 bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 py-4 rounded-lg font-bold text-lg hover:shadow-xl transition"
               >
                 {editingUser ? 'Update User' : 'Create User'}
               </button>
@@ -126,13 +126,13 @@ export default function CreateUser() {
               )}
             </div>
           </form>
-          {message && <p className="mt-6 text-green-600 text-center font-semibold text-lg">{message}</p>}
+          {message && <p className="mt-6 text-stockly-600 text-center font-semibold text-lg">{message}</p>}
           {error && <p className="mt-6 text-red-600 text-center font-semibold text-lg">Error: {error}</p>}
         </div>
 
         {/* User List */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-stockly-green to-emerald-400 p-6">
+          <div className="bg-gradient-to-r from-stockly-green to-stockly-400 p-6">
             <h2 className="text-2xl font-bold text-slate-900">All Users ({users.length})</h2>
           </div>
           {loading ? (
@@ -141,7 +141,7 @@ export default function CreateUser() {
             <p className="text-center py-10 text-gray-500">No users found.</p>
           ) : (
             <table className="w-full">
-              <thead className="bg-green-100 dark:bg-slate-700">
+              <thead className="bg-stockly-100 dark:bg-slate-700">
                 <tr>
                   <th className="px-6 py-4 text-left text-stockly-blue dark:text-stockly-green font-bold">Username</th>
                   <th className="px-6 py-4 text-left text-stockly-blue dark:text-stockly-green font-bold">Role</th>
@@ -150,7 +150,7 @@ export default function CreateUser() {
               </thead>
               <tbody>
                 {users.map(user => (
-                  <tr key={user.id} className="border-t dark:border-gray-700 hover:bg-green-50 dark:hover:bg-slate-700/50 transition">
+                  <tr key={user.id} className="border-t dark:border-gray-700 hover:bg-stockly-50 dark:hover:bg-slate-700/50 transition">
                     <td className="px-6 py-4 font-medium flex items-center justify-between">
                       <span>{user.username}</span>
                       <div className="ml-4 flex items-center gap-2">
@@ -166,7 +166,7 @@ export default function CreateUser() {
                       <span className={`px-4 py-2 rounded-full text-xs font-bold ${
                         user.role === 'manager'
                           ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-                          : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                          : 'bg-stockly-100 text-stockly-700 dark:bg-stockly-900 dark:text-stockly-300'
                       }`}>
                         {user.role.toUpperCase()}
                       </span>
@@ -182,3 +182,4 @@ export default function CreateUser() {
     </div>
   );
 }
+

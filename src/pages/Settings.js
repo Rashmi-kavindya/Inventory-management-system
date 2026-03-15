@@ -67,7 +67,7 @@ export default function Settings() {
 
             <button
               onClick={handleSave}
-              className="w-full bg-gradient-to-r from-stockly-green to-emerald-400 hover:from-emerald-400 hover:to-teal-400 text-slate-900 py-3 rounded-lg font-semibold hover:shadow-lg transition shadow-lg"
+              className="w-full bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 py-3 rounded-lg font-semibold hover:shadow-lg transition shadow-lg"
             >
               Save Changes
             </button>
@@ -77,3 +77,4 @@ export default function Settings() {
     </div>
   );
 }
+

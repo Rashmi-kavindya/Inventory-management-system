@@ -5,18 +5,29 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'stockly-green': '#40dfaf',
-        'stockly-blue': '#1b66a3',
-        'stockly-teal': '#14b8a6',
-        'stockly-navy': '#0f172a',
+        'stockly-green': '#F4992A',
+        'stockly-blue': '#442704',
+        'stockly-teal': '#F7B564',
+        'stockly-navy': '#180E01',
+        'stockly-50': '#FEF3E7',
+        'stockly-100': '#FBDFBB',
+        'stockly-200': '#F9CA90',
+        'stockly-300': '#F7B564',
+        'stockly-400': '#F4992A',
+        'stockly-500': '#F28B0D',
+        'stockly-600': '#C7720A',
+        'stockly-700': '#9B5908',
+        'stockly-800': '#6F4006',
+        'stockly-900': '#442704',
+        'stockly-950': '#180E01',
       },
       backgroundImage: {
-        'gradient-cover': 'linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%)',
-        'gradient-cover-dark': 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        'gradient-cover': 'linear-gradient(135deg, #FEF3E7 0%, #FBDFBB 100%)',
+        'gradient-cover-dark': 'linear-gradient(135deg, #180E01 0%, #442704 100%)',
       },
       boxShadow: {
-        'glow': '0 0 20px rgba(64, 223, 175, 0.3)',
-        'glow-lg': '0 0 30px rgba(64, 223, 175, 0.4)',
+        'glow': '0 0 20px rgba(244, 153, 42, 0.28)',
+        'glow-lg': '0 0 30px rgba(244, 153, 42, 0.38)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in',
