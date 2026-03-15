@@ -204,15 +204,13 @@ export default function ChatWidget() {
           aria-hidden="true"
           className="pointer-events-none absolute -inset-1 rounded-full border-2 border-stockly-blue/60"
         />
-        {isOpen ? (
-          <X size={28} />
-        ) : (
-          <img
-            src={chatAssistantImg}
-            alt="Chat Assistant"
-            className="w-12 h-12 rounded-full object-cover border border-white/70"
-          />
-        )}
+        <img
+          src={chatAssistantImg}
+          alt="Chat Assistant"
+          className={`w-12 h-12 rounded-full object-cover border border-white/70 transition-opacity ${
+            isOpen ? 'opacity-80' : 'opacity-100'
+          }`}
+        />
       </button>
 
       {/* Chat window */}
