@@ -193,7 +193,7 @@ export default function ChatWidget() {
         className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full 
                    bg-gradient-to-br from-stockly-green to-teal-500 
                    text-slate-900 flex items-center justify-center 
-                   shadow-2xl hover:scale-110 transition-transform duration-200"
+                   shadow-2xl hover:shadow-[0_12px_28px_rgba(16,185,129,0.45)] transition-shadow duration-200"
         title="Chat with Stockly Assistant"
       >
         <span
