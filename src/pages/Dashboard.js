@@ -111,14 +111,20 @@ export default function Dashboard() {
 
   const fetchExpiry = useCallback(async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:5000/near_expiry?days=${expiryDays}`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`http://127.0.0.1:5000/near_expiry?days=${expiryDays}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
       setExpiryItems(response.data);
     } catch (err) { console.error(err); }
   }, [expiryDays]);
 
   const fetchDeadStock = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/dead_stock?months_back=3');
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://127.0.0.1:5000/dead_stock?months_back=3', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
       setDeadStock(response.data);
     } catch (err) { console.error(err); }
   };
@@ -283,6 +289,65 @@ export default function Dashboard() {
     marker: { color: '#F59E0B' }
   }];
 
+  const bundleSuggestions = useMemo(() => {
+    const normalizeBundleArrays = (item, sourceLabel) => {
+      const raw =
+        item.bundles ||
+        item.bundle_suggestions ||
+        item.bundle_recommendations ||
+        item.suggested_bundles ||
+        [];
+      if (!Array.isArray(raw)) return [];
+      return raw.map((bundle, idx) => ({
+        id: bundle.bundle_id || bundle.id || `${sourceLabel}_${item.item_id || item.id || idx}`,
+        title: bundle.name || bundle.bundle_name || bundle.title || item.product_name || item.item_name || 'Bundle',
+        items: bundle.items || bundle.products || bundle.bundle_items || bundle.items_list || [],
+        discount: bundle.discount || bundle.discount_pct || bundle.discount_percent || bundle.discount_rate,
+        reason: bundle.reason || bundle.strategy || bundle.match_type || bundle.source,
+        source: sourceLabel,
+      }));
+    };
+
+    const normalizeBundleWith = (item, sourceLabel) => {
+      const bundleWith = item.bundle_with || item.bundleWith || [];
+      if (!Array.isArray(bundleWith) || bundleWith.length === 0) return [];
+      const primary = item.product_name || item.item_name || item.name || 'Item';
+      return [{
+        id: `${sourceLabel}_${item.item_id || item.id || primary}`,
+        title: `Bundle: ${primary}`,
+        items: [primary, ...bundleWith],
+        discount: item.recommended_discount || item.discount,
+        reason: item.bundling_suggestion || item.recommendation,
+        source: sourceLabel,
+      }];
+    };
+
+    const collect = (list, sourceLabel) => {
+      if (!Array.isArray(list)) return [];
+      return list.flatMap((item) => ([
+        ...normalizeBundleArrays(item, sourceLabel),
+        ...normalizeBundleWith(item, sourceLabel),
+      ]));
+    };
+
+    const suggestions = [
+      ...collect(expiryItems, 'Near Expiry'),
+      ...collect(deadStock, 'Dead Stock'),
+    ];
+
+    const deduped = [];
+    const seen = new Set();
+    suggestions.forEach((s) => {
+      const key = `${s.title}-${Array.isArray(s.items) ? s.items.join('|') : ''}-${s.discount || ''}-${s.source}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        deduped.push(s);
+      }
+    });
+
+    return deduped.slice(0, 6);
+  }, [expiryItems, deadStock]);
+
   // prepare lists for each alert type and compute current item per type
   const expiryList = expiryItems || [];
   const deadList = deadStock || [];
@@ -386,7 +451,15 @@ export default function Dashboard() {
         </div>
 
         <div className="card">
-          <h2 className="text-xl font-semibold mb-4">Alerts</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Alerts</h2>
+            <button
+              onClick={() => navigate('/bundle-suggestions')}
+              className="inline-flex items-center rounded-lg bg-stockly-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-stockly-700 focus:outline-none focus:ring-2 focus:ring-stockly-500 focus:ring-offset-1"
+            >
+              View Bundles
+            </button>
+          </div>
           <div className="p-4">
             <div className="mt-2 space-y-3">
               {/* Expiry row */}
@@ -617,6 +690,13 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
+
+
+
+
+
 
 
 

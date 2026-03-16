@@ -19,6 +19,7 @@ import Goals from './pages/Goals';
 import Login from './pages/Login';
 import logo from './assets/Logo - Stockly.png';
 import Calendar from './pages/Calendar';
+import BundleSuggestions from './pages/BundleSuggestions';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -104,7 +105,8 @@ function App() {
                   <div className="absolute top-12 left-0 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-stockly-green dark:border-stockly-green/50 w-56">
                     <Link to="/expiry-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Expiry Alerts</Link>
                     <Link to="/restock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Restock Alerts</Link>
-                    <Link to="/deadstock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition border-t dark:border-gray-700">Dead Stock Alerts</Link>
+                    <Link to="/deadstock-alerts" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition">Dead Stock Alerts</Link>
+                    <Link to="/bundle-suggestions" onClick={() => setIsAlertsOpen(false)} className="block px-4 py-3 hover:bg-stockly-50 dark:hover:bg-slate-700 hover:border-l-4 hover:border-stockly-green transition border-t dark:border-gray-700">Bundle Suggestions</Link>
                   </div>
                 )}
               </div>
@@ -172,6 +174,7 @@ function App() {
                 <Link to="/expiry-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10 rounded transition">Expiry</Link>
                 <Link to="/restock-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10 rounded transition">Restock</Link>
                 <Link to="/deadstock-alerts" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10 rounded transition">Dead Stock</Link>
+                <Link to="/bundle-suggestions" onClick={() => setIsMobileMenuOpen(false)} className="block pl-8 pr-4 py-2 text-white/90 hover:bg-white/10 rounded transition">Bundles</Link>
               </div>
             </div>
           </div>
@@ -189,6 +192,7 @@ function App() {
           <Route path="/expiry-alerts" element={<ExpiryAlerts />} />
           <Route path="/restock-alerts" element={<RestockAlerts />} />
           <Route path="/deadstock-alerts" element={<DeadstockAlerts />} />
+          <Route path="/bundle-suggestions" element={<BundleSuggestions />} />
           <Route path="/settings" element={<Settings />} />
           {role === 'manager' && <Route path="/create-user" element={<CreateUser />} />}
           <Route path="/calendar" element={<Calendar />} />
