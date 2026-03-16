@@ -6,7 +6,10 @@ import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 export default function Calendar() {
   const [events, setEvents] = useState([]);
   const [tab, setTab] = useState('calendar'); // 'calendar' | 'list'
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1, 1)); // February 2026
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
 
   useEffect(() => {
     const year = currentMonth.getFullYear();
@@ -40,12 +43,13 @@ export default function Calendar() {
     if (!acc[dateKey]) acc[dateKey] = event.name;
     return acc;
   }, {});
+  const todayKey = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20 px-6">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-2">Calendar</h1>
-        <p className="text-center text-gray-600 mb-8">Explore Sri Lankan festivals &amp; cultural celebrations</p>
+        <p className="text-center text-gray-600 mb-8">Explore Upcomming events &amp; festivals</p>
 
         {/* Month Navigation */}
         <div className="flex justify-between items-center mb-6">
@@ -71,10 +75,16 @@ export default function Calendar() {
                   : null;
                 const holidayName = dateKey ? eventNameByDate[dateKey] : null;
 
+                const isToday = dateKey && dateKey === todayKey;
+
                 return (
                   <div
                     key={i}
-                    className={`h-14 flex flex-col items-center justify-center rounded-2xl text-lg font-medium border-2 px-1 ${day && eventDates.has(dateKey) ? 'border-orange-500 bg-orange-50' : 'border-transparent'}`}
+                    className={`h-14 flex flex-col items-center justify-center rounded-2xl text-lg font-medium border-2 px-1 ${
+                      day && eventDates.has(dateKey) ? 'border-orange-500 bg-orange-50' : 'border-transparent'
+                    } ${
+                      isToday ? 'bg-stockly-100 border-stockly-500 text-stockly-900' : ''
+                    }`}
                   >
                     {day}
                     {holidayName && <div className="w-full truncate text-[10px] text-orange-700">{holidayName}</div>}
