@@ -22,6 +22,8 @@ export default function Goals() {
   });
 
   const userId = localStorage.getItem('user_id') || 1;
+  const role = localStorage.getItem('role') || '';
+  const canManageGoals = role === 'manager';
 
   const fetchItems = useCallback(async () => {
     try {
@@ -59,6 +61,7 @@ export default function Goals() {
   }, [fetchItems, fetchGoals]);
 
   const handleOpenModal = (goal = null) => {
+    if (!canManageGoals) return;
     if (goal) {
       setIsEditing(true);
       setEditingId(goal.id);
@@ -90,6 +93,7 @@ export default function Goals() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!canManageGoals) { toast.error('Only managers can create or edit goals'); return; }
     if (!formData.title.trim()) { toast.error('Goal title is required'); return; }
     if (!formData.item_id) { toast.error('Please select a product'); return; }
     if (!formData.target) { toast.error('Target quantity is required'); return; }
@@ -106,6 +110,7 @@ export default function Goals() {
   };
 
   const handleDelete = (id) => {
+    if (!canManageGoals) { toast.error('Only managers can delete goals'); return; }
     if (window.confirm('Delete this goal?')) {
       axios.delete(`${API_BASE}/goals/${id}`)
         .then(() => { toast.success('Goal deleted!'); fetchGoals(); })
@@ -156,9 +161,11 @@ export default function Goals() {
             <button onClick={fetchGoals} className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 px-4 rounded-lg transition">
               Refresh
             </button>
-            <button onClick={() => handleOpenModal()} className="bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl">
-              <PlusIcon className="h-5 w-5" /> New Goal
-            </button>
+            {canManageGoals && (
+              <button onClick={() => handleOpenModal()} className="bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition flex items-center gap-2 shadow-lg hover:shadow-xl">
+                <PlusIcon className="h-5 w-5" /> New Goal
+              </button>
+            )}
           </div>
         </div>
 
@@ -194,10 +201,14 @@ export default function Goals() {
             </div>
           ) : sortedGoals.length === 0 ? (
             <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center shadow-md">
-              <p className="text-gray-600 dark:text-gray-400 mb-4">No goals yet. Create one to get started!</p>
-              <button onClick={() => handleOpenModal()} className="bg-stockly-green hover:bg-stockly-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition">
-                Create Your First Goal
-              </button>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                {canManageGoals ? 'No goals yet. Create one to get started!' : 'No goals available yet.'}
+              </p>
+              {canManageGoals && (
+                <button onClick={() => handleOpenModal()} className="bg-stockly-green hover:bg-stockly-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition">
+                  Create Your First Goal
+                </button>
+              )}
             </div>
           ) : (
             sortedGoals.map((goal) => {
@@ -228,14 +239,16 @@ export default function Goals() {
                       </div>
                       {goal.deadline && <p className={`text-sm font-medium ${deadlineStatus.color}`}>Deadline: {deadlineStatus.text}</p>}
                     </div>
-                    <div className="flex items-center gap-2 ml-4">
-                      <button onClick={() => handleOpenModal(goal)} className="p-2 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-lg hover:bg-blue-100 hover:text-blue-600 transition" title="Edit goal">
-                        <PencilIcon className="h-5 w-5" />
-                      </button>
-                      <button onClick={() => handleDelete(goal.id)} className="p-2 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-lg hover:bg-red-100 hover:text-red-600 transition" title="Delete goal">
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
-                    </div>
+                    {canManageGoals && (
+                      <div className="flex items-center gap-2 ml-4">
+                        <button onClick={() => handleOpenModal(goal)} className="p-2 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-lg hover:bg-blue-100 hover:text-blue-600 transition" title="Edit goal">
+                          <PencilIcon className="h-5 w-5" />
+                        </button>
+                        <button onClick={() => handleDelete(goal.id)} className="p-2 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-lg hover:bg-red-100 hover:text-red-600 transition" title="Delete goal">
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
