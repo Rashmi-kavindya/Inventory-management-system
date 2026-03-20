@@ -297,7 +297,13 @@ export default function Dashboard() {
     x: deptStockMap.map(([dept]) => dept),
     y: deptStockMap.map(([, stock]) => stock),
     type: 'bar',
-    marker: { color: '#10B37F' }
+    marker: {
+      color: [
+        '#10B37F', '#3B82F6', '#F59E0B', '#EF4444',
+        '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'
+      ],
+      line: { color: chartBg, width: 1 }
+    }
   }];
 
   const expiryCounts = expiryItems.length > 0
@@ -318,7 +324,6 @@ export default function Dashboard() {
     automargin: true
   }] : [];
 
-  // bundleSuggestions removed from Dashboard (moved to dedicated page)
 
   // prepare lists for each alert type and compute current item per type
   const expiryList = expiryItems || [];
@@ -547,7 +552,7 @@ export default function Dashboard() {
       )}
 
       <div className="card mb-6">
-        <h2 className="text-xl font-semibold mb-4">Monthly Sales Trends (Last 12 Months)</h2>
+        <h2 className="text-xl font-semibold mb-4">Monthly Sales Trends</h2>
         <input 
           type="text" 
           placeholder="Search by Item ID or Name" 
@@ -645,7 +650,7 @@ export default function Dashboard() {
 
         {/* Expiry by Type Pie */}
         <div className="card flex-1">
-          <h2 className="text-xl font-semibold mb-4 flex items-center"><ExclamationTriangleIcon className="h-5 w-5 mr-2 text-yellow-500" /> Expiry Items by Type</h2>
+          <h2 className="text-xl font-semibold mb-4 flex items-center"><ExclamationTriangleIcon className="h-5 w-5 mr-2 text-yellow-500" /> Near Expiry Items by Type</h2>
           {expiryCounts.length > 0 ? (
             <div className="h-[340px] w-full min-w-0 overflow-hidden">
               <Plot
