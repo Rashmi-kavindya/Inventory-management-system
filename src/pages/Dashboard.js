@@ -287,20 +287,18 @@ export default function Dashboard() {
     const map = {};
     inventoryData.forEach(item => {
       const dept = item.department || 'Unknown';
-      map[dept] = (map[dept] || 0) + item.stock_quantity;
+      const qty = Number(item.stock_quantity || 0);
+      map[dept] = (map[dept] || 0) + (Number.isFinite(qty) ? qty : 0);
     });
     return Object.entries(map);
   }, [inventoryData]);
 
-  const pieData = deptStockMap.length > 0 ? [{
-    values: deptStockMap.map(([, stock]) => stock),
-    labels: deptStockMap.map(([dept]) => dept),
-    type: 'pie',
-    marker: { colors: ['#10B37F', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'] },
-    textinfo: 'label+percent',
-    textposition: 'inside',
-    insidetextorientation: 'radial'
-  }] : [];
+  const deptBarData = [{
+    x: deptStockMap.map(([dept]) => dept),
+    y: deptStockMap.map(([, stock]) => stock),
+    type: 'bar',
+    marker: { color: '#10B37F' }
+  }];
 
   const expiryCounts = expiryItems.length > 0
     ? Object.entries(expiryItems.reduce((acc, item) => {
@@ -309,12 +307,16 @@ export default function Dashboard() {
       }, {}))
     : [];
 
-  const barData = [{
-    x: expiryCounts.map(([type]) => type),
-    y: expiryCounts.map(([, count]) => count),
-    type: 'bar',
-    marker: { color: '#F59E0B' }
-  }];
+  const expiryPieColors = ['#F59E0B', '#3B82F6', '#10B981', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316'];
+  const expiryPieData = expiryCounts.length > 0 ? [{
+    values: expiryCounts.map(([, count]) => count),
+    labels: expiryCounts.map(([type]) => type),
+    type: 'pie',
+    marker: { colors: expiryCounts.map((_, i) => expiryPieColors[i % expiryPieColors.length]) },
+    textinfo: 'label+percent',
+    textposition: 'outside',
+    automargin: true
+  }] : [];
 
   // bundleSuggestions removed from Dashboard (moved to dedicated page)
 
@@ -613,55 +615,56 @@ export default function Dashboard() {
       </div>
       {/* Expiry List, Dead Stock */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Stock Distribution Pie */}
+        {/* Stock Distribution Bar */}
         <div className="card flex-1">
           <h2 className="text-xl font-semibold mb-4">Stock Distribution by Department</h2>
           {deptStockMap.length > 0 ? (
             <div className="h-[340px] w-full min-w-0 overflow-hidden">
               <Plot
                 useResizeHandler
-                data={pieData}
+                data={deptBarData}
               layout={{
                 autosize: true,
-                showlegend: true,
-                margin: { t: 8, b: 24, l: 24, r: 24 },
+                showlegend: false,
+                margin: { t: 8, b: 60, l: 50, r: 20 },
                 paper_bgcolor: chartBg,
                 plot_bgcolor: chartBg,
-                font: { color: chartFont }
+                font: { color: chartFont },
+                xaxis: { title: 'Department', automargin: true, gridcolor: chartGrid, zerolinecolor: chartGrid },
+                yaxis: { title: 'Units', automargin: true, gridcolor: chartGrid, zerolinecolor: chartGrid }
               }}
                 config={{ responsive: true, displayModeBar: false }}
                 style={{ width: '100%', height: '100%' }}
               />
             </div>
           ) : (
-            <p className="text-gray-500 dark:text-stockly-200">No inventory data—add more samples for multi-slice pie</p>
+            <p className="text-gray-500 dark:text-stockly-200">No inventory data—add more samples for a fuller bar chart</p>
           )}
           <button onClick={fetchInventory} className="mt-4 text-stockly-green hover:text-stockly-400 underline font-semibold transition">Refresh</button>
         </div>
 
-        {/* Expiry by Type Bar */}
+        {/* Expiry by Type Pie */}
         <div className="card flex-1">
           <h2 className="text-xl font-semibold mb-4 flex items-center"><ExclamationTriangleIcon className="h-5 w-5 mr-2 text-yellow-500" /> Expiry Items by Type</h2>
           {expiryCounts.length > 0 ? (
             <div className="h-[340px] w-full min-w-0 overflow-hidden">
               <Plot
                 useResizeHandler
-                data={barData}
+                data={expiryPieData}
               layout={{
                 autosize: true,
                 paper_bgcolor: chartBg,
                 plot_bgcolor: chartBg,
                 font: { color: chartFont },
-                xaxis: { title: 'Type', gridcolor: chartGrid, zerolinecolor: chartGrid },
-                yaxis: { title: 'Number of Items', gridcolor: chartGrid, zerolinecolor: chartGrid },
-                margin: { t: 10, b: 50, l: 50, r: 20 }
+                showlegend: true,
+                margin: { t: 10, b: 40, l: 20, r: 20 }
               }}
                 config={{ responsive: true, displayModeBar: false }}
                 style={{ width: '100%', height: '100%' }}
               />
             </div>
           ) : (
-            <p className="text-gray-500 dark:text-stockly-200">No expiry data—add samples with repeated types for varied bars</p>
+            <p className="text-gray-500 dark:text-stockly-200">No expiry data—add samples with repeated types for a clearer pie</p>
           )}
           <button onClick={fetchExpiry} className="mt-4 text-stockly-green hover:text-stockly-400 underline font-semibold transition">Refresh</button>
         </div>
@@ -672,6 +675,8 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
 
 
 
