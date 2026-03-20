@@ -74,12 +74,15 @@ export default function CreateUser() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 px-6">
+    <div className="min-h-screen bg-stockly-50 dark:bg-stockly-950 pt-20 px-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-stockly-blue dark:text-stockly-green mb-10">Create New User</h1>
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold text-stockly-900 dark:text-stockly-50">Create New User</h1>
+          <p className="text-gray-600 dark:text-stockly-200 mt-2">Manage staff access and roles</p>
+        </div>
 
         {/* Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-12">
+        <div className="bg-white dark:bg-stockly-900 rounded-2xl shadow-xl p-8 mb-12 border border-stockly-100 dark:border-stockly-800">
           <form onSubmit={handleSubmit} className="space-y-6">
             <input
               type="text"
@@ -88,7 +91,7 @@ export default function CreateUser() {
               value={formData.username}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-stockly-800 rounded-lg focus:ring-2 focus:ring-stockly-400 bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50"
             />
             <input
               type="password"
@@ -97,13 +100,13 @@ export default function CreateUser() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-stockly-800 rounded-lg focus:ring-2 focus:ring-stockly-400 bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50"
             />
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-stockly-800 rounded-lg focus:ring-2 focus:ring-stockly-400 bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50"
             >
               <option value="employee">Employee/Cashier</option>
               <option value="manager">Manager/Owner</option>
@@ -111,7 +114,7 @@ export default function CreateUser() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 py-4 rounded-lg font-bold text-lg hover:shadow-xl transition"
+                className="flex-1 bg-gradient-to-r from-stockly-400 to-stockly-300 hover:from-stockly-500 hover:to-stockly-400 text-stockly-950 py-4 rounded-lg font-bold text-lg hover:shadow-xl transition"
               >
                 {editingUser ? 'Update User' : 'Create User'}
               </button>
@@ -119,44 +122,44 @@ export default function CreateUser() {
                 <button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="w-40 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-4 rounded-lg font-semibold"
+                  className="w-40 bg-gray-200 dark:bg-stockly-800 text-gray-700 dark:text-stockly-200 py-4 rounded-lg font-semibold"
                 >
                   Cancel
                 </button>
               )}
             </div>
           </form>
-          {message && <p className="mt-6 text-stockly-600 text-center font-semibold text-lg">{message}</p>}
-          {error && <p className="mt-6 text-red-600 text-center font-semibold text-lg">Error: {error}</p>}
+          {message && <p className="mt-6 text-stockly-600 dark:text-stockly-300 text-center font-semibold text-lg">{message}</p>}
+          {error && <p className="mt-6 text-red-600 dark:text-red-300 text-center font-semibold text-lg">Error: {error}</p>}
         </div>
 
         {/* User List */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-stockly-green to-stockly-400 p-6">
-            <h2 className="text-2xl font-bold text-slate-900">All Users ({users.length})</h2>
+        <div className="bg-white dark:bg-stockly-900 rounded-2xl shadow-xl overflow-hidden border border-stockly-100 dark:border-stockly-800">
+          <div className="bg-gradient-to-r from-stockly-400 to-stockly-300 p-6">
+            <h2 className="text-2xl font-bold text-stockly-950">All Users ({users.length})</h2>
           </div>
           {loading ? (
-            <p className="text-center py-10 text-gray-500">Loading users...</p>
+            <p className="text-center py-10 text-gray-500 dark:text-stockly-200">Loading users...</p>
           ) : users.length === 0 ? (
-            <p className="text-center py-10 text-gray-500">No users found.</p>
+            <p className="text-center py-10 text-gray-500 dark:text-stockly-200">No users found.</p>
           ) : (
             <table className="w-full">
-              <thead className="bg-stockly-100 dark:bg-slate-700">
+              <thead className="bg-stockly-100 dark:bg-stockly-900">
                 <tr>
-                  <th className="px-6 py-4 text-left text-stockly-blue dark:text-stockly-green font-bold">Username</th>
-                  <th className="px-6 py-4 text-left text-stockly-blue dark:text-stockly-green font-bold">Role</th>
-                  <th className="px-6 py-4 text-left text-stockly-blue dark:text-stockly-green font-bold">Created</th>
+                  <th className="px-6 py-4 text-left text-stockly-900 dark:text-stockly-100 font-bold">Username</th>
+                  <th className="px-6 py-4 text-left text-stockly-900 dark:text-stockly-100 font-bold">Role</th>
+                  <th className="px-6 py-4 text-left text-stockly-900 dark:text-stockly-100 font-bold">Created</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map(user => (
-                  <tr key={user.id} className="border-t dark:border-gray-700 hover:bg-stockly-50 dark:hover:bg-slate-700/50 transition">
-                    <td className="px-6 py-4 font-medium flex items-center justify-between">
+                  <tr key={user.id} className="border-t dark:border-stockly-800 hover:bg-stockly-50 dark:hover:bg-stockly-800/60 transition">
+                    <td className="px-6 py-4 font-medium text-stockly-900 dark:text-stockly-50 flex items-center justify-between">
                       <span>{user.username}</span>
                       <div className="ml-4 flex items-center gap-2">
                         <button
                           onClick={() => handleEditClick(user)}
-                          className="text-sm px-3 py-1 bg-blue-50 text-blue-700 rounded hover:underline"
+                          className="text-sm px-3 py-1 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-200 rounded hover:underline"
                         >
                           Edit
                         </button>
@@ -165,13 +168,13 @@ export default function CreateUser() {
                     <td className="px-6 py-4">
                       <span className={`px-4 py-2 rounded-full text-xs font-bold ${
                         user.role === 'manager'
-                          ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-                          : 'bg-stockly-100 text-stockly-700 dark:bg-stockly-900 dark:text-stockly-300'
+                          ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-200'
+                          : 'bg-stockly-100 text-stockly-700 dark:bg-stockly-800 dark:text-stockly-100'
                       }`}>
                         {user.role.toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-500">{user.created_at ? user.created_at.split(' ')[0] : '-'}</td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-stockly-200">{user.created_at ? user.created_at.split(' ')[0] : '-'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -182,4 +185,5 @@ export default function CreateUser() {
     </div>
   );
 }
+
 

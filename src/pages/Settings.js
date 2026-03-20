@@ -40,34 +40,34 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20 px-6">
+    <div className="min-h-screen bg-stockly-50 dark:bg-stockly-950 pt-20 px-6">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Settings</h1>
+        <h1 className="text-3xl font-bold text-stockly-900 dark:text-stockly-50 mb-8">Settings</h1>
         
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+        <div className="bg-white dark:bg-stockly-900 rounded-2xl shadow-xl p-8 border border-stockly-100 dark:border-stockly-800">
           <div className="space-y-8">
             <div className="flex items-center gap-6">
               <img src={localStorage.getItem('profilePic') || 'https://via.placeholder.com/120'} alt="Profile" className="h-32 w-32 rounded-full ring-4 ring-stockly-green shadow-lg" />
               <div>
                 <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} className="block" />
-                <p className="text-sm text-gray-500 mt-2">JPG, PNG up to 2MB</p>
+                <p className="text-sm text-gray-500 dark:text-stockly-200 mt-2">JPG, PNG up to 2MB</p>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-stockly-200">Username</label>
               <input
                 type="text"
                 value={name}
                 readOnly
-                className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed dark:bg-slate-700 dark:border-gray-600 dark:text-gray-400"
+                className="mt-2 w-full px-4 py-3 border border-gray-200 dark:border-stockly-800 rounded-lg bg-gray-100 dark:bg-stockly-900 text-gray-600 dark:text-stockly-200 cursor-not-allowed"
               />
-              <p className="text-xs text-gray-500 mt-2">Username cannot be changed here. Contact an admin to request a username change.</p>
+              <p className="text-xs text-gray-500 dark:text-stockly-200 mt-2">Username cannot be changed here. Contact an admin to request a username change.</p>
             </div>
 
             <button
               onClick={handleSave}
-              className="w-full bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 py-3 rounded-lg font-semibold hover:shadow-lg transition shadow-lg"
+              className="w-full bg-gradient-to-r from-stockly-400 to-stockly-300 hover:from-stockly-500 hover:to-stockly-400 text-stockly-950 py-3 rounded-lg font-semibold hover:shadow-lg transition shadow-lg"
             >
               Save Changes
             </button>
@@ -77,4 +77,5 @@ export default function Settings() {
     </div>
   );
 }
+
 

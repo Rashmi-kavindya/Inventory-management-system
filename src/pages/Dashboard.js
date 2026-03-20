@@ -48,6 +48,10 @@ export default function Dashboard() {
 
   const [forecastData, setForecastData] = useState([]);
   const navigate = useNavigate();
+  const isDark = document.documentElement.classList.contains('dark');
+  const chartBg = isDark ? '#180E01' : '#FFFFFF';
+  const chartGrid = isDark ? '#3a2318' : '#e5e7eb';
+  const chartFont = isDark ? '#F8D7BF' : '#111827';
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -426,7 +430,7 @@ export default function Dashboard() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-gray-900">{event.name}</p>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-gray-600 dark:text-stockly-200 mt-1">
                         {new Date(event.date).toLocaleDateString('en-US', {
                           weekday: 'short',
                           month: 'short',
@@ -463,26 +467,26 @@ export default function Dashboard() {
           <div className="p-4">
             <div className="mt-2 space-y-3">
               {/* Expiry row */}
-              <div className="p-3 rounded border-l-4 border-yellow-400 bg-yellow-50">
-                <div className="text-sm font-medium text-gray-700">Expiry</div>
+              <div className="p-3 rounded border-l-4 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-stockly-900 dark:text-stockly-50">
+                <div className="text-sm font-medium text-gray-700 dark:text-stockly-200">Expiry</div>
                 <div className="font-semibold mt-1">{expiryCurrent ? expiryCurrent.product_name : 'No expiry alerts'}</div>
-                {expiryCurrent && <div className="text-sm text-gray-600 mt-1">{expiryCurrent.stock_quantity} units — {expiryCurrent.days_left} days left</div>}
+                {expiryCurrent && <div className="text-sm text-gray-600 dark:text-stockly-200 mt-1">{expiryCurrent.stock_quantity} units — {expiryCurrent.days_left} days left</div>}
                 {expiryCurrent && expiryCurrent.recommended_discount && <div className="text-xs text-stockly-green dark:text-stockly-400 mt-1">Discount: {expiryCurrent.recommended_discount}%</div>}
               </div>
 
               {/* Dead stock row */}
-              <div className="p-3 rounded border-l-4 border-red-400 bg-red-50">
-                <div className="text-sm font-medium text-gray-700">Dead Stock</div>
+              <div className="p-3 rounded border-l-4 border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/20 text-stockly-900 dark:text-stockly-50">
+                <div className="text-sm font-medium text-gray-700 dark:text-stockly-200">Dead Stock</div>
                 <div className="font-semibold mt-1">{deadCurrent ? (deadCurrent.item_name || `Item #${deadCurrent.item_id}`) : 'No dead stock'}</div>
-                {deadCurrent && <div className="text-sm text-gray-600 mt-1">{deadCurrent.stock_quantity} units — recent sales: {deadCurrent.recent_sales}</div>}
+                {deadCurrent && <div className="text-sm text-gray-600 dark:text-stockly-200 mt-1">{deadCurrent.stock_quantity} units — recent sales: {deadCurrent.recent_sales}</div>}
                 {deadCurrent && deadCurrent.recommendation && <div className="text-xs text-stockly-green dark:text-stockly-400 mt-1">{deadCurrent.recommendation}</div>}
               </div>
 
               {/* Reorder row */}
-              <div className="p-3 rounded border-l-4 border-orange-400 bg-orange-50">
-                <div className="text-sm font-medium text-gray-700">Reorder</div>
+              <div className="p-3 rounded border-l-4 border-orange-400 dark:border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-stockly-900 dark:text-stockly-50">
+                <div className="text-sm font-medium text-gray-700 dark:text-stockly-200">Reorder</div>
                 <div className="font-semibold mt-1">{reorderCurrent ? (reorderCurrent.product_name || `Item #${reorderCurrent.item_id}`) : 'No reorder alerts'}</div>
-                {reorderCurrent && <div className="text-sm text-gray-600 mt-1">Stock: {reorderCurrent.stock_quantity} ≤ Reorder: {reorderCurrent.reorder_level}</div>}
+                {reorderCurrent && <div className="text-sm text-gray-600 dark:text-stockly-200 mt-1">Stock: {reorderCurrent.stock_quantity} ≤ Reorder: {reorderCurrent.reorder_level}</div>}
                 {reorderCurrent && reorderCurrent.reorder_quantity && <div className="text-xs text-stockly-green dark:text-stockly-400 mt-1">Suggest: {reorderCurrent.reorder_quantity}</div>}
               </div>
             </div>
@@ -621,8 +625,11 @@ export default function Dashboard() {
               ]}
               layout={{
                 autosize: true,
-                xaxis: { title: 'Month/Year', automargin: true },
-                yaxis: { title: 'Units Sold', automargin: true },
+                paper_bgcolor: chartBg,
+                plot_bgcolor: chartBg,
+                font: { color: chartFont },
+                xaxis: { title: 'Month/Year', automargin: true, gridcolor: chartGrid, zerolinecolor: chartGrid },
+                yaxis: { title: 'Units Sold', automargin: true, gridcolor: chartGrid, zerolinecolor: chartGrid },
                 legend: { x: 0, y: 1.08, orientation: 'h' },
                 margin: { t: 24, b: 60, l: 50, r: 20 },
                 hovermode: 'x unified'
@@ -645,11 +652,14 @@ export default function Dashboard() {
               <Plot
                 useResizeHandler
                 data={pieData}
-                layout={{
-                  autosize: true,
-                  showlegend: true,
-                  margin: { t: 8, b: 24, l: 24, r: 24 }
-                }}
+              layout={{
+                autosize: true,
+                showlegend: true,
+                margin: { t: 8, b: 24, l: 24, r: 24 },
+                paper_bgcolor: chartBg,
+                plot_bgcolor: chartBg,
+                font: { color: chartFont }
+              }}
                 config={{ responsive: true, displayModeBar: false }}
                 style={{ width: '100%', height: '100%' }}
               />
@@ -668,12 +678,15 @@ export default function Dashboard() {
               <Plot
                 useResizeHandler
                 data={barData}
-                layout={{
-                  autosize: true,
-                  xaxis: { title: 'Type' },
-                  yaxis: { title: 'Number of Items' },
-                  margin: { t: 10, b: 50, l: 50, r: 20 }
-                }}
+              layout={{
+                autosize: true,
+                paper_bgcolor: chartBg,
+                plot_bgcolor: chartBg,
+                font: { color: chartFont },
+                xaxis: { title: 'Type', gridcolor: chartGrid, zerolinecolor: chartGrid },
+                yaxis: { title: 'Number of Items', gridcolor: chartGrid, zerolinecolor: chartGrid },
+                margin: { t: 10, b: 50, l: 50, r: 20 }
+              }}
                 config={{ responsive: true, displayModeBar: false }}
                 style={{ width: '100%', height: '100%' }}
               />
@@ -690,6 +703,8 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
 
 
 

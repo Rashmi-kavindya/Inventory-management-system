@@ -58,7 +58,7 @@ const ReportForm = React.memo(({ payload, API_BASE, pushBotMessage, addMessage }
 
   return (
     <div className="space-y-3 p-1">
-      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">{payload.title}</div>
+      <div className="text-sm font-semibold text-gray-900 dark:text-stockly-50 mb-2">{payload.title}</div>
 
       {/* Report Type Buttons */}
       <div className="flex gap-2 justify-center">
@@ -69,7 +69,7 @@ const ReportForm = React.memo(({ payload, API_BASE, pushBotMessage, addMessage }
             className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
               reportType === opt 
                 ? 'bg-stockly-green text-slate-900 shadow-md' 
-                : 'bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-500'
+                : 'bg-gray-300 dark:bg-stockly-800 text-gray-800 dark:text-stockly-200 hover:bg-gray-400 dark:hover:bg-stockly-700'
             }`}
           >
             {opt.charAt(0).toUpperCase() + opt.slice(1)}
@@ -79,11 +79,11 @@ const ReportForm = React.memo(({ payload, API_BASE, pushBotMessage, addMessage }
 
       {/* Month Selector */}
       <div className="mt-3">
-        <label className="text-xs font-semibold text-gray-900 dark:text-gray-100 block mb-2">Select month</label>
+        <label className="text-xs font-semibold text-gray-900 dark:text-stockly-50 block mb-2">Select month</label>
         <select
           value={month}
           onChange={(e) => setMonth(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-stockly-green"
+          className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-stockly-800 bg-white dark:bg-stockly-800 text-gray-900 dark:text-stockly-50 font-medium focus:outline-none focus:ring-2 focus:ring-stockly-green"
         >
           {payload.months.map(m => (
             <option key={m} value={m}>{m}</option>
@@ -278,7 +278,7 @@ export default function ChatWidget() {
         <div
           className="fixed bottom-24 right-6 left-auto z-50 
                      w-80 sm:w-96 h-[520px] 
-                     bg-white dark:bg-gray-800 
+                     bg-white dark:bg-stockly-900 
                      rounded-2xl shadow-2xl 
                      flex flex-col overflow-hidden"
         >
@@ -309,7 +309,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50 dark:bg-gray-900">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50 dark:bg-stockly-950">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -321,7 +321,7 @@ export default function ChatWidget() {
                       ? 'bg-stockly-green text-slate-900 font-semibold rounded-br-none'
                       : msg.error || (msg.content && msg.content.error)
                         ? 'bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-100 rounded-bl-none'
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-none'}`}
+                        : 'bg-gray-200 dark:bg-stockly-800 text-gray-900 dark:text-stockly-50 rounded-bl-none'}`}
                 >
                   {msg.isLoading ? (
                     <div className="flex items-center space-x-2">
@@ -363,7 +363,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Input area */}
-          <div className="p-4 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="p-4 border-t dark:border-stockly-800 bg-white dark:bg-stockly-900">
             <div className="flex gap-2">
               <button
                 type="button"
@@ -390,8 +390,8 @@ export default function ChatWidget() {
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Type your question..."
                 className="flex-1 px-4 py-2.5 rounded-lg border 
-                         border-gray-300 dark:border-gray-600 
-                         dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-stockly-green"
+                         border-gray-300 dark:border-stockly-800 
+                         dark:bg-stockly-800 focus:outline-none focus:ring-2 focus:ring-stockly-green"
               />
               <button
                 onClick={handleSend}
@@ -406,5 +406,6 @@ export default function ChatWidget() {
     </>
   );
 }
+
 
 

@@ -259,7 +259,7 @@ export default function Goals() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto border border-stockly-100">
+          <div className="bg-white dark:bg-stockly-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto border border-stockly-100">
             <div className="sticky top-0 bg-gradient-to-r from-stockly-400 to-stockly-300 text-stockly-950 px-6 py-5 flex justify-between items-center">
               <div>
                 <h2 className="text-2xl font-bold text-stockly-950">{isEditing ? 'Edit Sales Goal' : 'Create New Sales Goal'}</h2>
@@ -271,19 +271,19 @@ export default function Goals() {
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Goal Title *</label>
-                  <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g., Increase Coca Cola sales" className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required />
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-stockly-50 mb-2">Goal Title *</label>
+                  <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g., Increase Coca Cola sales" className="w-full px-4 py-2.5 border border-gray-300 dark:border-stockly-800 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-stockly-800 dark:text-stockly-50 transition" required />
                   <p className="text-xs text-gray-500 mt-1">Keep it specific so the team knows the focus.</p>
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Description</label>
-                  <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Add details about this sales goal..." className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition resize-none h-24" />
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-stockly-50 mb-2">Description</label>
+                  <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Add details about this sales goal..." className="w-full px-4 py-2.5 border border-gray-300 dark:border-stockly-800 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-stockly-800 dark:text-stockly-50 transition resize-none h-24" />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Select Product *</label>
-                  <select name="item_id" value={formData.item_id} onChange={handleInputChange} className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required>
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-stockly-50 mb-2">Select Product *</label>
+                  <select name="item_id" value={formData.item_id} onChange={handleInputChange} className="w-full px-4 py-2.5 border border-gray-300 dark:border-stockly-800 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-stockly-800 dark:text-stockly-50 transition" required>
                     <option value="">-- Choose a product --</option>
                     {items.map((item) => (
                       <option key={item.item_id} value={item.item_id}>{item.item_name} (ID: {item.item_id})</option>
@@ -292,13 +292,13 @@ export default function Goals() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Target Quantity (units) *</label>
-                  <input type="number" name="target" value={formData.target} onChange={handleInputChange} placeholder="e.g., 1000" className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required min="1" />
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-stockly-50 mb-2">Target Quantity (units) *</label>
+                  <input type="number" name="target" value={formData.target} onChange={handleInputChange} placeholder="e.g., 1000" className="w-full px-4 py-2.5 border border-gray-300 dark:border-stockly-800 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-stockly-800 dark:text-stockly-50 transition" required min="1" />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Deadline</label>
-                  <input type="date" name="deadline" value={formData.deadline} onChange={handleInputChange} className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition" />
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-stockly-50 mb-2">Deadline</label>
+                  <input type="date" name="deadline" value={formData.deadline} onChange={handleInputChange} className="w-full px-4 py-2.5 border border-gray-300 dark:border-stockly-800 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-stockly-800 dark:text-stockly-50 transition" />
                 </div>
               </div>
 
@@ -306,7 +306,7 @@ export default function Goals() {
                 <button type="submit" className="flex-1 bg-gradient-to-r from-stockly-400 to-stockly-300 hover:from-stockly-500 hover:to-stockly-400 text-stockly-950 font-semibold py-2.5 px-4 rounded-lg transition shadow-lg hover:shadow-xl">
                   {isEditing ? 'Update Goal' : 'Create Goal'}
                 </button>
-                <button type="button" onClick={handleCloseModal} className="flex-1 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-900 dark:text-white font-semibold py-2.5 px-4 rounded-lg transition">
+                <button type="button" onClick={handleCloseModal} className="flex-1 bg-gray-200 dark:bg-stockly-800 hover:bg-gray-300 dark:hover:bg-stockly-700 text-gray-900 dark:text-stockly-50 font-semibold py-2.5 px-4 rounded-lg transition">
                   Cancel
                 </button>
               </div>
@@ -317,5 +317,6 @@ export default function Goals() {
     </div>
   );
 }
+
 
 
