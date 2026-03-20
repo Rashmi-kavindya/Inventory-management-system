@@ -150,15 +150,15 @@ export default function Goals() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-stockly-50 dark:bg-stockly-950 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Sales Goals</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">Track and monitor your sales targets by product</p>
+            <h1 className="text-4xl font-bold text-stockly-900 dark:text-stockly-50">Sales Goals</h1>
+            <p className="text-gray-600 dark:text-stockly-200 mt-2">Track and monitor your sales targets by product</p>
           </div>
           <div className="flex gap-3">
-            <button onClick={fetchGoals} className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 px-4 rounded-lg transition">
+            <button onClick={fetchGoals} className="bg-gray-200 dark:bg-stockly-900 hover:bg-gray-300 dark:hover:bg-stockly-800 text-gray-900 dark:text-stockly-50 font-semibold py-3 px-4 rounded-lg transition">
               Refresh
             </button>
             {canManageGoals && (
@@ -171,41 +171,41 @@ export default function Goals() {
 
         {goalsList.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Goals</p>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{goalsList.length}</p>
+            <div className="bg-white dark:bg-stockly-900 rounded-lg p-6 shadow-md border border-stockly-100 dark:border-stockly-800">
+              <p className="text-gray-600 dark:text-stockly-200 text-sm font-medium">Total Goals</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-stockly-50 mt-2">{goalsList.length}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Completed</p>
-              <p className="text-3xl font-bold text-stockly-600 dark:text-stockly-400 mt-2">{goalsList.filter((g) => g.status === 'completed').length}</p>
+            <div className="bg-white dark:bg-stockly-900 rounded-lg p-6 shadow-md border border-stockly-100 dark:border-stockly-800">
+              <p className="text-gray-600 dark:text-stockly-200 text-sm font-medium">Completed</p>
+              <p className="text-3xl font-bold text-stockly-600 dark:text-stockly-300 mt-2">{goalsList.filter((g) => g.status === 'completed').length}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">In Progress</p>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{goalsList.filter((g) => g.status === 'active').length}</p>
+            <div className="bg-white dark:bg-stockly-900 rounded-lg p-6 shadow-md border border-stockly-100 dark:border-stockly-800">
+              <p className="text-gray-600 dark:text-stockly-200 text-sm font-medium">In Progress</p>
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-300 mt-2">{goalsList.filter((g) => g.status === 'active').length}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Overdue</p>
-              <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">{goalsList.filter((g) => g.status === 'overdue').length}</p>
+            <div className="bg-white dark:bg-stockly-900 rounded-lg p-6 shadow-md border border-stockly-100 dark:border-stockly-800">
+              <p className="text-gray-600 dark:text-stockly-200 text-sm font-medium">Overdue</p>
+              <p className="text-3xl font-bold text-red-600 dark:text-red-300 mt-2">{goalsList.filter((g) => g.status === 'overdue').length}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Avg Progress</p>
-              <p className="text-3xl font-bold text-stockly-green dark:text-stockly-400 mt-2">{goalsList.length > 0 ? Math.round(goalsList.reduce((sum, g) => sum + getProgressPercentage(g), 0) / goalsList.length) : 0}%</p>
+            <div className="bg-white dark:bg-stockly-900 rounded-lg p-6 shadow-md border border-stockly-100 dark:border-stockly-800">
+              <p className="text-gray-600 dark:text-stockly-200 text-sm font-medium">Avg Progress</p>
+              <p className="text-3xl font-bold text-stockly-600 dark:text-stockly-300 mt-2">{goalsList.length > 0 ? Math.round(goalsList.reduce((sum, g) => sum + getProgressPercentage(g), 0) / goalsList.length) : 0}%</p>
             </div>
           </div>
         )}
 
         <div className="space-y-4">
           {loading ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center shadow-md">
-              <p className="text-gray-600 dark:text-gray-400">Loading goals...</p>
+            <div className="bg-white dark:bg-stockly-900 rounded-lg p-12 text-center shadow-md border border-stockly-100 dark:border-stockly-800">
+              <p className="text-gray-600 dark:text-stockly-200">Loading goals...</p>
             </div>
           ) : sortedGoals.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center shadow-md">
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <div className="bg-white dark:bg-stockly-900 rounded-lg p-12 text-center shadow-md border border-stockly-100 dark:border-stockly-800">
+              <p className="text-gray-600 dark:text-stockly-200 mb-4">
                 {canManageGoals ? 'No goals yet. Create one to get started!' : 'No goals available yet.'}
               </p>
               {canManageGoals && (
-                <button onClick={() => handleOpenModal()} className="bg-stockly-green hover:bg-stockly-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition">
+                <button onClick={() => handleOpenModal()} className="bg-stockly-400 hover:bg-stockly-500 text-stockly-950 font-semibold py-2 px-4 rounded-lg transition">
                   Create Your First Goal
                 </button>
               )}
@@ -215,25 +215,25 @@ export default function Goals() {
               const progress = getProgressPercentage(goal);
               const deadlineStatus = getDeadlineStatus(goal.deadline);
               return (
-                <div key={goal.id} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md border-l-4 border-stockly-green transition hover:shadow-lg hover:border-stockly-400">
+                <div key={goal.id} className="bg-white dark:bg-stockly-900 rounded-lg p-6 shadow-md border-l-4 border-stockly-400 transition hover:shadow-lg hover:border-stockly-500 border border-stockly-100 dark:border-stockly-800">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{goal.title}</h3>
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-stockly-50">{goal.title}</h3>
                         <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                          goal.status === 'completed' ? 'bg-stockly-100 text-stockly-800 dark:bg-stockly-900 dark:text-stockly-200' :
-                          goal.status === 'overdue' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                          goal.status === 'completed' ? 'bg-stockly-100 text-stockly-800 dark:bg-stockly-800 dark:text-stockly-100' :
+                          goal.status === 'overdue' ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200' :
+                          'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200'
                         }`}>{goal.status}</span>
-                        <span className="text-sm font-medium px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full">{goal.item_name || `Item #${goal.item_id}`}</span>
+                        <span className="text-sm font-medium px-3 py-1 bg-stockly-100 text-stockly-800 dark:bg-stockly-800 dark:text-stockly-100 rounded-full">{goal.item_name || `Item #${goal.item_id}`}</span>
                       </div>
-                      {goal.description && <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">{goal.description}</p>}
+                      {goal.description && <p className="text-gray-600 dark:text-stockly-200 text-sm mb-3">{goal.description}</p>}
                       <div className="mb-4">
                         <div className="flex justify-between items-center mb-2">
                           <span className={`text-sm font-bold ${getStatusColor(goal)}`}>{goal.current_sales || 0} / {goal.target} units</span>
                           <span className={`text-sm font-bold ${getStatusColor(goal)}`}>{progress.toFixed(1)}%</span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                        <div className="w-full bg-gray-200 dark:bg-stockly-800 rounded-full h-3 overflow-hidden">
                           <div className={`h-3 rounded-full transition-all ${progress >= 100 ? 'bg-stockly-500' : progress >= 75 ? 'bg-blue-500' : progress >= 50 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${Math.min(progress, 100)}%` }}></div>
                         </div>
                       </div>
@@ -241,10 +241,10 @@ export default function Goals() {
                     </div>
                     {canManageGoals && (
                       <div className="flex items-center gap-2 ml-4">
-                        <button onClick={() => handleOpenModal(goal)} className="p-2 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-lg hover:bg-blue-100 hover:text-blue-600 transition" title="Edit goal">
+                        <button onClick={() => handleOpenModal(goal)} className="p-2 bg-gray-100 text-gray-600 dark:bg-stockly-800 dark:text-stockly-200 rounded-lg hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/40 dark:hover:text-blue-200 transition" title="Edit goal">
                           <PencilIcon className="h-5 w-5" />
                         </button>
-                        <button onClick={() => handleDelete(goal.id)} className="p-2 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-lg hover:bg-red-100 hover:text-red-600 transition" title="Delete goal">
+                        <button onClick={() => handleDelete(goal.id)} className="p-2 bg-gray-100 text-gray-600 dark:bg-stockly-800 dark:text-stockly-200 rounded-lg hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/40 dark:hover:text-red-200 transition" title="Delete goal">
                           <TrashIcon className="h-5 w-5" />
                         </button>
                       </div>
@@ -259,48 +259,54 @@ export default function Goals() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-stockly-green to-stockly-400 text-slate-900 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-slate-900">{isEditing ? 'Edit Sales Goal' : 'Create New Sales Goal'}</h2>
-              <button onClick={handleCloseModal} className="text-slate-900 hover:bg-slate-900/10 p-2 rounded-lg transition">X</button>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto border border-stockly-100">
+            <div className="sticky top-0 bg-gradient-to-r from-stockly-400 to-stockly-300 text-stockly-950 px-6 py-5 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-stockly-950">{isEditing ? 'Edit Sales Goal' : 'Create New Sales Goal'}</h2>
+                <p className="text-xs text-stockly-900/70">Set clear targets and track performance by product</p>
+              </div>
+              <button onClick={handleCloseModal} className="text-stockly-950 hover:bg-stockly-950/10 p-2 rounded-lg transition">X</button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Goal Title *</label>
-                <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g., Increase Coca Cola sales" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition" required />
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Goal Title *</label>
+                  <input type="text" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g., Increase Coca Cola sales" className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required />
+                  <p className="text-xs text-gray-500 mt-1">Keep it specific so the team knows the focus.</p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Description</label>
+                  <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Add details about this sales goal..." className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition resize-none h-24" />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Select Product *</label>
+                  <select name="item_id" value={formData.item_id} onChange={handleInputChange} className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required>
+                    <option value="">-- Choose a product --</option>
+                    {items.map((item) => (
+                      <option key={item.item_id} value={item.item_id}>{item.item_name} (ID: {item.item_id})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Target Quantity (units) *</label>
+                  <input type="number" name="target" value={formData.target} onChange={handleInputChange} placeholder="e.g., 1000" className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition" required min="1" />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Deadline</label>
+                  <input type="date" name="deadline" value={formData.deadline} onChange={handleInputChange} className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-400 focus:border-transparent dark:bg-gray-700 dark:text-white transition" />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Description</label>
-                <textarea name="description" value={formData.description} onChange={handleInputChange} placeholder="Add details about this sales goal..." className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition resize-none h-20" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Select Product *</label>
-                <select name="item_id" value={formData.item_id} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition" required>
-                  <option value="">-- Choose a product --</option>
-                  {items.map((item) => (
-                    <option key={item.item_id} value={item.item_id}>{item.item_name} (ID: {item.item_id})</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Target Quantity (units) *</label>
-                <input type="number" name="target" value={formData.target} onChange={handleInputChange} placeholder="e.g., 1000" className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition" required min="1" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Deadline</label>
-                <input type="date" name="deadline" value={formData.deadline} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-stockly-green focus:border-transparent dark:bg-gray-700 dark:text-white transition" />
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button type="submit" className="flex-1 bg-gradient-to-r from-stockly-green to-stockly-400 hover:from-stockly-400 hover:to-stockly-400 text-slate-900 font-semibold py-2 px-4 rounded-lg transition shadow-lg hover:shadow-xl">
+              <div className="flex gap-3 pt-2">
+                <button type="submit" className="flex-1 bg-gradient-to-r from-stockly-400 to-stockly-300 hover:from-stockly-500 hover:to-stockly-400 text-stockly-950 font-semibold py-2.5 px-4 rounded-lg transition shadow-lg hover:shadow-xl">
                   {isEditing ? 'Update Goal' : 'Create Goal'}
                 </button>
-                <button type="button" onClick={handleCloseModal} className="flex-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-900 dark:text-white font-semibold py-2 px-4 rounded-lg transition">
+                <button type="button" onClick={handleCloseModal} className="flex-1 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-900 dark:text-white font-semibold py-2.5 px-4 rounded-lg transition">
                   Cancel
                 </button>
               </div>
