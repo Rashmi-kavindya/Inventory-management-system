@@ -436,7 +436,7 @@ export default function Dashboard() {
           <div className="p-4">
             <div className="mt-2 space-y-3">
               {/* Expiry row */}
-              <div className="p-3 rounded border-l-4 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-stockly-900 dark:text-stockly-50">
+              <div className="p-3 rounded-xl border-l-4 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20 text-stockly-900 dark:text-stockly-50">
                 <div className="text-sm font-medium text-gray-700 dark:text-stockly-200">Expiry</div>
                 <div className="font-semibold mt-1">{expiryCurrent ? expiryCurrent.product_name : 'No expiry alerts'}</div>
                 {expiryCurrent && <div className="text-sm text-gray-600 dark:text-stockly-200 mt-1">{expiryCurrent.stock_quantity} units — {expiryCurrent.days_left} days left</div>}
@@ -444,7 +444,7 @@ export default function Dashboard() {
               </div>
 
               {/* Dead stock row */}
-              <div className="p-3 rounded border-l-4 border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/20 text-stockly-900 dark:text-stockly-50">
+              <div className="p-3 rounded-xl border-l-4 border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/20 text-stockly-900 dark:text-stockly-50">
                 <div className="text-sm font-medium text-gray-700 dark:text-stockly-200">Dead Stock</div>
                 <div className="font-semibold mt-1">{deadCurrent ? (deadCurrent.item_name || `Item #${deadCurrent.item_id}`) : 'No dead stock'}</div>
                 {deadCurrent && <div className="text-sm text-gray-600 dark:text-stockly-200 mt-1">{deadCurrent.stock_quantity} units — recent sales: {deadCurrent.recent_sales}</div>}
@@ -452,7 +452,7 @@ export default function Dashboard() {
               </div>
 
               {/* Reorder row */}
-              <div className="p-3 rounded border-l-4 border-orange-400 dark:border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-stockly-900 dark:text-stockly-50">
+              <div className="p-3 rounded-xl border-l-4 border-orange-400 dark:border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-stockly-900 dark:text-stockly-50">
                 <div className="text-sm font-medium text-gray-700 dark:text-stockly-200">Reorder</div>
                 <div className="font-semibold mt-1">{reorderCurrent ? (reorderCurrent.product_name || `Item #${reorderCurrent.item_id}`) : 'No reorder alerts'}</div>
                 {reorderCurrent && <div className="text-sm text-gray-600 dark:text-stockly-200 mt-1">Stock: {reorderCurrent.stock_quantity} ≤ Reorder: {reorderCurrent.reorder_level}</div>}
