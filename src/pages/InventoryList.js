@@ -87,6 +87,13 @@ export default function InventoryList() {
     });
   }, [inventory, search, sortConfig]);
 
+  const formatDate = (value) => {
+    if (!value) return '-';
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return '-';
+    return d.toLocaleDateString();
+  };
+
   return (
     <div className="min-h-screen bg-stockly-50 dark:bg-stockly-950 py-8 px-4 overflow-x-auto">
       <div className="max-w-full mx-auto">
@@ -178,7 +185,7 @@ export default function InventoryList() {
                         </span>
                       </td>
                       <td className="px-3 py-3 text-sm text-gray-700 dark:text-stockly-200 hidden lg:table-cell">
-                        {item.expire_date ? new Date(item.expire_date).toLocaleDateString() : '—'}
+                        {formatDate(item.expire_date)}
                       </td>
                       <td className="pr-6 pl-3 py-3">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-stockly-100 dark:bg-stockly-800 text-stockly-700 dark:text-stockly-200">
@@ -204,4 +211,7 @@ export default function InventoryList() {
     </div>
   );
 }
+
+
+
 

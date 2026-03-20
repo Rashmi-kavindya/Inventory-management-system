@@ -52,6 +52,7 @@ export default function Dashboard() {
   const chartBg = isDark ? '#180E01' : '#FFFFFF';
   const chartGrid = isDark ? '#3a2318' : '#e5e7eb';
   const chartFont = isDark ? '#F8D7BF' : '#111827';
+  const token = localStorage.getItem('token');
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -157,13 +158,35 @@ export default function Dashboard() {
 
   const fetchUpcomingEvents = useCallback(async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:5000/api/festivals/upcoming');
-      setUpcomingEvents(res.data || []);
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const [festivalsRes, eventsRes] = await Promise.allSettled([
+        axios.get('http://127.0.0.1:5000/api/festivals/upcoming', { headers }),
+        axios.get('http://127.0.0.1:5000/events', { headers })
+      ]);
+
+      const festivals = festivalsRes.status === 'fulfilled' ? festivalsRes.value.data || [] : [];
+      const customEvents = eventsRes.status === 'fulfilled' ? eventsRes.value.data || [] : [];
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const normalizedFestivals = festivals
+        .filter(e => e?.date)
+        .map(e => ({ ...e, kind: 'Holiday' }));
+      const normalizedCustom = customEvents
+        .filter(e => e?.date && new Date(e.date) >= today)
+        .map(e => ({ ...e, kind: 'Event' }));
+
+      const combined = [...normalizedFestivals, ...normalizedCustom]
+        .filter(e => e?.date)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      setUpcomingEvents(combined);
     } catch (err) {
-      console.error("Upcoming festivals fetch failed:", err);
+      console.error("Upcoming events fetch failed:", err);
       setUpcomingEvents([]);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     // fetchInventorySales(selectedItemId);
@@ -293,64 +316,7 @@ export default function Dashboard() {
     marker: { color: '#F59E0B' }
   }];
 
-  const bundleSuggestions = useMemo(() => {
-    const normalizeBundleArrays = (item, sourceLabel) => {
-      const raw =
-        item.bundles ||
-        item.bundle_suggestions ||
-        item.bundle_recommendations ||
-        item.suggested_bundles ||
-        [];
-      if (!Array.isArray(raw)) return [];
-      return raw.map((bundle, idx) => ({
-        id: bundle.bundle_id || bundle.id || `${sourceLabel}_${item.item_id || item.id || idx}`,
-        title: bundle.name || bundle.bundle_name || bundle.title || item.product_name || item.item_name || 'Bundle',
-        items: bundle.items || bundle.products || bundle.bundle_items || bundle.items_list || [],
-        discount: bundle.discount || bundle.discount_pct || bundle.discount_percent || bundle.discount_rate,
-        reason: bundle.reason || bundle.strategy || bundle.match_type || bundle.source,
-        source: sourceLabel,
-      }));
-    };
-
-    const normalizeBundleWith = (item, sourceLabel) => {
-      const bundleWith = item.bundle_with || item.bundleWith || [];
-      if (!Array.isArray(bundleWith) || bundleWith.length === 0) return [];
-      const primary = item.product_name || item.item_name || item.name || 'Item';
-      return [{
-        id: `${sourceLabel}_${item.item_id || item.id || primary}`,
-        title: `Bundle: ${primary}`,
-        items: [primary, ...bundleWith],
-        discount: item.recommended_discount || item.discount,
-        reason: item.bundling_suggestion || item.recommendation,
-        source: sourceLabel,
-      }];
-    };
-
-    const collect = (list, sourceLabel) => {
-      if (!Array.isArray(list)) return [];
-      return list.flatMap((item) => ([
-        ...normalizeBundleArrays(item, sourceLabel),
-        ...normalizeBundleWith(item, sourceLabel),
-      ]));
-    };
-
-    const suggestions = [
-      ...collect(expiryItems, 'Near Expiry'),
-      ...collect(deadStock, 'Dead Stock'),
-    ];
-
-    const deduped = [];
-    const seen = new Set();
-    suggestions.forEach((s) => {
-      const key = `${s.title}-${Array.isArray(s.items) ? s.items.join('|') : ''}-${s.discount || ''}-${s.source}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        deduped.push(s);
-      }
-    });
-
-    return deduped.slice(0, 6);
-  }, [expiryItems, deadStock]);
+  // bundleSuggestions removed from Dashboard (moved to dedicated page)
 
   // prepare lists for each alert type and compute current item per type
   const expiryList = expiryItems || [];
@@ -366,16 +332,16 @@ export default function Dashboard() {
       {/* Greeting */}
       <div className="card flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-stockly-green to-stockly-blue bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-stockly-900 dark:text-stockly-50">
             {getGreeting()}, {username}!
           </h1>
-          <p className="text-lg text-gray-600 mt-2">
+          <p className="text-lg text-gray-600 dark:text-stockly-200 mt-2">
             You've got <strong>{inventoryData.length}</strong> items in stock.
           </p>
-          <div className="w-64 bg-gray-200 rounded-full h-2.5 mt-4">
+          <div className="w-64 bg-gray-200 dark:bg-stockly-800 rounded-full h-2.5 mt-4">
             <div className="bg-stockly-green h-2.5 rounded-full" style={{ width: `${goals && goals.length > 0 ? Math.round(goals.reduce((sum, goal) => sum + Math.min((goal.current_sales || 0) / goal.target * 100, 100), 0) / goals.length) : 0}%` }}></div>
           </div>
-          <p className="text-sm text-gray-500 mt-1">{goals && goals.length > 0 ? Math.round(goals.reduce((sum, goal) => sum + Math.min((goal.current_sales || 0) / goal.target * 100, 100), 0) / goals.length) : 0}% of sales goals achieved</p>
+          <p className="text-sm text-gray-600 dark:text-stockly-200 mt-1">{goals && goals.length > 0 ? Math.round(goals.reduce((sum, goal) => sum + Math.min((goal.current_sales || 0) / goal.target * 100, 100), 0) / goals.length) : 0}% of sales goals achieved</p>
         </div>
         <img src={dashboardImg} alt="Welcome" className="w-48 h-48 object-contain" />
       </div>
@@ -391,7 +357,7 @@ export default function Dashboard() {
               value={weatherCity}
               onChange={e => setWeatherCity(e.target.value)}
               placeholder="City (e.g., Colombo)"
-              className="flex-1 border p-2 rounded"
+              className="flex-1 border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50"
             />
             <button onClick={fetchWeather} className="btn-primary">Get Forecast</button>
           </div>
@@ -407,12 +373,12 @@ export default function Dashboard() {
               </ul>
             </div>
           ) : (
-            <p className="text-gray-500">Click "Get Forecast" for weather-based stocking tips!</p>
+            <p className="text-gray-500 dark:text-stockly-200">Click "Get Forecast" for weather-based stocking tips!</p>
           )}
 
           <div className="mt-10 pt-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="font-semibold text-lg">Upcoming Holidays</h4>
+              <h4 className="font-semibold text-lg text-stockly-900 dark:text-stockly-50">Upcoming Events</h4>
               <button
                 onClick={() => navigate('/calendar')}
                 className="inline-flex items-center rounded-lg bg-stockly-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-stockly-700 focus:outline-none focus:ring-2 focus:ring-stockly-500 focus:ring-offset-1"
@@ -424,12 +390,15 @@ export default function Dashboard() {
             {upcomingEvents.length > 0 ? (
               <div className="space-y-3">
                 {upcomingEvents.slice(0, 1).map(event => (
-                  <div key={event.id} className="flex items-start gap-3 bg-white p-3 rounded-xl border border-gray-100 border-l-4 border-l-stockly-500 shadow-sm">
+                  <div key={`${event.kind}-${event.id}`} className="flex items-start gap-3 bg-white dark:bg-stockly-900/80 p-3 rounded-xl border border-gray-100 dark:border-stockly-800 border-l-4 border-l-stockly-500 shadow-sm">
                     <div className="mt-0.5 text-stockly-600">
                       <CalendarDaysIcon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-900">{event.name}</p>
+                      <p className="font-medium text-gray-900 dark:text-stockly-50">{event.name}</p>
+                      <span className={`mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${event.kind === 'Holiday' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-200' : 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200'}`}>
+                        {event.kind}
+                      </span>
                       <p className="text-sm text-gray-600 dark:text-stockly-200 mt-1">
                         {new Date(event.date).toLocaleDateString('en-US', {
                           weekday: 'short',
@@ -438,9 +407,9 @@ export default function Dashboard() {
                         })}
                       </p>
                     </div>
-                    <div className="shrink-0 rounded-lg bg-stockly-50 px-2 py-1 text-center">
-                      <p className="text-[10px] uppercase tracking-wide text-stockly-700">Date</p>
-                      <p className="text-sm font-semibold text-stockly-800">
+                    <div className="shrink-0 rounded-lg bg-stockly-50 dark:bg-stockly-800 px-2 py-1 text-center">
+                      <p className="text-[10px] uppercase tracking-wide text-stockly-700 dark:text-stockly-200">Date</p>
+                      <p className="text-sm font-semibold text-stockly-800 dark:text-stockly-100">
                         {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </p>
                     </div>
@@ -448,7 +417,7 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-400 text-center py-3">No upcoming holidays found</p>
+              <p className="text-gray-500 dark:text-stockly-200 text-center py-3">No upcoming events found</p>
             )}
           </div>
 
@@ -503,11 +472,11 @@ export default function Dashboard() {
               <PlusIcon className="h-5 w-5 mr-2 text-stockly-green" /> Quick Add Inventory
             </h2>
             <form onSubmit={handleAddSubmit} className="space-y-3">
-              <select value={selectedDept} onChange={e => setSelectedDept(e.target.value)} className="w-full border p-2 rounded">
+              <select value={selectedDept} onChange={e => setSelectedDept(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
                 <option value="">All Departments</option>
                 {[...new Set(items.map(i => i.department))].sort().map(d => <option key={d}>{d}</option>)}
               </select>
-              <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className="w-full border p-2 rounded">
+              <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
                 <option value="">All Types</option>
                 {[...new Set(items.map(i => i.type))].sort().map(t => <option key={t}>{t}</option>)}
               </select>
@@ -515,14 +484,14 @@ export default function Dashboard() {
                 const val = e.target.value;
                 const item = filteredItems.find(i => `${i.item_name} (${i.item_code})` === val);
                 if (item) handleItemSelect(item);
-              }} className="w-full border p-2 rounded">
+              }} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
                 <option>Select Item ({filteredItems.length})</option>
                 {filteredItems.map(i => <option key={i.item_id}>{i.item_name} ({i.item_code})</option>)}
               </select>
-              <input type="number" name="stock_quantity" placeholder="Quantity" value={addForm.stock_quantity} onChange={e => setAddForm({ ...addForm, stock_quantity: e.target.value })} required className="w-full border p-2 rounded" />
-              <input type="date" name="expire_date" value={addForm.expire_date} onChange={e => setAddForm({ ...addForm, expire_date: e.target.value })} required className="w-full border p-2 rounded" />
-              <input type="text" name="supplier" placeholder="Supplier (opt)" value={addForm.supplier} onChange={e => setAddForm({ ...addForm, supplier: e.target.value })} className="w-full border p-2 rounded" />
-              <input type="text" name="batch_number" placeholder="Batch (opt)" value={addForm.batch_number} onChange={e => setAddForm({ ...addForm, batch_number: e.target.value })} className="w-full border p-2 rounded" />
+              <input type="number" name="stock_quantity" placeholder="Quantity" value={addForm.stock_quantity} onChange={e => setAddForm({ ...addForm, stock_quantity: e.target.value })} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+              <input type="date" name="expire_date" value={addForm.expire_date} onChange={e => setAddForm({ ...addForm, expire_date: e.target.value })} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+              <input type="text" name="supplier" placeholder="Supplier (opt)" value={addForm.supplier} onChange={e => setAddForm({ ...addForm, supplier: e.target.value })} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+              <input type="text" name="batch_number" placeholder="Batch (opt)" value={addForm.batch_number} onChange={e => setAddForm({ ...addForm, batch_number: e.target.value })} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
               <button type="submit" className="btn-primary w-full">Add Stock</button>
             </form>
           </div>
@@ -533,11 +502,11 @@ export default function Dashboard() {
               <PlusIcon className="h-5 w-5 mr-2 text-stockly-blue" /> Add Sales
             </h2>
             <form onSubmit={handleSingleSaleSubmit} className="space-y-3 mb-4">
-              <select value={selectedSaleItemId} onChange={e => setSelectedSaleItemId(e.target.value)} className="w-full border p-2 rounded">
+              <select value={selectedSaleItemId} onChange={e => setSelectedSaleItemId(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
                 <option value="">Select Item</option>
                 {items.map(i => <option key={i.item_id} value={i.item_id}>{i.item_name} ({i.item_code})</option>)}
               </select>
-              <input type="number" value={quantitySold} onChange={e => setQuantitySold(e.target.value)} placeholder="Qty Sold" required className="w-full border p-2 rounded" />
+              <input type="number" value={quantitySold} onChange={e => setQuantitySold(e.target.value)} placeholder="Qty Sold" required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
               <button type="submit" className="btn-primary w-full">Add Sale</button>
             </form>
             <form onSubmit={handleBulkSaleSubmit}>
@@ -558,17 +527,17 @@ export default function Dashboard() {
                   {newItemForm.next_code || 'Loading...'}
                 </div>
               </div>
-              <input name="item_name" value={newItemForm.item_name} onChange={handleNewItemChange} placeholder="Item Name" required className="w-full border p-2 rounded" />
-              <select name="department" value={newItemForm.department} onChange={handleNewItemChange} required className="w-full border p-2 rounded">
+              <input name="item_name" value={newItemForm.item_name} onChange={handleNewItemChange} placeholder="Item Name" required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+              <select name="department" value={newItemForm.department} onChange={handleNewItemChange} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
                 <option value="">Select Department</option>
                 {[...new Set(items.map(i => i.department))].sort().map(d => <option key={d} value={d}>{d}</option>)}
               </select>
-              <select name="type" value={newItemForm.type} onChange={handleNewItemChange} required className="w-full border p-2 rounded">
+              <select name="type" value={newItemForm.type} onChange={handleNewItemChange} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
                 <option value="">Select Type</option>
                 {[...new Set(items.map(i => i.type))].sort().map(t => <option key={t} value={t}>{t}</option>)}
               </select>
               <label className="block text-sm font-medium text-gray-700">Reorder Level</label>
-              <input type="number" name="reorder_level" value={newItemForm.reorder_level} onChange={handleNewItemChange} placeholder="Reorder Level" className="w-full border p-2 rounded" />
+              <input type="number" name="reorder_level" value={newItemForm.reorder_level} onChange={handleNewItemChange} placeholder="Reorder Level" className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
               <button type="submit" className="btn-primary w-full">Add Item</button>
             </form>
           </div>
@@ -639,7 +608,7 @@ export default function Dashboard() {
             />
           </div>
         ) : (
-          <p className="text-gray-500">Select an item to view trends.</p>
+          <p className="text-gray-500 dark:text-stockly-200">Select an item to view trends.</p>
         )}
       </div>
       {/* Expiry List, Dead Stock */}
@@ -665,7 +634,7 @@ export default function Dashboard() {
               />
             </div>
           ) : (
-            <p className="text-gray-500">No inventory data—add more samples for multi-slice pie</p>
+            <p className="text-gray-500 dark:text-stockly-200">No inventory data—add more samples for multi-slice pie</p>
           )}
           <button onClick={fetchInventory} className="mt-4 text-stockly-green hover:text-stockly-400 underline font-semibold transition">Refresh</button>
         </div>
@@ -692,7 +661,7 @@ export default function Dashboard() {
               />
             </div>
           ) : (
-            <p className="text-gray-500">No expiry data—add samples with repeated types for varied bars</p>
+            <p className="text-gray-500 dark:text-stockly-200">No expiry data—add samples with repeated types for varied bars</p>
           )}
           <button onClick={fetchExpiry} className="mt-4 text-stockly-green hover:text-stockly-400 underline font-semibold transition">Refresh</button>
         </div>
@@ -703,6 +672,10 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
+
+
 
 
 

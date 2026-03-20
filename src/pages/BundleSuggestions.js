@@ -92,17 +92,18 @@ export default function BundleSuggestions() {
   }, [expiryItems, deadStock]);
 
   return (
-    <div className="space-y-6">
-      <div className="card flex flex-col gap-2">
-        <h1 className="text-2xl font-bold text-stockly-900">Bundle Suggestions</h1>
-        <p className="text-sm text-gray-600">
+    <div className="min-h-screen bg-stockly-50 dark:bg-stockly-950 py-8 px-4">
+      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="card flex flex-col gap-2 bg-white dark:bg-stockly-900 border border-stockly-100 dark:border-stockly-800">
+        <h1 className="text-2xl font-bold text-stockly-900 dark:text-stockly-50">Bundle Suggestions</h1>
+        <p className="text-sm text-gray-600 dark:text-stockly-200">
           AI-assisted pairings from near-expiry and dead-stock items to improve sell-through.
         </p>
       </div>
 
-      <div className="card">
+      <div className="card bg-white dark:bg-stockly-900 border border-stockly-100 dark:border-stockly-800">
         {loading ? (
-          <div className="text-sm text-gray-500">Loading bundle suggestions...</div>
+          <div className="text-sm text-gray-500 dark:text-stockly-200">Loading bundle suggestions...</div>
         ) : bundleSuggestions.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2">
             {bundleSuggestions.map((bundle) => {
@@ -115,14 +116,14 @@ export default function BundleSuggestions() {
               const extra = labels.length - visible.length;
 
               return (
-                <div key={bundle.id} className="rounded-2xl border border-stockly-100 bg-white p-4 shadow-sm">
+                <div key={bundle.id} className="rounded-2xl border border-stockly-100 dark:border-stockly-800 bg-white dark:bg-stockly-900 p-4 shadow-sm">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="font-semibold text-gray-900 truncate">{bundle.title}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{bundle.source}</p>
+                      <p className="font-semibold text-gray-900 dark:text-stockly-50 truncate">{bundle.title}</p>
+                      <p className="text-xs text-gray-500 dark:text-stockly-200 mt-0.5">{bundle.source}</p>
                     </div>
                     {bundle.discount && (
-                      <span className="shrink-0 rounded-full bg-stockly-50 px-2 py-1 text-xs font-semibold text-stockly-700">
+                      <span className="shrink-0 rounded-full bg-stockly-50 dark:bg-stockly-800 px-2 py-1 text-xs font-semibold text-stockly-700 dark:text-stockly-100">
                         {bundle.discount}% OFF
                       </span>
                     )}
@@ -130,19 +131,19 @@ export default function BundleSuggestions() {
 
                   <div className="mt-3 flex flex-wrap gap-2">
                     {visible.map((label, idx) => (
-                      <span key={`${bundle.id}_item_${idx}`} className="rounded-lg bg-stockly-50 px-2.5 py-1 text-xs font-medium text-stockly-800">
+                      <span key={`${bundle.id}_item_${idx}`} className="rounded-lg bg-stockly-50 dark:bg-stockly-800 px-2.5 py-1 text-xs font-medium text-stockly-800 dark:text-stockly-100">
                         {label}
                       </span>
                     ))}
                     {extra > 0 && (
-                      <span className="rounded-lg bg-stockly-100 px-2.5 py-1 text-xs font-medium text-stockly-800">
+                      <span className="rounded-lg bg-stockly-100 dark:bg-stockly-800 px-2.5 py-1 text-xs font-medium text-stockly-800 dark:text-stockly-100">
                         +{extra} more
                       </span>
                     )}
                   </div>
 
                   {bundle.reason && (
-                    <p className="mt-3 text-xs text-gray-600">
+                    <p className="mt-3 text-xs text-gray-600 dark:text-stockly-200">
                       Strategy: <span className="font-medium">{bundle.reason}</span>
                     </p>
                   )}
@@ -151,8 +152,9 @@ export default function BundleSuggestions() {
             })}
           </div>
         ) : (
-          <div className="text-sm text-gray-500">No bundle suggestions available yet.</div>
+          <div className="text-sm text-gray-500 dark:text-stockly-200">No bundle suggestions available yet.</div>
         )}
+      </div>
       </div>
     </div>
   );
