@@ -573,7 +573,7 @@ export default function Dashboard() {
               </option>
             ))}
         </select>
-        {salesData.length > 0 ? (
+        {(salesData.length > 0 || forecastData.length > 0) ? (
           <div className="h-[420px] w-full min-w-0 overflow-hidden">
             <Plot
               useResizeHandler
