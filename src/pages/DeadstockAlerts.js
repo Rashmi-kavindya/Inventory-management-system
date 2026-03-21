@@ -21,7 +21,7 @@ export default function DeadstockAlerts() {
               <h3 className="text-xl font-bold">{item.item_name}</h3>
               <p className="text-sm text-gray-700 dark:text-stockly-200">Stock: <strong>{item.stock_quantity}</strong> units</p>
               <p className="text-sm text-gray-700 dark:text-stockly-200">Recent Sales: <strong>{item.recent_sales}</strong></p>
-              <p className="text-red-700 dark:text-red-300 font-bold mt-2">? {item.recommendation}</p>
+              <p className="text-red-700 dark:text-red-300 font-bold mt-2">{item.recommendation}</p>
             </div>
           ))}
         </div>
