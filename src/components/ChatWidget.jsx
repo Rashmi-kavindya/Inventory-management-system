@@ -122,6 +122,7 @@ export default function ChatWidget() {
   const [input, setInput] = useState('');
   const recognitionRef = useRef(null);
   const baseInputRef = useRef('');
+  const finalTranscriptRef = useRef('');
 
   const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -145,20 +146,35 @@ export default function ChatWidget() {
     recognition.interimResults = true;
     recognition.continuous = false;
 
-    recognition.onstart = () => setIsListening(true);
+    recognition.onstart = () => {
+      finalTranscriptRef.current = '';
+      setIsListening(true);
+    };
     recognition.onend = () => setIsListening(false);
     recognition.onerror = () => setIsListening(false);
     recognition.onresult = (event) => {
-      const transcript = Array.from(event.results)
-        .map(result => result[0]?.transcript || '')
+      let finalTranscript = finalTranscriptRef.current;
+      let interimTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        const text = (result[0]?.transcript || '').trim();
+        if (!text) continue;
+        if (result.isFinal) {
+          finalTranscript = `${finalTranscript} ${text}`.trim();
+        } else {
+          interimTranscript = `${interimTranscript} ${text}`.trim();
+        }
+      }
+
+      finalTranscriptRef.current = finalTranscript;
+      const combined = [baseInputRef.current, finalTranscriptRef.current, interimTranscript]
+        .filter(Boolean)
         .join(' ')
+        .replace(/\s+/g, ' ')
         .trim();
 
-      setInput((prev) => {
-        const base = baseInputRef.current || prev;
-        if (!transcript) return base;
-        return base ? `${base} ${transcript}` : transcript;
-      });
+      setInput(combined);
     };
 
     recognitionRef.current = recognition;
