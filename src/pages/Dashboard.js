@@ -28,7 +28,6 @@ export default function Dashboard() {
   const [quantitySold, setQuantitySold] = useState('');
   const [file, setFile] = useState(null);
 
-  const [weather, setWeather] = useState(null);
   const [weatherCity, setWeatherCity] = useState('Colombo');  // Default
   const [expiryIndex, setExpiryIndex] = useState(0);
   const [deadIndex, setDeadIndex] = useState(0);
@@ -143,20 +142,7 @@ export default function Dashboard() {
       });
       setGoals(response.data);
     } catch (err) { console.error('Failed to load goals:', err); }
-  };
-
-  const fetchWeather = useCallback(async () => {
-    try {
-      const { data } = await axios.get(
-        `http://127.0.0.1:5000/weather?city=${weatherCity}`
-      );
-      setWeather(data);
-    } catch (err) {
-      alert('Weather fetch failed: ' + err.message);
-    }
-  }, [weatherCity]); // ← only re‑create when city changes
-
-  const fetchUpcomingEvents = useCallback(async () => {
+  };const fetchUpcomingEvents = useCallback(async () => {
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const [festivalsRes, eventsRes] = await Promise.allSettled([
@@ -198,10 +184,9 @@ export default function Dashboard() {
     fetchExpiry();
     fetchDeadStock();
     fetchItems();
-    fetchWeather();
     fetchGoals();
     fetchUpcomingEvents();
-  }, [selectedItemId, expiryDays, fetchExpiry, fetchWeather, weatherCity, fetchUpcomingEvents]);
+  }, [selectedItemId, expiryDays, fetchExpiry, fetchUpcomingEvents]);
 
   useEffect(() => {
     // cycle through each alert's item lists every ~1500ms
@@ -366,22 +351,14 @@ export default function Dashboard() {
               placeholder="City (e.g., Colombo)"
               className="flex-1 border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50"
             />
-            <button onClick={fetchWeather} className="btn-primary">Get Forecast</button>
+            <button
+              onClick={() => navigate(`/weather?city=${encodeURIComponent(weatherCity)}`)}
+              className="btn-primary"
+            >
+              Get Forecast
+            </button>
           </div>
-          {weather ? (
-            <div className="space-y-2">
-              <h3 className="font-bold">{weather.city} – {weather.date}</h3>
-              <p>🌡️ High: {weather.max_temp}°C | Low: {weather.min_temp}°C</p>
-              <p>🌧️ Rain Chance: {weather.rain_prob}%</p>
-              <ul className="list-disc pl-5 space-y-1">
-                {weather.suggestions.map((s, i) => (
-                  <li key={i} className="text-sm text-blue-600">{s}</li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p className="text-gray-500 dark:text-stockly-200">Click "Get Forecast" for weather-based stocking tips!</p>
-          )}
+          <p className="text-gray-500 dark:text-stockly-200">Forecast opens on a dedicated page after you click.</p>
 
           <div className="mt-10 pt-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
@@ -680,6 +657,12 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
+
+
+
+
 
 
 

@@ -20,6 +20,7 @@ import Login from './pages/Login';
 import logo from './assets/Logo - Stockly.png';
 import Calendar from './pages/Calendar';
 import BundleSuggestions from './pages/BundleSuggestions';
+import WeatherForecast from './pages/WeatherForecast';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -196,6 +197,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           {role === 'manager' && <Route path="/create-user" element={<CreateUser />} />}
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/weather" element={<WeatherForecast />} />
         </Routes>
       </main>
     </div>
