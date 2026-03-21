@@ -28,6 +28,14 @@ export default function Dashboard() {
   const [quantitySold, setQuantitySold] = useState('');
   const [file, setFile] = useState(null);
 
+  const [weather, setWeather] = useState(() => {
+    try {
+      const raw = localStorage.getItem('weatherLast');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  });
   const [weatherCity, setWeatherCity] = useState('Colombo');  // Default
   const [expiryIndex, setExpiryIndex] = useState(0);
   const [deadIndex, setDeadIndex] = useState(0);
@@ -73,6 +81,20 @@ export default function Dashboard() {
     const handleResize = () => window.dispatchEvent(new Event('resize'));
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const refreshWeather = () => {
+      try {
+        const raw = localStorage.getItem('weatherLast');
+        if (raw) setWeather(JSON.parse(raw));
+      } catch {
+        // ignore invalid cache
+      }
+    };
+    window.addEventListener('focus', refreshWeather);
+    refreshWeather();
+    return () => window.removeEventListener('focus', refreshWeather);
   }, []);
 
   // ──────────────────────── FETCHERS ────────────────────────
@@ -358,7 +380,22 @@ export default function Dashboard() {
               Get Forecast
             </button>
           </div>
-          <p className="text-gray-500 dark:text-stockly-200">Forecast opens on a dedicated page after you click.</p>
+          {weather ? (
+            <div className="space-y-2">
+              <h3 className="font-bold"> {weather.city} – {weather.date}</h3>
+              <p>🌡️ High: {weather.max_temp}°C | Low: {weather.min_temp}°C</p>
+              <p>🌧️ Rain Chance: {weather.rain_prob}%</p>
+              {weather.suggestions?.length > 0 && (
+                <ul className="list-disc pl-5 space-y-1">
+                  {weather.suggestions.map((s, i) => (
+                    <li key={i} className="text-sm text-blue-600"> {s}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-stockly-200">Click "Get Forecast" for weather-based stocking tips!</p>
+          )}
 
           <div className="mt-10 pt-4 border-t border-gray-200">
             <div className="flex items-center justify-between mb-3">
