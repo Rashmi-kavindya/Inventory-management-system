@@ -50,6 +50,7 @@ export default function Dashboard() {
   });
 
   const role = localStorage.getItem('role');
+  const isManager = role === 'manager';
   const username = localStorage.getItem('username') || 'User';
   const { expiryDays } = useExpiry();
 
@@ -484,86 +485,90 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Manager Actions */}
-      {role === 'manager' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Add Inventory */}
-          <div className="card">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <PlusIcon className="h-5 w-5 mr-2 text-stockly-green" /> Quick Add Inventory
-            </h2>
-            <form onSubmit={handleAddSubmit} className="space-y-3">
-              <select value={selectedDept} onChange={e => setSelectedDept(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
-                <option value="">All Departments</option>
-                {[...new Set(items.map(i => i.department))].sort().map(d => <option key={d}>{d}</option>)}
-              </select>
-              <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
-                <option value="">All Types</option>
-                {[...new Set(items.map(i => i.type))].sort().map(t => <option key={t}>{t}</option>)}
-              </select>
-              <select onChange={e => {
-                const val = e.target.value;
-                const item = filteredItems.find(i => `${i.item_name} (${i.item_code})` === val);
-                if (item) handleItemSelect(item);
-              }} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
-                <option>Select Item ({filteredItems.length})</option>
-                {filteredItems.map(i => <option key={i.item_id}>{i.item_name} ({i.item_code})</option>)}
-              </select>
-              <input type="number" name="stock_quantity" placeholder="Quantity" value={addForm.stock_quantity} onChange={e => setAddForm({ ...addForm, stock_quantity: e.target.value })} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
-              <input type="date" name="expire_date" value={addForm.expire_date} onChange={e => setAddForm({ ...addForm, expire_date: e.target.value })} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
-              <input type="text" name="supplier" placeholder="Supplier (opt)" value={addForm.supplier} onChange={e => setAddForm({ ...addForm, supplier: e.target.value })} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
-              <input type="text" name="batch_number" placeholder="Batch (opt)" value={addForm.batch_number} onChange={e => setAddForm({ ...addForm, batch_number: e.target.value })} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
-              <button type="submit" className="btn-primary w-full">Add Stock</button>
-            </form>
-          </div>
-
-          {/* Add Sales */}
-          <div className="card">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <PlusIcon className="h-5 w-5 mr-2 text-stockly-blue" /> Add Sales
-            </h2>
-            <form onSubmit={handleSingleSaleSubmit} className="space-y-3 mb-4">
-              <select value={selectedSaleItemId} onChange={e => setSelectedSaleItemId(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
-                <option value="">Select Item</option>
-                {items.map(i => <option key={i.item_id} value={i.item_id}>{i.item_name} ({i.item_code})</option>)}
-              </select>
-              <input type="number" value={quantitySold} onChange={e => setQuantitySold(e.target.value)} placeholder="Qty Sold" required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
-              <button type="submit" className="btn-primary w-full">Add Sale</button>
-            </form>
-            <form onSubmit={handleBulkSaleSubmit}>
-              <input type="file" accept=".xlsx" onChange={e => setFile(e.target.files[0])} className="mb-2 w-full" />
-              <button type="submit" className="btn-primary w-full">Upload Bulk</button>
-            </form>
-          </div>
-
-          {/* Add New Item */}
-          <div className="card">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <PlusIcon className="h-5 w-5 mr-2 text-stockly-green" /> Add New Item
-            </h2>
-            <form onSubmit={handleNewItemSubmit} className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Item Code</label>
-                <div className="bg-gray-100 border border-gray-300 text-gray-800 font-mono p-2 rounded text-center">
-                  {newItemForm.next_code || 'Loading...'}
-                </div>
-              </div>
-              <input name="item_name" value={newItemForm.item_name} onChange={handleNewItemChange} placeholder="Item Name" required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
-              <select name="department" value={newItemForm.department} onChange={handleNewItemChange} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
-                <option value="">Select Department</option>
-                {[...new Set(items.map(i => i.department))].sort().map(d => <option key={d} value={d}>{d}</option>)}
-              </select>
-              <select name="type" value={newItemForm.type} onChange={handleNewItemChange} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
-                <option value="">Select Type</option>
-                {[...new Set(items.map(i => i.type))].sort().map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-              <label className="block text-sm font-medium text-gray-700">Reorder Level</label>
-              <input type="number" name="reorder_level" value={newItemForm.reorder_level} onChange={handleNewItemChange} placeholder="Reorder Level" className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
-              <button type="submit" className="btn-primary w-full">Add Item</button>
-            </form>
-          </div>
+      {/* Inventory & Sales (All Roles) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Add Inventory */}
+        <div className="card">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <PlusIcon className="h-5 w-5 mr-2 text-stockly-green" /> Quick Add Inventory
+          </h2>
+          <form onSubmit={handleAddSubmit} className="space-y-3">
+            <select value={selectedDept} onChange={e => setSelectedDept(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
+              <option value="">All Departments</option>
+              {[...new Set(items.map(i => i.department))].sort().map(d => <option key={d}>{d}</option>)}
+            </select>
+            <select value={selectedType} onChange={e => setSelectedType(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
+              <option value="">All Types</option>
+              {[...new Set(items.map(i => i.type))].sort().map(t => <option key={t}>{t}</option>)}
+            </select>
+            <select onChange={e => {
+              const val = e.target.value;
+              const item = filteredItems.find(i => `${i.item_name} (${i.item_code})` === val);
+              if (item) handleItemSelect(item);
+            }} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
+              <option>Select Item ({filteredItems.length})</option>
+              {filteredItems.map(i => <option key={i.item_id}>{i.item_name} ({i.item_code})</option>)}
+            </select>
+            <input type="number" name="stock_quantity" placeholder="Quantity" value={addForm.stock_quantity} onChange={e => setAddForm({ ...addForm, stock_quantity: e.target.value })} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+            <input type="date" name="expire_date" value={addForm.expire_date} onChange={e => setAddForm({ ...addForm, expire_date: e.target.value })} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+            <input type="text" name="supplier" placeholder="Supplier (opt)" value={addForm.supplier} onChange={e => setAddForm({ ...addForm, supplier: e.target.value })} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+            <input type="text" name="batch_number" placeholder="Batch (opt)" value={addForm.batch_number} onChange={e => setAddForm({ ...addForm, batch_number: e.target.value })} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+            <button type="submit" className="btn-primary w-full">Add Stock</button>
+          </form>
         </div>
-      )}
+
+        {/* Add Sales */}
+        <div className="card">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <PlusIcon className="h-5 w-5 mr-2 text-stockly-blue" /> Add Sales
+          </h2>
+          <form onSubmit={handleSingleSaleSubmit} className="space-y-3 mb-4">
+            <select value={selectedSaleItemId} onChange={e => setSelectedSaleItemId(e.target.value)} className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
+              <option value="">Select Item</option>
+              {items.map(i => <option key={i.item_id} value={i.item_id}>{i.item_name} ({i.item_code})</option>)}
+            </select>
+            <input type="number" value={quantitySold} onChange={e => setQuantitySold(e.target.value)} placeholder="Qty Sold" required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+            <button type="submit" className="btn-primary w-full">Add Sale</button>
+          </form>
+          <form onSubmit={handleBulkSaleSubmit}>
+            <input type="file" accept=".xlsx" onChange={e => setFile(e.target.files[0])} className="mb-2 w-full" />
+            <button type="submit" className="btn-primary w-full">Upload Bulk</button>
+          </form>
+        </div>
+        {/* Add New Item (Visible to All, Action Disabled for Non-Managers) */}
+        <div className="card">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <PlusIcon className="h-5 w-5 mr-2 text-stockly-green" /> Add New Item
+          </h2>
+          <form onSubmit={handleNewItemSubmit} className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Item Code</label>
+              <div className="bg-gray-100 border border-gray-300 text-gray-800 font-mono p-2 rounded text-center">
+                {newItemForm.next_code || 'Loading...'}
+              </div>
+            </div>
+            <input name="item_name" value={newItemForm.item_name} onChange={handleNewItemChange} placeholder="Item Name" required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+            <select name="department" value={newItemForm.department} onChange={handleNewItemChange} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
+              <option value="">Select Department</option>
+              {[...new Set(items.map(i => i.department))].sort().map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+            <select name="type" value={newItemForm.type} onChange={handleNewItemChange} required className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50">
+              <option value="">Select Type</option>
+              {[...new Set(items.map(i => i.type))].sort().map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+            <label className="block text-sm font-medium text-gray-700">Reorder Level</label>
+            <input type="number" name="reorder_level" value={newItemForm.reorder_level} onChange={handleNewItemChange} placeholder="Reorder Level" className="w-full border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50" />
+            <button
+              type="submit"
+              disabled={!isManager}
+              className={`btn-primary w-full ${!isManager ? 'opacity-60 cursor-not-allowed hover:scale-100 hover:shadow-lg' : ''}`}
+              title={!isManager ? 'Only managers can add new items' : undefined}
+            >
+              Add Item
+            </button>
+          </form>
+        </div>
+      </div>
 
       <div className="card mb-6">
         <h2 className="text-xl font-semibold mb-4">Monthly Sales Trends</h2>
