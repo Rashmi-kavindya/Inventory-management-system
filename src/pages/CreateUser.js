@@ -73,6 +73,13 @@ export default function CreateUser() {
     setError(''); setMessage('');
   };
 
+  const formatCreatedAt = (value) => {
+    if (!value) return '-';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
   return (
     <div className="min-h-screen bg-stockly-50 dark:bg-stockly-950 pt-20 px-6">
       <div className="max-w-4xl mx-auto">
@@ -174,7 +181,7 @@ export default function CreateUser() {
                         {user.role.toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-500 dark:text-stockly-200">{user.created_at ? user.created_at.split(' ')[0] : '-'}</td>
+                    <td className="px-6 py-4 text-gray-500 dark:text-stockly-200">{formatCreatedAt(user.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
