@@ -344,20 +344,20 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 relative">
       {/* Greeting */}
-      <div className="card flex items-center justify-between">
-        <div>
+      <div className="card flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="text-center md:text-left">
           <h1 className="text-4xl font-bold text-stockly-900 dark:text-stockly-50">
             {getGreeting()}, {username}!
           </h1>
           <p className="text-lg text-gray-600 dark:text-stockly-200 mt-2">
             You've got <strong>{inventoryData.length}</strong> items in stock.
           </p>
-          <div className="w-64 bg-gray-200 dark:bg-stockly-800 rounded-full h-2.5 mt-4">
+          <div className="w-full sm:w-64 bg-gray-200 dark:bg-stockly-800 rounded-full h-2.5 mt-4">
             <div className="bg-stockly-green h-2.5 rounded-full" style={{ width: `${goals && goals.length > 0 ? Math.round(goals.reduce((sum, goal) => sum + Math.min((goal.current_sales || 0) / goal.target * 100, 100), 0) / goals.length) : 0}%` }}></div>
           </div>
           <p className="text-sm text-gray-600 dark:text-stockly-200 mt-1">{goals && goals.length > 0 ? Math.round(goals.reduce((sum, goal) => sum + Math.min((goal.current_sales || 0) / goal.target * 100, 100), 0) / goals.length) : 0}% of sales goals achieved</p>
         </div>
-        <img src={dashboardImg} alt="Welcome" className="w-48 h-48 object-contain" />
+        <img src={dashboardImg} alt="Welcome" className="w-40 h-40 md:w-48 md:h-48 object-contain mx-auto md:mx-0" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -365,17 +365,17 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold mb-4 flex items-center">
             <CloudIcon className="h-5 w-5 mr-2 text-blue-500" /> Weather Insights
           </h2>
-          <div className="flex gap-4 mb-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-4">
             <input
               type="text"
               value={weatherCity}
               onChange={e => setWeatherCity(e.target.value)}
               placeholder="City (e.g., Colombo)"
-              className="flex-1 border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50"
+              className="w-full sm:flex-1 border border-gray-300 dark:border-stockly-800 p-2 rounded bg-white dark:bg-stockly-900 text-stockly-900 dark:text-stockly-50"
             />
             <button
               onClick={() => navigate(`/weather?city=${encodeURIComponent(weatherCity)}`)}
-              className="btn-primary"
+              className="btn-primary w-full sm:w-auto"
             >
               Get Forecast
             </button>
