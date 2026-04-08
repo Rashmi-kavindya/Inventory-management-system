@@ -165,7 +165,9 @@ export default function Dashboard() {
       });
       setGoals(response.data);
     } catch (err) { console.error('Failed to load goals:', err); }
-  };const fetchUpcomingEvents = useCallback(async () => {
+  };
+
+  const fetchUpcomingEvents = useCallback(async () => {
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const [festivalsRes, eventsRes] = await Promise.allSettled([
@@ -694,7 +696,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Floating Chat Widget – only on Dashboard */}
+      {/* Chat Widget on Dashboard */}
       <ChatWidget />
     </div>
   );

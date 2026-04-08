@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
-// Tiny inline SVG for sort indicator (no external dependency)
 const SortIcon = ({ isActive, direction }) => {
   if (!isActive) {
     return (
@@ -117,7 +116,6 @@ export default function InventoryList() {
               <table className="min-w-full divide-y divide-gray-300 dark:divide-stockly-800">
                 <thead className="bg-stockly-50 dark:bg-stockly-900 sticky top-0 z-10">
                   <tr>
-                    {/* CODE – now has left padding */}
                     <th
                       onClick={() => handleSort('item_code')}
                       className="cursor-pointer pl-6 pr-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-200 uppercase tracking-wider hover:bg-stockly-100 dark:hover:bg-stockly-800 transition"
@@ -154,7 +152,6 @@ export default function InventoryList() {
                     >
                       Expire <SortIcon isActive={sortConfig.key === 'expire_date'} direction={sortConfig.direction} />
                     </th>
-                    {/* REORDER – right padding */}
                     <th
                       onClick={() => handleSort('reorder_level')}
                       className="cursor-pointer pr-6 pl-3 py-3 text-left text-xs font-medium text-stockly-blue dark:text-stockly-200 uppercase tracking-wider hover:bg-stockly-100 dark:hover:bg-stockly-800 transition"

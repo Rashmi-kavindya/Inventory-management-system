@@ -38,7 +38,7 @@ export default function CreateUser() {
     try {
       let response;
       if (editingUser) {
-        // Update existing user (backend must implement PUT /users/<id>)
+        // Update existing user
         response = await axios.put(`http://127.0.0.1:5000/users/${editingUser.id}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });

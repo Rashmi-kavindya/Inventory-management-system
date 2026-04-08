@@ -65,7 +65,7 @@ export default function Calendar() {
     }
   };
 
-  // Simple calendar grid
+  // Calendar grid
   const monthName = currentMonth.toLocaleString('default', { month: 'long' });
   const year = currentMonth.getFullYear();
 

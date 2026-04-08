@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import chatAssistantImg from '../assets/ChatAssistant.jpg';
 
 // ================================================================
-// ReportForm: MOVED OUTSIDE so it doesn't remount on parent re-render
+// ReportForm
 // ================================================================
 const ReportForm = React.memo(({ payload, API_BASE, pushBotMessage, addMessage }) => {
   const [reportType, setReportType] = useState(payload.options?.[0] || 'sales');
@@ -91,7 +91,7 @@ const ReportForm = React.memo(({ payload, API_BASE, pushBotMessage, addMessage }
         </select>
       </div>
 
-      {/* Centered Generate Button */}
+      {/* Generate Button */}
       <div className="flex justify-center pt-2">
         <button
           onClick={generateReport}
