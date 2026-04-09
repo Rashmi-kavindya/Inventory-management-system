@@ -40,9 +40,13 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
       <sub><strong>Dashboard</strong></sub>
     </td>
     <td width="50%" valign="top" align="center">
-      <img src="./src/assets/bundling.jpeg" alt="Weather Forecast" width="100%" />
+      <img src="./src/assets/bundling.jpeg" alt="Bundle Suggestions" width="94%" />
       <br />
       <sub><strong>Bundle Suggestions</strong></sub>
+      <div style="height: 16px;"></div>
+      <img src="./src/assets/chatbot_ss.jpeg" alt="Chatbot Assistant" width="80%" />
+      <br />
+      <sub><strong>Chatbot Assistant</strong></sub>
     </td>
   </tr>
   <tr>
@@ -55,13 +59,6 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
       <img src="./src/assets/calander.jpeg" alt="Calendar" width="100%" />
       <br />
       <sub><strong>Calendar</strong></sub>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" valign="top" align="center">
-      <img src="./src/assets/chatbot_ss.jpeg" alt="Chatbot Assistant" width="70%" />
-      <br />
-      <sub><strong>Chatbot Assistant</strong></sub>
     </td>
   </tr>
 </table>
