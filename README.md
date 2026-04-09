@@ -69,9 +69,13 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
 
 ## About This Project
 
-Stockly was built as a final-project style inventory platform to demonstrate CRUD workflows, dashboard analytics, alerting, forecasting, and assistant-driven actions in a single polished interface.
+Stockly was developed as an individual project for the Data Management Project course at my university.
 
-It is designed to feel like a real product rather than a collection of forms, with a strong focus on decision support, visual clarity, and practical business use.
+It is a full-stack AI-powered inventory management system designed for supermarkets to provide real-time stock tracking, intelligent demand forecasting, near-expiry alerts, and dead-stock detection.
+
+The application combines a modern React dashboard with a Flask-MySQL backend and an XGBoost machine learning model to reduce waste, prevent stock-outs, and improve profitability. The forecasting model achieved an accuracy of 82.53%.
+
+Key features include role-based access control with JWT authentication, a chatbot with Groq AI fallback, automated bundle suggestions for slow-moving items, weather-aware stocking recommendations, a Sri Lankan holiday calendar for demand planning, sales goal tracking, and PDF report generation.
 
 ## Features
 
