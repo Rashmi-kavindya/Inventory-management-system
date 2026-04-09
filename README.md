@@ -1,187 +1,215 @@
-# 📦 Stockly - Smart Inventory Management System
+# Stockly
 
-[![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.0-38B2AC.svg)](https://tailwindcss.com/)
-[![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)](https://nodejs.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<p align="center">
+  <img src="./src/assets/Logo%20-%20Stockly.png" alt="Stockly Logo" width="120" />
+</p>
 
-> A comprehensive inventory management solution built with React, designed to help businesses track stock, manage expiry dates, predict demand, and optimize operations.
+<p align="center">
+  Smart inventory management for stock, sales, alerts, forecasts, and planning.
+</p>
 
-## ✨ Features
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=000" alt="React" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=fff" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Axios-HTTP-5A29E4?style=for-the-badge" alt="Axios" />
+  <img src="https://img.shields.io/badge/Plotly.js-Analytics-3F4F75?style=for-the-badge" alt="Plotly.js" />
+</p>
 
-### 🏠 Dashboard
-- Real-time overview of inventory status
-- Key metrics and analytics
-- Quick access to alerts and notifications
+Stockly is a modern inventory management dashboard built with React and Tailwind CSS. It helps businesses monitor inventory, track expiry and restock alerts, manage sales goals, view weather-based insights, and chat with an embedded assistant for quick actions and report generation.
 
-### 📋 Inventory Management
-- Complete inventory listing with search and filters
-- Add new items with detailed specifications
-- Track stock levels, locations, and categories
+## Highlights
 
-### 🚨 Smart Alerts
-- **Expiry Alerts**: Never miss product expiration dates
-- **Restock Alerts**: Automatic notifications for low stock items
-- **Deadstock Alerts**: Identify slow-moving inventory
-
-### 📊 Analytics & Insights
-- Sales tracking and entry system
-- Demand prediction using historical data
-- Goal setting and progress monitoring
-- Weather-based forecasting for seasonal items
-
-### 🤖 AI-Powered Features
-- Bundle suggestions for optimal sales
-- Intelligent restocking recommendations
-- Predictive analytics for inventory planning
-
-### 👥 User Management
-- User creation and authentication
-- Role-based access control
-- Secure login system
-
-### 📅 Additional Tools
-- Calendar integration for scheduling
+- Inventory dashboard with live summaries and charts
+- Searchable, sortable inventory list
+- Expiry, restock, dead stock, and bundle suggestion views
+- Sales entry, bulk upload, and sales forecasting
+- Goal tracking for sales targets
+- Calendar for holidays and custom events
 - Weather forecast integration
-- Interactive chat widget for support
+- Chatbot assistant with voice input and report generation
+- Role-based login and user management
+- Dark mode support
 
-## 🚀 Quick Start
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="./src/assets/dashboard.jpeg" alt="Dashboard" width="100%" />
+      <br />
+      <sub>Dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="./src/assets/weather.jpeg" alt="Weather Forecast" width="100%" />
+      <br />
+      <sub>Weather Forecast</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./src/assets/bundling.jpeg" alt="Bundle Suggestions" width="100%" />
+      <br />
+      <sub>Bundle Suggestions</sub>
+    </td>
+    <td align="center">
+      <img src="./src/assets/calander.jpeg" alt="Calendar" width="100%" />
+      <br />
+      <sub>Calendar</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="./src/assets/chatbot.jpeg" alt="Chatbot" width="60%" />
+      <br />
+      <sub>Chatbot Assistant</sub>
+    </td>
+  </tr>
+</table>
+
+## Demo Video
+
+- YouTube: `https://youtu.be/your-demo-video`
+
+## Features
+
+### Dashboard
+- Quick overview of inventory, alerts, goals, weather, and upcoming events
+- Sales trend chart and department-wise stock distribution
+- Fast access to alerts and actions from a single screen
+
+### Inventory Management
+- Full inventory list with search and sorting
+- Add new items with auto-generated item codes
+- Track quantity, reorder level, expiry date, department, and type
+
+### Smart Alerts
+- Expiry alerts for items close to expiration
+- Restock alerts for low-stock items
+- Dead stock alerts for slow-moving items
+- Bundle suggestions to help move related products
+
+### Sales and Forecasting
+- Add single sales entries
+- Upload bulk sales data through Excel files
+- View historical sales trends
+- Predict future sales demand
+- Predict reorder quantity for products
+
+### Sales Goals
+- Create and manage sales goals
+- Track progress against targets
+- View completion status and deadlines
+
+### Calendar and Events
+- Monthly calendar view
+- Custom event creation for managers
+- Holiday and upcoming event display
+- Edit and delete custom events
+
+### Weather Forecasting
+- Search weather by city
+- View forecast data and stocking suggestions
+- Save the latest forecast for quick reference
+
+### Chat Assistant
+- Floating chatbot for inventory help
+- Ask about stock, sales, alerts, and reports
+- Voice input support in compatible browsers
+- Generate and download reports from the chat window
+
+### User Management
+- Secure login
+- Role-based access control
+- Create user functionality for managers
+- Profile picture upload and settings
+
+## Tech Stack
+
+- React 19
+- React Router
+- Axios
+- Tailwind CSS
+- Plotly.js
+- React Hot Toast
+- Lucide React
+- Heroicons
+
+## Project Structure
+
+```text
+stockly/
+|-- public/
+|-- src/
+|   |-- assets/
+|   |   |-- dashboard.jpeg
+|   |   |-- weather.jpeg
+|   |   |-- bundling.jpeg
+|   |   |-- calander.jpeg
+|   |   `-- chatbot.jpeg
+|   |-- components/
+|   |   `-- ChatWidget.jsx
+|   |-- contexts/
+|   |   `-- ExpiryContext.js
+|   |-- pages/
+|   |   |-- Dashboard.js
+|   |   |-- InventoryList.js
+|   |   |-- ExpiryAlerts.js
+|   |   |-- RestockAlerts.js
+|   |   |-- DeadstockAlerts.js
+|   |   |-- BundleSuggestions.js
+|   |   |-- Goals.js
+|   |   |-- Calendar.js
+|   |   |-- WeatherForecast.js
+|   |   |-- Login.js
+|   |   `-- Settings.js
+|   |-- App.js
+|   `-- index.js
+|-- package.json
+`-- README.md
+```
+
+## Getting Started
 
 ### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-- XAMPP (for local development)
 
-### Installation
+- Node.js
+- npm
+- Backend API running at `http://127.0.0.1:5000`
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/stockly.git
-   cd stockly
-   ```
+### Install
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```bash
+git clone https://github.com/your-username/stockly.git
+cd stockly
+npm install
+```
 
-3. **Start the development server**
-   ```bash
-   npm start
-   ```
+### Run
 
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+```bash
+npm start
+```
 
-### Build for Production
+Open `http://localhost:3000` in your browser.
+
+### Build
+
 ```bash
 npm run build
 ```
 
-## 📖 Usage
+## Backend
 
-### Getting Started
-1. **Login**: Use your credentials to access the system
-2. **Dashboard**: Get an overview of your inventory status
-3. **Add Items**: Start by adding your products to the inventory
-4. **Monitor Alerts**: Keep track of expiry and restock notifications
-5. **Analyze Data**: Use the analytics tools to make informed decisions
+This repository contains the frontend application.
 
-### Key Workflows
-- **Daily Operations**: Check dashboard → Review alerts → Update inventory
-- **New Product**: Create Item → Set expiry dates → Add to inventory
-- **Sales Management**: Enter sales data → Monitor goals → Generate reports
+- Frontend repo: `https://github.com/Rashmi-kavindya/Inventory-management-system`
+- Backend repo: `https://github.com/Rashmi-kavindya/stockly-backend`
 
-## 🛠️ Technologies Used
+## Notes
 
-- **Frontend**: React 18, Tailwind CSS
-- **Build Tool**: Create React App
-- **Styling**: PostCSS, Tailwind CSS
-- **State Management**: React Context API
-- **Icons & UI**: Custom components with Tailwind
-- **Database**: Local storage / API integration ready
+- The app expects the backend API to be available locally during development.
+- Some features depend on backend endpoints, including login, alerts, chatbot responses, weather data, and reports.
 
-## 📸 Screenshots
+## Author
 
-### Dashboard Overview
-![Dashboard](screenshots/dashboard.png)
-*Main dashboard showing key metrics and alerts*
-
-### Inventory Management
-![Inventory](screenshots/inventory.png)
-*Comprehensive inventory listing with filters*
-
-### Analytics & Predictions
-![Analytics](screenshots/analytics.png)
-*Sales analytics and demand predictions*
-
-*📝 Note: Screenshots will be added soon. Place your images in the `screenshots/` folder.*
-
-## 🎥 Demo Videos
-
-- **Product Tour**: [Watch Video](videos/product-tour.mp4)
-- **Setup Guide**: [Watch Video](videos/setup-guide.mp4)
-- **Advanced Features**: [Watch Video](videos/advanced-features.mp4)
-
-*📹 Videos will be added to the `videos/` folder for easy access.*
-
-## 📁 Project Structure
-
-```
-stockly/
-├── public/
-│   ├── index.html
-│   └── manifest.json
-├── src/
-│   ├── assets/
-│   ├── components/
-│   │   └── ChatWidget.jsx
-│   ├── contexts/
-│   │   └── ExpiryContext.js
-│   ├── pages/
-│   │   ├── Dashboard.js
-│   │   ├── InventoryList.js
-│   │   ├── ExpiryAlerts.js
-│   │   └── ... (other pages)
-│   ├── App.js
-│   └── index.js
-├── build/
-├── package.json
-└── README.md
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-- Follow React best practices
-- Use Tailwind CSS for styling
-- Write clear, concise commit messages
-- Test your changes thoroughly
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/your-username/stockly/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/stockly/discussions)
-- **Email**: support@stockly.com
-
-## 🙏 Acknowledgments
-
-- Built with [Create React App](https://github.com/facebook/create-react-app)
-- Styled with [Tailwind CSS](https://tailwindcss.com/)
-- Icons and components inspired by modern design systems
-
----
-
-**Made with ❤️ for efficient inventory management**
+Rashmi Kavindya
