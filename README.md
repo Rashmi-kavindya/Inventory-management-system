@@ -66,10 +66,9 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
   </tr>
 </table>
 
-## Demo Video
+<!-- ## Demo Video
 
-- YouTube: `https://youtu.be/your-demo-video`
-- GitHub preview: add a linked thumbnail here later
+- YouTube: `https://youtu.be/your-demo-video` -->
 
 ## About This Project
 
