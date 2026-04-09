@@ -15,8 +15,6 @@
   <img src="https://img.shields.io/badge/Plotly.js-Analytics-3F4F75?style=for-the-badge" alt="Plotly.js" />
 </p>
 
-Stockly is a modern inventory management dashboard built with React and Tailwind CSS. It helps businesses monitor inventory, track expiry and restock alerts, manage sales goals, view weather-based insights, and chat with an embedded assistant for quick actions and report generation.
-
 ## Highlights
 
 - Inventory dashboard with live summaries and charts
@@ -207,9 +205,8 @@ npm run build
 
 ## Backend
 
-This repository contains the frontend application.
+This repository contains the backend.
 
-- Frontend repo: `https://github.com/Rashmi-kavindya/Inventory-management-system`
 - Backend repo: `https://github.com/Rashmi-kavindya/stockly-backend`
 
 ## Notes
