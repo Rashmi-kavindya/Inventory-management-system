@@ -141,13 +141,6 @@ It is designed to feel like a real product rather than a collection of forms, wi
 - Lucide React
 - Heroicons
 
-## Showcase Tips
-
-- Keep screenshots consistent in size and crop for a cleaner gallery.
-- Add a short demo video after you record the final walkthrough.
-- If you later add more screenshots, place them in `src/assets` or a dedicated `docs/screenshots` folder.
-- Keep course submission details in a separate file so the public README stays professional.
-
 ## Project Structure
 
 ```text
