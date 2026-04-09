@@ -1,7 +1,7 @@
 # Stockly
 
 <p align="center">
-  <img src="./src/assets/Logo%20-%20Stockly.png" alt="Stockly Logo" width="120" />
+  <img src="./src/assets/Logo.png" alt="Stockly Logo" width="120" />
 </p>
 
 <p align="center">
@@ -34,34 +34,39 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
 
 <table>
   <tr>
-    <td align="center">
-      <img src="./src/assets/dashboard.jpeg" alt="Dashboard" width="100%" />
-      <br />
-      <sub>Dashboard</sub>
+    <td width="50%" valign="top">
+      <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 14px; background: linear-gradient(180deg, #fffaf2 0%, #ffffff 100%); box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
+        <img src="./src/assets/dashboard.jpeg" alt="Dashboard" width="100%" style="border-radius: 12px;" />
+        <p align="center"><strong>Dashboard</strong></p>
+      </div>
     </td>
-    <td align="center">
-      <img src="./src/assets/weather.jpeg" alt="Weather Forecast" width="100%" />
-      <br />
-      <sub>Weather Forecast</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="./src/assets/bundling.jpeg" alt="Bundle Suggestions" width="100%" />
-      <br />
-      <sub>Bundle Suggestions</sub>
-    </td>
-    <td align="center">
-      <img src="./src/assets/calander.jpeg" alt="Calendar" width="100%" />
-      <br />
-      <sub>Calendar</sub>
+    <td width="50%" valign="top">
+      <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 14px; background: linear-gradient(180deg, #fffaf2 0%, #ffffff 100%); box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
+        <img src="./src/assets/bundling.jpeg" alt="Bundle Suggestions" width="100%" style="border-radius: 12px;" />
+        <p align="center"><strong>Bundle Suggestions</strong></p>
+      </div>
     </td>
   </tr>
   <tr>
-    <td align="center" colspan="2">
-      <img src="./src/assets/chatbot.jpeg" alt="Chatbot" width="60%" />
-      <br />
-      <sub>Chatbot Assistant</sub>
+    <td colspan="2" valign="top">
+      <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 16px; background: linear-gradient(180deg, #fffaf2 0%, #ffffff 100%); box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
+        <table width="100%">
+          <tr>
+            <td width="33.33%" valign="top" style="padding-right: 10px;">
+              <img src="./src/assets/weather.jpeg" alt="Weather Forecast" width="100%" style="border-radius: 12px;" />
+              <p align="center"><strong>Weather Forecast</strong></p>
+            </td>
+            <td width="33.33%" valign="top" style="padding-left: 5px; padding-right: 5px;">
+              <img src="./src/assets/calander.jpeg" alt="Calendar" width="100%" style="border-radius: 12px;" />
+              <p align="center"><strong>Calendar</strong></p>
+            </td>
+            <td width="33.33%" valign="top" style="padding-left: 10px;">
+              <img src="./src/assets/chatbot.jpeg" alt="Chatbot Assistant" width="100%" style="border-radius: 12px;" />
+              <p align="center"><strong>Chatbot Assistant</strong></p>
+            </td>
+          </tr>
+        </table>
+      </div>
     </td>
   </tr>
 </table>
@@ -69,6 +74,13 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
 ## Demo Video
 
 - YouTube: `https://youtu.be/your-demo-video`
+- GitHub preview: add a linked thumbnail here later
+
+## About This Project
+
+Stockly was built as a final-project style inventory platform to demonstrate CRUD workflows, dashboard analytics, alerting, forecasting, and assistant-driven actions in a single polished interface.
+
+It is designed to feel like a real product rather than a collection of forms, with a strong focus on decision support, visual clarity, and practical business use.
 
 ## Features
 
@@ -133,6 +145,13 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
 - React Hot Toast
 - Lucide React
 - Heroicons
+
+## Showcase Tips
+
+- Keep screenshots consistent in size and crop for a cleaner gallery.
+- Add a short demo video after you record the final walkthrough.
+- If you later add more screenshots, place them in `src/assets` or a dedicated `docs/screenshots` folder.
+- Keep course submission details in a separate file so the public README stays professional.
 
 ## Project Structure
 
