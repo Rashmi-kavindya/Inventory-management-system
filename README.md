@@ -52,17 +52,23 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
       <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 16px; background: linear-gradient(180deg, #fffaf2 0%, #ffffff 100%); box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
         <table width="100%">
           <tr>
-            <td width="33.33%" valign="top" style="padding-right: 10px;">
-              <img src="./src/assets/weather.jpeg" alt="Weather Forecast" width="100%" style="border-radius: 12px;" />
-              <p align="center"><strong>Weather Forecast</strong></p>
+            <td width="33.33%" valign="top" style="padding-right: 8px;">
+              <div style="border: 1px solid #f1e3d1; border-radius: 14px; padding: 12px; background: #fff;">
+                <img src="./src/assets/weather.jpeg" alt="Weather Forecast" width="100%" style="border-radius: 10px;" />
+                <p align="center"><strong>Weather Forecast</strong></p>
+              </div>
             </td>
-            <td width="33.33%" valign="top" style="padding-left: 5px; padding-right: 5px;">
-              <img src="./src/assets/calander.jpeg" alt="Calendar" width="100%" style="border-radius: 12px;" />
-              <p align="center"><strong>Calendar</strong></p>
+            <td width="33.33%" valign="top" style="padding-left: 4px; padding-right: 4px;">
+              <div style="border: 1px solid #f1e3d1; border-radius: 14px; padding: 12px; background: #fff;">
+                <img src="./src/assets/calander.jpeg" alt="Calendar" width="100%" style="border-radius: 10px;" />
+                <p align="center"><strong>Calendar</strong></p>
+              </div>
             </td>
-            <td width="33.33%" valign="top" style="padding-left: 10px;">
-              <img src="./src/assets/chatbot.jpeg" alt="Chatbot Assistant" width="100%" style="border-radius: 12px;" />
-              <p align="center"><strong>Chatbot Assistant</strong></p>
+            <td width="33.33%" valign="top" style="padding-left: 8px;">
+              <div style="border: 1px solid #f1e3d1; border-radius: 14px; padding: 12px; background: #fff;">
+                <img src="./src/assets/chatbot.jpeg" alt="Chatbot Assistant" width="100%" style="border-radius: 10px;" />
+                <p align="center"><strong>Chatbot Assistant</strong></p>
+              </div>
             </td>
           </tr>
         </table>
