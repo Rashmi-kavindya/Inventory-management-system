@@ -34,45 +34,34 @@ Stockly is a modern inventory management dashboard built with React and Tailwind
 
 <table>
   <tr>
-    <td width="50%" valign="top">
-      <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 14px; background: linear-gradient(180deg, #fffaf2 0%, #ffffff 100%); box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
-        <img src="./src/assets/dashboard.jpeg" alt="Dashboard" width="100%" style="border-radius: 12px;" />
-        <p align="center"><strong>Dashboard</strong></p>
-      </div>
+    <td width="50%" valign="top" align="center">
+      <img src="./src/assets/dashboard.jpeg" alt="Dashboard" width="100%" />
+      <br />
+      <sub><strong>Dashboard</strong></sub>
     </td>
-    <td width="50%" valign="top">
-      <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 14px; background: linear-gradient(180deg, #fffaf2 0%, #ffffff 100%); box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
-        <img src="./src/assets/bundling.jpeg" alt="Bundle Suggestions" width="100%" style="border-radius: 12px;" />
-        <p align="center"><strong>Bundle Suggestions</strong></p>
-      </div>
+    <td width="50%" valign="top" align="center">
+      <img src="./src/assets/weather.jpeg" alt="Weather Forecast" width="100%" />
+      <br />
+      <sub><strong>Weather Forecast</strong></sub>
     </td>
   </tr>
   <tr>
-    <td colspan="2" valign="top">
-      <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 16px; background: linear-gradient(180deg, #fffaf2 0%, #ffffff 100%); box-shadow: 0 8px 24px rgba(0,0,0,0.04);">
-        <table width="100%">
-          <tr>
-            <td width="33.33%" valign="top" style="padding-right: 8px;">
-              <div style="border: 1px solid #f1e3d1; border-radius: 14px; padding: 12px; background: #fff;">
-                <img src="./src/assets/weather.jpeg" alt="Weather Forecast" width="100%" style="border-radius: 10px;" />
-                <p align="center"><strong>Weather Forecast</strong></p>
-              </div>
-            </td>
-            <td width="33.33%" valign="top" style="padding-left: 4px; padding-right: 4px;">
-              <div style="border: 1px solid #f1e3d1; border-radius: 14px; padding: 12px; background: #fff;">
-                <img src="./src/assets/calander.jpeg" alt="Calendar" width="100%" style="border-radius: 10px;" />
-                <p align="center"><strong>Calendar</strong></p>
-              </div>
-            </td>
-            <td width="33.33%" valign="top" style="padding-left: 8px;">
-              <div style="border: 1px solid #f1e3d1; border-radius: 14px; padding: 12px; background: #fff;">
-                <img src="./src/assets/chatbot.jpeg" alt="Chatbot Assistant" width="100%" style="border-radius: 10px;" />
-                <p align="center"><strong>Chatbot Assistant</strong></p>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </div>
+    <td width="50%" valign="top" align="center">
+      <img src="./src/assets/bundling.jpeg" alt="Bundle Suggestions" width="100%" />
+      <br />
+      <sub><strong>Bundle Suggestions</strong></sub>
+    </td>
+    <td width="50%" valign="top" align="center">
+      <img src="./src/assets/calander.jpeg" alt="Calendar" width="100%" />
+      <br />
+      <sub><strong>Calendar</strong></sub>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top" align="center">
+      <img src="./src/assets/chatbot.jpeg" alt="Chatbot Assistant" width="70%" />
+      <br />
+      <sub><strong>Chatbot Assistant</strong></sub>
     </td>
   </tr>
 </table>
